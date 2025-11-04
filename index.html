@@ -1,98 +1,57 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-<title>RepoTracker - Follow the northern lights </title>  
-<meta name="description" content="Follow the northern lights in real time with RepoTracker. Map and northern lights forecasts">
-<meta name="keywords" content="revontulet, aurora borealis, RepoTracker, sää, kartta, Rovaniemi, northern lights, aurora forecast, real-time aurora">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RepoTracker</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-  body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
-/* Banneri */
-.banner {
-  background: url('revontulet.npg') no-repeat center center;
-  background-size: cover;
-  height: 100px;
-  color: white;
-  text-align: center;
-  position: relative;
-}
-
-.banner-content {
-  position: absolute;
-  bottom: 20px;
-  width: 100%;
-}
-
-.banner-content h1 {
-  font-size: 3rem;
-  margin: 0;
-}
-
-.banner-content p {
-  font-size: 1.2rem;
-  margin: 0;
-}
-
-/* Navigointipalkki */
-.menu {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
-
-.menu ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-}
-
-.menu li {
-  margin-left: 15px;
-}
-
-.menu a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-/* Layout */
-.container {
-  display: flex;
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 10px;
-}
-
-.content {
-  flex: 3;
-  padding: 10px;
-}
-
-.sidebar {
-  flex: 1;
-  padding: 10px;
-  background: #f9f9f9;
-}
-
-/* Responsiivisuus */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #0000;
   }
-  .sidebar {
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    margin-top: 20px;
+    height: 100px;
+    background: #1e88e5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
   }
-}
+  #container {
+    position: absolute;
+    top: 100px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  #map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  #sidebar {
+    position: absolute;
+    top: 100px;
+    right: 0;
+    width: 250px;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 10px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    height: calc(100% - 100px);
+    z-index: 1000;
+  }
   .leaflet-top.leaflet-left {
     top: 100px !important;
   }
@@ -106,23 +65,46 @@
     padding: 5px 10px;
     border-radius: 5px;
   }
+  .loading { 
+opacity: 0.7; 
+}
+  .error { 
+color: red; 
+}
+.banner {
+  background: url('revontulet.png') no-repeat center center;
+  background-size: cover;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
 
+.banner-content h1 {
+  font-size: 3rem;
+  margin: 0;
+}
 
+.banner-content p {
+  font-size: 1.2rem;
+  margin: 0;
+}
 </style>
 </head>
 <body>
 <header class="banner">
   <div class="banner-content">
     
-<h1>RepoTracker</h1>
-    <p>Revontulien seuranta reaaliajassa</p>
-
   </div>
 </header>
+
 <div id="container">
   <div id="map"></div>
   <aside id="sidebar">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1393421309906207"
+   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1393421309906207"
      crossorigin="anonymous"></script>
   </aside>
 </div>
