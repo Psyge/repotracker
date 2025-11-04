@@ -30,12 +30,19 @@
     z-index: 1000;
   }
   #container {
-    position: absolute;
-    top: 100px;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    
+  display: flex;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 10px;
+
   }
+  
+.content {
+  flex: 3;
+  padding: 10px;
+}
+
   #map {
     position: absolute;
     top: 0;
@@ -44,16 +51,9 @@
     right: 0;
   }
   #sidebar {
-    position: absolute;
-    top: 100px;
-    right: 0;
-    width: 250px;
-    background: rgba(255, 255, 255, 0.85);
+    flex: 1;
     padding: 10px;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-    overflow-y: auto;
-    height: calc(100% - 100px);
-    z-index: 1000;
+    background: #f9f9f9;
   }
   .leaflet-top.leaflet-left {
     top: 100px !important;
@@ -109,7 +109,13 @@ color: red;
 <div id="container">
   <div id="map"></div>
   <aside id="sidebar">
-   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1393421309906207"
+    
+<ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXXXXXXXXXX"
+         data-ad-slot="YYYYYYYYYY"
+         data-ad-format="auto"></ins>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1393421309906207"
      crossorigin="anonymous"></script>
   </aside>
 </div>
@@ -282,6 +288,7 @@ setInterval(fetchAuroraData, 5*60*1000);
 </script>
 </body>
 </html>
+
 
 
 
