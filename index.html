@@ -261,7 +261,7 @@ function checkAuroraAtLocation(userLat,userLon) {
     message+=`<br><small>Distance to data point: ~${(nearest.distance*111).toFixed(0)} km</small>`;
     L.popup().setLatLng([userLat,userLon]).setContent(message).openOn(map);
     if(Notification.permission==="granted"&&nearest.intensity>5){
-      new Notification("🌌 Revontuli-ilmoitus",{body:message.replace(/<[^>]*>/g,'')});
+      new Notification("🌌 Northern Lights alert",{body:message.replace(/<[^>]*>/g,'')});
     }
   }
 }
@@ -283,6 +283,7 @@ setInterval(fetchAuroraData, 5*60*1000);
 </script>
 </body>
 </html>
+
 
 
 
