@@ -88,10 +88,13 @@ color: red;
   font-family: Arial, sans-serif;
 }
 
-.banner-content h1 {
-  font-size: 3rem;
-  margin: 0;
-  align: left;
+.banner-content h1 { 
+position: absolute;
+  bottom: 20px;
+  left: 20px; /* siirtää vasemmalle */
+  text-align: left; /* teksti vasemmalle */
+  width: auto;
+
 }
 
 .banner-content p {
@@ -285,6 +288,7 @@ setInterval(fetchAuroraData, 5*60*1000);
      
 </body>
 </html>
+
 
 
 
