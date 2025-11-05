@@ -300,16 +300,22 @@ function checkAuroraAtLocation(userLat,userLon) {
   }
 }
 
+
 // --- Käyttäjän sijainti ---
 if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const lat=pos.coords.latitude;
-    const lon=pos.coords.longitude;
-    map.setView([lat,lon],5);
-    userMarker=L.marker([lat,lon]).addTo(map).bindPopup('Your location');
-    checkAuroraAtLocation(lat,lon);
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    map.setView([lat, lon], 5);
+    userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Your location');
+    checkAuroraAtLocation(lat, lon);
   });
+} else {
+  alert("Your browser does not support location detection.");
+}
 
+// --- Nappi oman sijainnin näyttämiseen ---
+document.getElementById("locate-btn").addEventListener("click", () => {
   if (!navigator.geolocation) {
     alert("Your browser does not support location detection.");
     return;
@@ -331,6 +337,8 @@ if (navigator.geolocation) {
   }, err => {
     alert("Location determination failed: " + err.message);
   });
+});
+
 
    
 // --- Säännöllinen päivitys ---
@@ -341,6 +349,7 @@ setInterval(fetchAuroraData, 5*60*1000);
      
 </body>
 </html>
+
 
 
 
