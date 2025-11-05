@@ -114,6 +114,24 @@ position: absolute;
   text-align: left; /* teksti vasemmalle */
   width: auto;   
 }
+#locate-btn {
+  position: absolute;
+  top: 120px;
+  right: 10px;
+  z-index: 1001;
+  background: #1e88e5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+#locate-btn:hover {
+  background: #1565c0;
+}  
 </style>
 </head>
 <body>
@@ -126,6 +144,7 @@ position: absolute;
 
 <div id="container">
   <div id="map"></div>
+  <button id="locate-btn">📍 Näytä sijaintini</button>
   <aside id="sidebar">
   
 <div style="background:#eee; height:250px; text-align:center;">Mainospaikka</div>
@@ -295,6 +314,28 @@ if (navigator.geolocation) {
     checkAuroraAtLocation(lat,lon);
   });
 }
+  if (!navigator.geolocation) {
+    alert("Selaimesi ei tue sijainnin määritystä.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+    map.setView([lat, lon], 6);
+
+    if (userMarker) {
+      userMarker.setLatLng([lat, lon]);
+    } else {
+      userMarker = L.marker([lat, lon]).addTo(map).bindPopup('Sinun sijaintisi');
+    }
+
+    userMarker.openPopup();
+    checkAuroraAtLocation(lat, lon);
+  }, err => {
+    alert("Sijainnin määritys epäonnistui: " + err.message);
+  });
+});  
 
 // --- Säännöllinen päivitys ---
 fetchAuroraData();
@@ -304,6 +345,7 @@ setInterval(fetchAuroraData, 5*60*1000);
      
 </body>
 </html>
+
 
 
 
