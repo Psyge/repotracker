@@ -148,6 +148,49 @@ position: absolute;
 #locate-btn:hover {
   background: #1565c0;
 }  
+
+/* --- MENU NAPPI --- */
+#menu-btn {
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  left: 20px;
+  top: 35px;
+  z-index: 1100;
+  user-select: none;
+  color: white;
+}
+
+#menu-btn:hover {
+  color: #cce4ff;
+}
+
+/* --- MENU --- */
+#menu {
+  display: none;
+  position: absolute;
+  top: 100px; /* bannerin alapuolelle */
+  left: 0;
+  background: rgba(30,136,229,0.95);
+  width: 220px;
+  box-shadow: 2px 4px 8px rgba(0,0,0,0.4);
+  flex-direction: column;
+  padding: 10px 0;
+  z-index: 1200;
+}
+
+#menu a {
+  display: block;
+  padding: 12px 20px;
+  color: white;
+  text-decoration: none;
+  font-family: Arial, sans-serif;
+}
+
+#menu a:hover {
+  background: rgba(255,255,255,0.15);
+}
+  
 </style>
 </head>
 <body>
@@ -156,6 +199,12 @@ position: absolute;
     <h1>RepoTracker</h1>
     <p>Northern Lights tracking</p>
   </div>
+<nav id="menu">
+    <a href="#">Etusivu</a>
+    <a href="#">Revontulikartta</a>
+    <a href="#">Tilastot</a>
+    <a href="#">Tietoa</a>
+  </nav>  
 </header>
 
 <div id="container">
@@ -359,11 +408,24 @@ document.getElementById("locate-btn").addEventListener("click", () => {
 // --- Säännöllinen päivitys ---
 fetchAuroraData();
 setInterval(fetchAuroraData, 5*60*1000);
+
+// --- Valikon toiminta ---
+const menuBtn = document.getElementById("menu-btn");
+const menu = document.getElementById("menu");
+
+menuBtn.addEventListener("click", () => {
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+});
+map.on('click', () => { 
+  menu.style.display = 'none'; 
+});
+  
 </script>
 
      
 </body>
 </html>
+
 
 
 
