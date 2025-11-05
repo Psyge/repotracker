@@ -101,7 +101,7 @@ opacity: 0.7;
 color: red; 
 }
 .banner {
-  background: url('https://psyge.github.io/repotracker/revontulet.png') no-repeat center center;
+  background: url('https://psyge.github.io/repotracker/revontulet.png') no-repeat center bottom;
   background-size: cover;
   height: 100px;
   display: flex;
@@ -156,7 +156,7 @@ position: absolute;
   position: absolute;
   left: 20px;
   top: 35px;
-  z-index: 1100;
+  z-index: 2000;
   user-select: none;
   color: white;
 }
@@ -195,17 +195,21 @@ position: absolute;
 </head>
 <body>
 <header class="banner">
+  <div id="menu-btn">☰</div>
+
   <div class="banner-content">
     <h1>RepoTracker</h1>
     <p>Northern Lights tracking</p>
   </div>
-<nav id="menu">
+
+  <nav id="menu">
     <a href="#">Etusivu</a>
     <a href="#">Revontulikartta</a>
     <a href="#">Tilastot</a>
     <a href="#">Tietoa</a>
-  </nav>  
+  </nav>
 </header>
+
 
 <div id="container">
   <div id="map">
@@ -425,6 +429,7 @@ map.on('click', () => {
      
 </body>
 </html>
+
 
 
 
