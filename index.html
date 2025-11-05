@@ -331,7 +331,7 @@ if (navigator.geolocation) {
   }, err => {
     alert("Location determination failed: " + err.message);
   });
-});  
+
    
 // --- Säännöllinen päivitys ---
 fetchAuroraData();
@@ -341,6 +341,7 @@ setInterval(fetchAuroraData, 5*60*1000);
      
 </body>
 </html>
+
 
 
 
