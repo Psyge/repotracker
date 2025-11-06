@@ -19,65 +19,85 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1393421309906207"
      crossorigin="anonymous"></script>  
 <style>
-  body, html {
+  /* Perusasetukset */
+body, html {
     margin: 0;
     padding: 0;
     height: 100%;
     background: #0000;
-  }
+}
 
+/* Banneri */
 header.banner {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: url('revontulet.png') no-repeat center bottom;
+    background-size: cover; /* Täyttää koko bannerin */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Logo vasemmalle */
+    padding: 0 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    z-index: 1000;
 }
 
+/* Gradientti bannerin alareunaan */
 header.banner::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 15px;
-  background: linear-gradient(to bottom, rgba(30,136,229,1), rgba(30,136,229,0));
-  pointer-events: none;
-}
-  
-.logo {
-    /* Säädä sopivaksi */
-    height: 90px;
-}
-
-
-  #container {
-    
-  display: flex;
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 10px;
-
-  }
-  
-.content {
-  flex: 3;
-  padding: 10px;
-}
-
-  #map {
+    content: "";
     position: absolute;
-    top: 90px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background: linear-gradient(to bottom, rgba(30,136,229,1), rgba(30,136,229,0));
+    pointer-events: none;
+}
+
+/* Logo */
+.logo {
+    height: 90px; /* Tee logosta isompi */
+}
+
+/* Container ja sisältö */
+#container {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.content {
+    flex: 3;
+    padding: 10px;
+}
+
+/* Kartta */
+#map {
+    position: absolute;
+    top: 100px;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1; 
-  }
-  #sidebar {
+    z-index: 1;
+}
+
+/* Sidebar */
+#sidebar {
     flex: 1;
     padding: 10px;
     background: #f9f9f9;
-  }
-  .leaflet-top.leaflet-left {
+}
+
+/* Leaflet UI */
+.leaflet-top.leaflet-left {
     top: 100px !important;
-  }
-  #info {
+}
+
+/* Info-paneeli */
+#info {
     position: absolute;
     top: 110px;
     left: 10px;
@@ -86,103 +106,74 @@ header.banner::after {
     background: rgba(0,0,0,0.5);
     padding: 5px 10px;
     border-radius: 5px;
-  }
-  .loading { 
-opacity: 0.7; 
-}
-  .error { 
-color: red; 
-}
-header.banner {
-  background: url('revontulet.png') no-repeat center bottom;
-  background-position: center 87%;
-  width: 100%;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  color: white;
-  padding-left: 20px;
 }
 
-.banner-content h1 { 
-position: absolute;
-  bottom: 20px;
-  left: 60px; /* siirtää vasemmalle */
-  text-align: left; /* teksti vasemmalle */
-  width: auto;
+/* Tilaviestit */
+.loading { opacity: 0.7; }
+.error { color: red; }
 
-}
-
-.banner-content p {
-  font-size: 1.2rem;
-  margin: 0;
-  position: absolute;
-  bottom: 20px;
-  left: 60px; /* siirtää vasemmalle */
-  text-align: left; /* teksti vasemmalle */
-  width: auto;   
-}
+/* Locate-painike */
 #locate-btn {
-  position: absolute;
-  top: 20px;
-  right: 10px;
-  z-index: 1001;
-  background: #1e88e5;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    z-index: 1001;
+    background: #1e88e5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 #locate-btn:hover {
-  background: #1565c0;
-}  
+    background: #1565c0;
+}
 
-/* --- MENU NAPPI --- */
+/* Menu-nappi */
 #menu-btn {
-  font-size: 24px;
-  cursor: pointer;
-  position: absolute;
-  left: 20px;
-  top: 30px;
-  z-index: 2000;
-  user-select: none;
-  color: white;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    left: 20px;
+    top: 30px;
+    z-index: 2000;
+    user-select: none;
+    color: white;
 }
 
 #menu-btn:hover {
-  color: #cce4ff;
+    color: #cce4ff;
 }
 
-/* --- MENU --- */
+/* Menu */
 #menu {
-  display: none;
-  position: fixed;
-  top: 100px; /* bannerin alapuolelle */
-  left: 0;
-  background: rgba(30,136,229,0.95);
-  width: 220px;
-  box-shadow: 2px 4px 8px rgba(0,0,0,0.4);
-  flex-direction: column;
-  padding: 10px 0;
-  z-index: 7000;
+    display: none;
+    position: fixed;
+    top: 100px;
+    left: 0;
+    background: rgba(30,136,229,0.95);
+    width: 220px;
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.4);
+    flex-direction: column;
+    padding: 10px 0;
+    z-index: 7000;
 }
 
 #menu a {
-  display: block;
-  padding: 12px 20px;
-  color: white;
-  text-decoration: none;
-  font-family: Arial, sans-serif;
+    display: block;
+    padding: 12px 20px;
+    color: white;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
 }
 
 #menu a:hover {
-  background: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.15);
 }
+
   
 </style>
 </head>
@@ -421,6 +412,7 @@ map.on('click', () => {
      
 </body>
 </html>
+
 
 
 
