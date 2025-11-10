@@ -213,10 +213,15 @@ header.banner::after {
     position: fixed;
     bottom: 10px;
     left: 10px;
-    right: 10px;
+    max-width: 90%; /* rajoittaa leveyttä */
+    background: rgba(0,0,0,0.6); /* läpinäkyvä tausta */
     font-size: 14px;
+    border-radius: 6px;
+    padding: 8px;
+    z-index: 999; /* pysyy kartan päällä */
   }
 }
+
 
 </style>
 </head>
@@ -456,6 +461,7 @@ map.on('click', () => {
      
 </body>
 </html>
+
 
 
 
