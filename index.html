@@ -213,15 +213,35 @@ header.banner::after {
     position: fixed;
     bottom: 10px;
     left: 10px;
-    max-width: 90%; /* rajoittaa leveyttä */
+    max-width: 60%; /* rajoittaa leveyttä */
     background: rgba(0,0,0,0.6); /* läpinäkyvä tausta */
-    font-size: 14px;
+    font-size: 10px;
     border-radius: 6px;
-    padding: 8px;
+    padding: 4px 8px;
     z-index: 999; /* pysyy kartan päällä */
   }
-}
+  header.banner {
+    flex-direction: column; /* logo ja IG allekkain */
+    height: auto; /* bannerin korkeus mukautuu */
+    padding: 10px;
+  }
 
+  .banner-left .logo {
+    height: 70px; /* pienempi logo mobiilissa */
+    margin-bottom: 10px;
+  }
+
+  .banner-right {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .banner-right .icon {
+    width: 36px;
+    height: 36px;
+  }
+}
 
 </style>
 </head>
@@ -455,12 +475,21 @@ menuBtn.addEventListener("click", () => {
 map.on('click', () => { 
   menu.style.display = 'none'; 
 });
+
+function hideInfoAfterDelay() {
+  setTimeout(() => {
+    document.getElementById("info").style.display = "none";
+  }, 5000); // 5 sekuntia
+}
+
+hideInfoAfterDelay();
   
 </script>
 
      
 </body>
 </html>
+
 
 
 
