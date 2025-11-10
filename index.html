@@ -175,6 +175,20 @@ header.banner::after {
 #menu a:hover {
     background: rgba(255,255,255,0.15);
 }
+.social-btn.instagram {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.icon {
+    width: 32px; /* sopiva koko */
+    height: 32px;
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
+    transition: transform 0.2s ease;
+}
+
+.icon:hover {
+    transform: scale(1.1);
 
   
 </style>
@@ -185,6 +199,11 @@ header.banner::after {
 
   <div class="banner-content">
     <img src="repo-neon.png" alt="RepoTracker Logo" class="logo">
+    
+<a href="https://instagram.com/oma_tili" target="_blank" class="social-btn instagram">
+    <img src="images/instagram-icon.png" alt="Instagram" class="icon">
+</a>
+
   </div>
 
   <nav id="menu">
@@ -414,6 +433,7 @@ map.on('click', () => {
      
 </body>
 </html>
+
 
 
 
