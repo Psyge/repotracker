@@ -51,7 +51,8 @@ header.banner::after {
     height: 32px;
     filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
     transition: transform 0.2s ease;
-    padding-righ: 40px;
+    padding-right: 10px;
+    padding-bottom: 10px;
 }
 
 .banner-right .icon:hover {
@@ -178,6 +179,7 @@ header.banner::after {
     display: inline-block;
     margin-left: 15px;
     padding-right: 40px;
+    padding-bottom: 10px;
 }
 
 .icon {
@@ -259,3 +261,4 @@ lex-direction: row; /* logo ja IG vierekkäin */
   }
 
 }
+
