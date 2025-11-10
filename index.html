@@ -227,16 +227,27 @@ lex-direction: row; /* logo ja IG vierekkäin */
     padding-left: 20px;
   }
 
-  .banner-right {
-    display: flex;
+  
+.banner-right {
     justify-content: center;
+    flex-wrap: wrap;
     gap: 10px;
   }
+
+  .banner-right img {
+    height: 36px;
+  }
+
 
   .banner-right .icon {
     width: 36px;
     height: 36px;
   }
+  
+.banner-right img {
+    height: 40px; /* sopiva koko mobiilille */
+}
+
 
 #info {
     position: fixed;
@@ -288,6 +299,9 @@ osition: fixed; /* kiinnitetään kartan päälle */
     <a href="https://instagram.com/repotracker_" target="_blank" class="social-btn instagram">
       <img src="ig-icon.png" alt="Instagram" class="icon">
     </a>
+    <a href="https://www.buymeacoffee.com/repotracker" target="_blank">
+    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 50px; width: auto;">
+
   </div>
 </header>
 
@@ -519,6 +533,7 @@ hideInfoAfterDelay();
      
 </body>
 </html>
+
 
 
 
