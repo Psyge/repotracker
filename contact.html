@@ -3,31 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact & Feedback</title>
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-header {
-  background: #1e88e5;
-  color: white;
-  padding: 10px;
-  text-align: center;
-}
-iframe {
-  display: block;
-  width: 100%;
-  height: 800px;
-  border: none;
-}
-</style>
+<title>Contact & Feedback - RepoTracker</title>
+<link rel="stylesheet" href="style.css"> <!-- Käytä samaa CSS-tiedostoa -->
 </head>
 <body>
-<header>
-  <h1>Contact & Feedback</h1>
+
+<header class="banner">
+  <div id="menu-btn">☰</div>
+  <div class="banner-left">
+    <img src="repo-neon.png" alt="RepoTracker Logo" class="logo">
+  </div>
+  <div class="banner-right">
+   r
+  </div>
 </header>
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdnjjYcD008LAMcvo0g2riXAtQ80_Xtfy-2vQ2vrEo6xbSuXQ/viewform?embedded=true" width="640" height="851" frameborder="0" marginheight="0" marginwidth="0">Ladataan…</iframe>
+
+<!-- Sama menu -->
+<nav id="menu">
+  <a href="index.html">Front page</a>
+  <a href="contact.html">Contact / Feedback</a>
+</nav>
+
+<!-- Lomake -->
+<div id="container" style="margin-top:120px; text-align:center;">
+  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdnjjYcD008LAMcvo0g2riXAtQ80_Xtfy-2vQ2vrEo6xbSuXQ/viewform?embedded=true" width="640" height="686" frameborder="0" marginheight="0" marginwidth="0">Ladataan…</iframe>
+</div>
+
+<script>
+const menuBtn = document.getElementById("menu-btn");
+const menu = document.getElementById("menu");
+menuBtn.addEventListener("click", () => {
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+});
+</script>
+
 </body>
 </html>
