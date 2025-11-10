@@ -78,7 +78,9 @@ header.banner::after {
 .banner-right .icon:hover {
     transform: scale(1.1);
 }
-
+.banner-right img {
+    height: 40px; /* sopiva koko mobiilille */
+}
 
 /* Container ja sisältö */
 #container {
@@ -224,7 +226,7 @@ lex-direction: row; /* logo ja IG vierekkäin */
   .banner-left .logo {
     height: 60px;
     margin: 0;
-    padding-left: 20px;
+    padding-left: 40px;
   }
 
   
@@ -244,24 +246,19 @@ lex-direction: row; /* logo ja IG vierekkäin */
     height: 36px;
   }
   
-.banner-right img {
-    height: 40px; /* sopiva koko mobiilille */
-}
-
-
 #info {
     position: fixed;
     bottom: 10px;
     left: 10px;
     font-size: 12px;
     max-width: 70%;
-    height: 40px;  
+    height: 60px;  
     padding: 4px 8px;
   }
 
   #locate-btn {
     
-osition: fixed; /* kiinnitetään kartan päälle */
+position: fixed; /* kiinnitetään kartan päälle */
     bottom: 80px; /* siirretään alemmas */
     right: 20px;
     width: 50px;
@@ -533,6 +530,7 @@ hideInfoAfterDelay();
      
 </body>
 </html>
+
 
 
 
