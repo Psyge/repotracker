@@ -213,20 +213,23 @@ header.banner::after {
 @media (max-width: 768px) {
   
 header.banner {
-    flex-direction: column;
+    
+lex-direction: row; /* logo ja IG vierekkäin */
+    justify-content: space-between;
     height: auto;
     padding: 10px;
+
   }
 
   .banner-left .logo {
     height: 60px;
-    margin-bottom: 8px;
+    margin: 0;
   }
 
   .banner-right {
     display: flex;
     justify-content: center;
-    width: 100%;
+    gap: 10px;
   }
 
   .banner-right .icon {
@@ -244,6 +247,10 @@ header.banner {
   }
 
   #locate-btn {
+    
+osition: fixed; /* kiinnitetään kartan päälle */
+    bottom: 80px; /* siirretään alemmas */
+    right: 20px;
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -251,6 +258,10 @@ header.banner {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #1e88e5;
+    color: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+
   }
 
   #locate-btn::before {
@@ -506,6 +517,7 @@ hideInfoAfterDelay();
      
 </body>
 </html>
+
 
 
 
