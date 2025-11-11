@@ -231,6 +231,10 @@ header.banner::after {
   background: #45a049;
 }
   
+#bmc-button {
+  all: unset; /* poistaa ulkoiset tyylit */
+}
+
 @media (max-width: 768px) {
   
 header.banner {
@@ -303,6 +307,7 @@ lex-direction: row; /* logo ja IG vierekkäin */
   }
 
 }
+
 
 
 
