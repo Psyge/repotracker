@@ -365,34 +365,11 @@ showHelpLink.addEventListener('click', (e) => {
 
  
 <script src="markers.js"></script>
-<script>
-  // Kun kartta on valmis, lisää markkerit
-  
-addMarkers(); // Luo markerit markersLayeriin
 
-  // Napin toiminta
-  document.getElementById('markers-btn').addEventListener('click', () => {
-    if (!map.hasLayer(markersLayer)) {
-      markersLayer.addTo(map);
-    } else {
-      map.removeLayer(markersLayer);
-    }
-  });
-
-  // Näkyvyys zoomin mukaan
-  map.on('zoomend', () => {
-    const zoom = map.getZoom();
-    if (zoom >= 6) {
-      if (!map.hasLayer(markersLayer)) markersLayer.addTo(map);
-    } else {
-      if (map.hasLayer(markersLayer)) map.removeLayer(markersLayer);
-    }
-  });
-
-</script>
     
 </body>
 </html>
+
 
 
 
