@@ -267,12 +267,57 @@ function hideInfoAfterDelay() {
 }
 
 hideInfoAfterDelay();
-  
+ // --- Klikkaus kartalla: näytä revontulitilanne ---
+map.on('click', (e) => {
+  const lat = e.latlng.lat;
+  const lon = e.latlng.lng;
+  showAuroraAtClickedLocation(lat, lon);
+});
+
+function showAuroraAtClickedLocation(lat, lon) {
+  if (!currentData || !currentData.coordinates) {
+    L.popup()
+      .setLatLng([lat, lon])
+      .setContent("❌ No aurora data available.")
+      .openOn(map);
+    return;
+  }
+
+  let nearest = null, minDist = Infinity;
+  currentData.coordinates.forEach(p => {
+    let pointLon = p[0] < 0 ? p[0] + 360 : p[0];
+    let pointLat = p[1];
+    let intensity = p[2];
+    const latDiff = pointLat - lat;
+    const lonDiff = Math.abs(pointLon - lon);
+    const lonDiffNormalized = Math.min(lonDiff, 360 - lonDiff);
+    const dist = Math.hypot(latDiff, lonDiffNormalized * Math.cos(lat * Math.PI / 180));
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = { lat: pointLat, lon: pointLon, intensity, distance: dist };
+    }
+  });
+
+  let message = '', emoji = '';
+  if (nearest.intensity > 80) { emoji = '🌟'; message = `${emoji} <strong>Strong aurora activity!</strong>`; }
+  else if (nearest.intensity > 60) { emoji = '🌌'; message = `${emoji} <strong>Very likely visible</strong>`; }
+  else if (nearest.intensity > 40) { emoji = '✨'; message = `${emoji} <strong>Moderate activity</strong>`; }
+  else if (nearest.intensity > 20) { emoji = '🌙'; message = `${emoji} <strong>Low activity</strong>`; }
+  else { emoji = '😕'; message = `${emoji} <strong>Not much northern lights</strong>`; }
+
+  message += `<br>Intensity: ${nearest.intensity.toFixed(1)}<br><small>Distance to data point: ~${(nearest.distance * 111).toFixed(0)} km</small>`;
+
+  L.popup()
+    .setLatLng([lat, lon])
+    .setContent(message)
+    .openOn(map);
+} 
 </script>
 
      
 </body>
 </html>
+
 
 
 
