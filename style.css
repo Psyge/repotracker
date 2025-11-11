@@ -178,7 +178,7 @@ header.banner::after {
 .social-btn.instagram {
     display: inline-block;
     margin-left: 15px;
-    padding-right: 40px;
+    padding-right: 5px;
     padding-bottom: 10px;
 }
 
@@ -303,6 +303,7 @@ lex-direction: row; /* logo ja IG vierekkäin */
   }
 
 }
+
 
 
 
