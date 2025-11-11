@@ -77,12 +77,13 @@ header.banner::after {
 
 /* Kartta */
 #map {
-  position: relative;
-   top: 100px; /* sama kuin bannerin korkeus */
+    position: absolute;
+    top: 100px; /* sama kuin bannerin korkeus */
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 1;
+
 }
 
 
@@ -306,6 +307,7 @@ lex-direction: row; /* logo ja IG vierekkäin */
   }
 
 }
+
 
 
 
