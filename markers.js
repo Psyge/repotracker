@@ -3,13 +3,16 @@ const places = [
   
 ];
 
-function addMarkers(map) {
+
+const markersLayer = L.layerGroup();
+
+function addMarkers() {
   places.forEach(place => {
     const customIcon = L.icon({
       iconUrl: place.icon,
-      iconSize: [32, 32],       // kuvakkeen koko
-      iconAnchor: [16, 32],     // ankkuri (mihin kohtaan kartalla osuu)
-      popupAnchor: [0, -32]     // popupin sijainti suhteessa ikoniin
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32]
     });
 
     const popupContent = `
@@ -18,7 +21,7 @@ function addMarkers(map) {
     `;
 
     L.marker([place.lat, place.lon], { icon: customIcon })
-      .addTo(map)
-      .bindPopup(popupContent);
+      .bindPopup(popupContent)
+      .addTo(markersLayer);
   });
 }
