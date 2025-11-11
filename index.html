@@ -349,16 +349,20 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
   
-document.getElementById('show-help').addEventListener('click', (e) => {
-  e.preventDefault();
-  helpPopup.style.display = 'flex';
+
+const showHelpLink = document.getElementById('show-help');
+showHelpLink.addEventListener('click', (e) => {
+  e.preventDefault(); // estää #-linkin hyppäämisen
+  document.getElementById('help-popup').style.display = 'flex';
 });
+
  
 </script>
 
      
 </body>
 </html>
+
 
 
 
