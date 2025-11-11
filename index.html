@@ -48,7 +48,8 @@
 
 
 <!-- Pop-up Help -->
-<div id="help-popup" class="popup">
+<!-- Pop-up Help -->
+<div id="help-popup" class="popup" style="display:none;">
   <div class="popup-content">
     <h2>How to use RepoTracker</h2>
     <p>Click anywhere on the map to see the aurora forecast for that location.<br>
@@ -56,9 +57,11 @@
     <label>
       <input type="checkbox" id="dont-show-again"> Don’t show again
     </label>
+    <br>
     <button id="close-popup">Close</button>
   </div>
 </div>
+
 
 
 <div id="container">
@@ -328,21 +331,24 @@ function showAuroraAtClickedLocation(lat, lon) {
 } 
 
 // --- Pop-up Help Logic ---
-const helpPopup = document.getElementById('help-popup');
-const closePopupBtn = document.getElementById('close-popup');
-const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+document.addEventListener('DOMContentLoaded', () => {
+  const helpPopup = document.getElementById('help-popup');
+  const closePopupBtn = document.getElementById('close-popup');
+  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
 
-// Show popup only if user hasn't disabled it
-if (!localStorage.getItem('hideHelpPopup')) {
-  helpPopup.style.display = 'flex';
-}
-
-closePopupBtn.addEventListener('click', () => {
-  if (dontShowAgainCheckbox.checked) {
-    localStorage.setItem('hideHelpPopup', 'true');
+  // Show popup only if user hasn't disabled it
+  if (!localStorage.getItem('hideHelpPopup')) {
+    helpPopup.style.display = 'flex';
   }
-  helpPopup.style.display = 'none';
- 
+
+  closePopupBtn.addEventListener('click', () => {
+    if (dontShowAgainCheckbox.checked) {
+      localStorage.setItem('hideHelpPopup', 'true');
+    }
+    helpPopup.style.display = 'none';
+  });
+});
+  
 document.getElementById('show-help').addEventListener('click', (e) => {
   e.preventDefault();
   helpPopup.style.display = 'flex';
@@ -353,6 +359,7 @@ document.getElementById('show-help').addEventListener('click', (e) => {
      
 </body>
 </html>
+
 
 
 
