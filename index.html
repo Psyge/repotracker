@@ -46,6 +46,19 @@
 </header>
 
 
+<!-- Pop-up Help -->
+<div id="help-popup" class="popup">
+  <div class="popup-content">
+    <h2>How to use RepoTracker</h2>
+    <p>Click anywhere on the map to see the aurora forecast for that location.<br>
+       Use the 📍 button to check your current position.</p>
+    <label>
+      <input type="checkbox" id="dont-show-again"> Don’t show again
+    </label>
+    <button id="close-popup">Close</button>
+  </div>
+</div>
+
 
 <div id="container">
   <div id="map">
@@ -312,11 +325,29 @@ function showAuroraAtClickedLocation(lat, lon) {
     .setContent(message)
     .openOn(map);
 } 
+
+// --- Pop-up Help Logic ---
+const helpPopup = document.getElementById('help-popup');
+const closePopupBtn = document.getElementById('close-popup');
+const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+
+// Show popup only if user hasn't disabled it
+if (!localStorage.getItem('hideHelpPopup')) {
+  helpPopup.style.display = 'flex';
+}
+
+closePopupBtn.addEventListener('click', () => {
+  if (dontShowAgainCheckbox.checked) {
+    localStorage.setItem('hideHelpPopup', 'true');
+  }
+  helpPopup.style.display = 'none';
+  
 </script>
 
      
 </body>
 </html>
+
 
 
 
