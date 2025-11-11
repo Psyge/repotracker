@@ -41,6 +41,7 @@
 <nav id="menu">
   <a href="index.html">Front page</a>
   <a href="contact.html">Contact / Feedback</a>
+  <a href="#" id="show-help">Help</a>
 </nav>
 
 </header>
@@ -341,12 +342,18 @@ closePopupBtn.addEventListener('click', () => {
     localStorage.setItem('hideHelpPopup', 'true');
   }
   helpPopup.style.display = 'none';
-  
+ 
+document.getElementById('show-help').addEventListener('click', (e) => {
+  e.preventDefault();
+  helpPopup.style.display = 'flex';
+});
+ 
 </script>
 
      
 </body>
 </html>
+
 
 
 
