@@ -17,7 +17,7 @@ function addMarkers() {
 
     const popupContent = `
       <strong>${place.name}</strong><br>
-      ${place.url}More info</a>
+      <a href="${place.url}" target="_blank" rel="noopener noreferrer">More info</a>
     `;
 
     L.marker([place.lat, place.lon], { icon: customIcon })
@@ -25,3 +25,4 @@ function addMarkers() {
       .addTo(markersLayer);
   });
 }
+
