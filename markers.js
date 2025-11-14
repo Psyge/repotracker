@@ -56,6 +56,12 @@ marker.on('popupopen', (e) => {
     // Pakota popupin leveys iframe-leveyden mukaan
     const popupWrapper = e.popup.getElement().querySelector('.leaflet-popup-content-wrapper');
     popupWrapper.style.width = container.dataset.width + 'px';
+
+     setTimeout(() => {
+      e.popup._updateLayout();
+      e.popup._updatePosition();
+      e.popup._adjustPan();
+    }, 50);
   }
 });
 });
@@ -67,3 +73,4 @@ marker.on('popupopen', (e) => {
 }
 
 addMarkers();
+
