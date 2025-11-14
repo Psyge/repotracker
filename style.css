@@ -69,6 +69,7 @@ header.banner::after {
   width: 100%;
   height: calc(100vh - 100px); /* täyttää loput ruudusta */
   z-index: 1;
+  
 }
 
 /* Info-paneeli */
@@ -180,6 +181,117 @@ header.banner::after {
 .popup-content button:hover {
   background: #45a049;
 }
+.popup-img {
+  width: 60px;       /* haluttu koko */
+  height: 60px;      /* sama kuin leveys */
+  border-radius: 50%; /* tekee kuvasta pyöreän */
+  object-fit: cover; /* varmistaa ettei kuva veny */
+  display: block;
+  margin: 8px auto;  /* keskittää kuvan popupissa */
+}
+
+.circle-icon {
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+#forecast-btn {
+  position: absolute;
+  top: 90px; /* Show my location on top, markers below, forecast next */
+  right: 10px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#forecast-overlay {
+  position: absolute;
+  top: 140px;
+  right: 20px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 2000;
+}
+
+.kp-dot {
+  font-size: 24px; /* isompi koko */
+  font-weight: bold; /* tekee pisteestä paksumman */
+}
+
+
+.marker-wrapper {
+  position: relative;
+  width: 32px;
+  height: 48px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.marker-wrapper img.pin {
+  width: 32px !important;
+  height: 48px !important;
+  object-fit: contain;
+}
+
+.marker-wrapper img.pin-icon {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50%;
+  background: white;
+  padding: 2px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+
+.pin {
+ 
+ width: 100%;
+  height: auto;
+  max-width: 32px;   /* pakottaa oikean koon */
+  max-height: 48px;
+
+}
+
+.pin-icon {
+  position: absolute;
+  top: 4px; /* siirtää ympyrän yläosaan */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  padding: 2px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+
+.custom-popup .leaflet-popup-content-wrapper {
+  width: auto !important;
+  max-width: none !important;
+}
+
+.custom-popup .leaflet-popup-content {
+  width: auto !important;
+  padding: 0;
+}
+
+.popup-stream iframe {
+  display: block;
+  max-width: none; /* varmistaa ettei popupin ulkopuolelle */
+}
+
 
 /* Mobiili */
 @media (max-width: 768px) {
@@ -235,4 +347,3 @@ header.banner::after {
     font-size: 24px;
   }
 }
-
