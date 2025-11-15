@@ -24,7 +24,8 @@ const places = [
   { name: 'Joulupukin Pajakylä', lat: 66.54363, lon: 25.84641, url: 'https://santaclausvillage.info/', icon: 'images/pukki.png', stream: 'https://www.youtube.com/embed/Cp4RRAEgpeU', streamWidth: 320, streamHeight: 180},
   { name: 'Levi', lat: 67.80886, lon: 24.81125, url: 'https://www.levi.fi/', icon: 'images/levi.png',  stream: 'https://www.youtube.com/embed/X7tdyNFpp1g', streamWidth: 320, streamHeight: 180},
   { name: 'Ylläs', lat: 67.56501, lon: 24.22361, url: 'https://yllas.fi/', icon: 'images/yllas.png' },
-  { name: 'Apukka Resort', lat: 66.578510, lon: 26.014702, url: 'https://apukkaresort.fi/', icon: 'images/apukka.png', stream: 'https://www.youtube.com/embed/bOEvPL206Hc', streamWidth: 320, streamHeight: 180 }
+  { name: 'Apukka Resort', lat: 66.578510, lon: 26.014702, url: 'https://apukkaresort.fi/', icon: 'images/apukka.png', stream: 'https://www.youtube.com/embed/bOEvPL206Hc', streamWidth: 320, streamHeight: 180 },
+  { name: 'Beatiful Northern Lights live stream. Credits: Starlapland / Samuli Korvanen', lat: 67.41711, lon: 26.58897, url: 'https://repotrack.fi', icon: 'images/iconi.png', stream: 'https://www.youtube.com/embed/dnlQtDad6Dk', streamWidth: 320, streamHeight: 180 }
 ];
 
 const markersLayer = L.layerGroup().addTo(map);
@@ -123,6 +124,7 @@ function addMarkers() {
 
 
 addMarkers();
+
 
 
 
