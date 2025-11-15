@@ -1,10 +1,10 @@
 
 const places = [
-  { name: 'Rovaniemi', lat: 66.5, lon: 25.7, url: 'https://visitrovaniemi.fi', icon: 'images/roic.png' },
-  { name: 'Joulupukin Pajakylä', lat: 66.54, lon: 25.84, url: 'https://santaclausvillage.info/', icon: 'images/pukki.png', stream: 'https://www.youtube.com/embed/Cp4RRAEgpeU', streamWidth: 320, streamHeight: 180},
+  { name: 'Rovaniemi', lat: 66.50276, lon: 25.72912, url: 'https://visitrovaniemi.fi', icon: 'images/roic.png' },
+  { name: 'Joulupukin Pajakylä', lat: 66.54363, lon: 25.84641, url: 'https://santaclausvillage.info/', icon: 'images/pukki.png', stream: 'https://www.youtube.com/embed/Cp4RRAEgpeU', streamWidth: 320, streamHeight: 180},
   { name: 'Levi', lat: 67.80886, lon: 24.81125, url: 'https://www.levi.fi/', icon: 'images/levi.png',  stream: 'https://www.youtube.com/embed/X7tdyNFpp1g', streamWidth: 320, streamHeight: 180},
-  { name: 'Ylläs', lat: 67.57, lon: 24.20, url: 'https://yllas.fi/', icon: 'images/yllas.png' },
-  { name: 'Apukka Resort', lat: 66.58, lon: 26.01, url: 'https://apukkaresort.fi/', icon: 'images/apukka.png', stream: 'https://www.youtube.com/embed/bOEvPL206Hc', streamWidth: 320, streamHeight: 180 }
+  { name: 'Ylläs', lat: 67.56501, lon: 24.22361, url: 'https://yllas.fi/', icon: 'images/yllas.png' },
+  { name: 'Apukka Resort', lat: 66.578510, lon: 26.014702, url: 'https://apukkaresort.fi/', icon: 'images/apukka.png', stream: 'https://www.youtube.com/embed/bOEvPL206Hc', streamWidth: 320, streamHeight: 180 }
 ];
 
 const markersLayer = L.layerGroup().addTo(map);
@@ -74,6 +74,7 @@ marker.on('popupopen', (e) => {
 }
 
 addMarkers();
+
 
 
 
