@@ -2,7 +2,7 @@
 const places = [
   { name: 'Rovaniemi', lat: 66.5, lon: 25.7, url: 'https://visitrovaniemi.fi', icon: 'roic.png' },
   { name: 'Joulupukin Pajakylä', lat: 66.54, lon: 25.84, url: 'https://santaclausvillage.info/', icon: 'pukki.png', stream: 'https://www.youtube.com/embed/Cp4RRAEgpeU', streamWidth: 320, streamHeight: 180},
-  { name: 'Levi', lat: 67.80, lon: 24.80, url: 'https://www.levi.fi/', icon: 'levi.png',  stream: 'https://www.youtube.com/watch?v=X7tdyNFpp1g', streamWidth: 320, streamHeight: 180},
+  { name: 'Levi', lat: 67.80, lon: 24.80, url: 'https://www.levi.fi/', icon: 'levi.png',  stream: 'https://www.youtube.com/embed/X7tdyNFpp1g', streamWidth: 320, streamHeight: 180},
   { name: 'Ylläs', lat: 67.57, lon: 24.20, url: 'https://yllas.fi/', icon: 'yllas.png' }
 ];
 
@@ -73,5 +73,6 @@ marker.on('popupopen', (e) => {
 }
 
 addMarkers();
+
 
 
