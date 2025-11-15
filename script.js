@@ -346,7 +346,7 @@ async function fetchAuroraForecast() {
     console.log(`Löydettiin ${lineCount} riviä, joista ${times.length} kelvollista.`);
 
     if (times.length === 0) {
-      throw new Error("Kp-arvoja ei löytynyt datasta – tarkista regex tai datan muoto.");
+      throw new Error("Kp values not found in data – check regex or data format.");
     }
 
     console.log("Aikavälit:", times);
@@ -410,10 +410,10 @@ async function fetchAuroraForecast() {
     });
 
   } catch (error) {
-    console.error("Virhe haettaessa tai käsiteltäessä dataa:", error);
+    console.error("Error when retrieving or processing data:", error);
     const container = document.getElementById('errorMessage');
     if (container) {
-      container.textContent = "⚠️ Virhe ladattaessa NOAA:n dataa: " + error.message;
+      container.textContent = "⚠️ Error downloading NOAA data: " + error.message;
       container.style.color = 'red';
       container.style.fontWeight = 'bold';
     }
@@ -421,3 +421,4 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
