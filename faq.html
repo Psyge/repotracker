@@ -107,7 +107,20 @@
 <p>If you are moving with a rental car, stay on plowed public roads. Do not drive on poorly maintained or unplowed forest roads, so you don't get stuck in the snow. It can take a long time for help to arrive in winter</p>
 </div>
 </section>
-
+<div id="help-popup" class="popup" style="display:none;">
+  <div class="popup-content">
+    <h2>How to use RepoTracker</h2>
+    <p>Click anywhere on the map to see the aurora forecast for that location.<br>
+       Use the 📍 button to check your current position.<br><br>
+    <strong>Note:</strong> Cloud cover can affect visibility even if aurora activity is strong.
+    </p>
+    <label>
+      <input type="checkbox" id="dont-show-again"> Don’t show again
+    </label>
+    <br>
+    <button id="close-popup">Close</button>
+  </div>
+</div>
 <script>
 const menuBtn = document.getElementById("menu-btn");
 const menu = document.getElementById("menu");
