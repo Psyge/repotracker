@@ -195,14 +195,14 @@ fetchAuroraData();
 setInterval(fetchAuroraData, 5*60*1000);
 
 // --- Valikon toiminta ---
-const menuBtn = document.getElementById("menu-btn");
-const menu = document.getElementById("menu");
-
-menuBtn.addEventListener("click", () => {
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-});
-map.on('click', () => { 
-  menu.style.display = 'none'; 
+document.addEventListener('DOMContentLoaded', () => {
+  const menuBtn = document.getElementById('menu-btn');
+  const menu = document.getElementById('menu');
+  if (menuBtn && menu) {
+    menuBtn.addEventListener('click', () => {
+      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    });
+  }
 });
 
 
@@ -428,6 +428,7 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
 
 
 
