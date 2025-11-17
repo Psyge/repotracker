@@ -1,70 +1,30 @@
+
 let auroraLayer = null;
 let userMarker = null;
 let currentData = null;
 let notificationPermissionRequested = false;
-let map;
-
-document.addEventListener('DOMContentLoaded', () => {
-  const helpPopup = document.getElementById('help-popup');
-  const closePopupBtn = document.getElementById('close-popup');
-  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
-  const showHelpLink = document.getElementById('show-help');
-
-  // Näytä popup vain jos käyttäjä ei ole estänyt sitä
-  if (helpPopup && !localStorage.getItem('hideHelpPopup')) {
-    helpPopup.style.display = 'flex';
-  }
-
-  // Sulkemisnappi
-  if (closePopupBtn) {
-    closePopupBtn.addEventListener('click', () => {
-      if (dontShowAgainCheckbox && dontShowAgainCheckbox.checked) {
-        localStorage.setItem('hideHelpPopup', 'true');
-      }
-      helpPopup.style.display = 'none';
-    });
-  }
-
-  // Help-linkki
-  if (showHelpLink) {
-    showHelpLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (helpPopup) {
-        helpPopup.style.display = 'flex';
-      }
-    });
-  }
-});
 
 // --- Kartta ---
+const map = L.map('map', {
+  center: [65, 25],
+  zoom: 4,
+  minZoom: 2,
+  maxZoom: 15,
+  worldCopyJump: false
+});
 
- if (typeof L !== 'undefined') {
-    map = L.map('map', {
-      center: [65, 25],
-      zoom: 4,
-      minZoom: 2,
-      maxZoom: 15,
-      worldCopyJump: false
-    });
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> & <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19,
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19
-    }).addTo(map);
+}).addTo(map);
 
-    map.setMaxBounds([[-90, -180], [90, 180]]);
-    map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
-  }
+// Rajoitetaan näkymä yhteen maapallon levyiseen alueeseen
+map.setMaxBounds([[-90, -180], [90, 180]]);
+map.on('drag', () => map.panInsideBounds([[-90, -180],[90,180]], {animate:false}));
 
-  
 const info = document.getElementById("info");
-if (info) {
-  info.textContent = "Klikkaa karttaa nähdäksesi revontulien ennusteen.";
-}
-
-
-
 
 // --- Hae NOAA data ---
 function fetchAuroraData() {
@@ -236,15 +196,16 @@ fetchAuroraData();
 setInterval(fetchAuroraData, 5*60*1000);
 
 // --- Valikon toiminta ---
-document.addEventListener('DOMContentLoaded', () => {
-  // --- Menu Logic ---
-  const menuBtn = document.getElementById('menu-btn');
-  const menu = document.getElementById('menu');
-  if (menuBtn && menu) {
-    menuBtn.addEventListener('click', () => {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    });
-  }
+const menuBtn = document.getElementById("menu-btn");
+const menu = document.getElementById("menu");
+
+menuBtn.addEventListener("click", () => {
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+});
+map.on('click', () => { 
+  menu.style.display = 'none'; 
+});
+
 
 
 hideInfoAfterDelay();
@@ -294,8 +255,31 @@ function showAuroraAtClickedLocation(lat, lon) {
     .openOn(map);
 } 
 
+// --- Pop-up Help Logic ---
+document.addEventListener('DOMContentLoaded', () => {
+  const helpPopup = document.getElementById('help-popup');
+  const closePopupBtn = document.getElementById('close-popup');
+  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+
+  // Show popup only if user hasn't disabled it
+  if (!localStorage.getItem('hideHelpPopup')) {
+    helpPopup.style.display = 'flex';
+  }
+
+  closePopupBtn.addEventListener('click', () => {
+    if (dontShowAgainCheckbox.checked) {
+      localStorage.setItem('hideHelpPopup', 'true');
+    }
+    helpPopup.style.display = 'none';
+  });
+});
 
 
+const showHelpLink = document.getElementById('show-help');
+showHelpLink.addEventListener('click', (e) => {
+  e.preventDefault(); // estää #-linkin hyppäämisen
+  document.getElementById('help-popup').style.display = 'flex';
+});
 
 // Chart.js CDN
 // Lisää Chart.js
@@ -438,12 +422,3 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
-
-
-
-
-
-
-
-
-
