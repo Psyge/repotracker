@@ -4,6 +4,7 @@ let currentData = null;
 let notificationPermissionRequested = false;
 
 // --- Kartta ---
+if (typeof L !== 'undefined') {
 const map = L.map('map', {
   center: [65, 25],
   zoom: 4,
@@ -22,7 +23,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 // Rajoitetaan näkymä yhteen maapallon levyiseen alueeseen
 map.setMaxBounds([[-90, -180], [90, 180]]);
 map.on('drag', () => map.panInsideBounds([[-90, -180],[90,180]], {animate:false}));
-
+}
 const info = document.getElementById("info");
 
 // --- Hae NOAA data ---
@@ -460,6 +461,7 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
 
 
 
