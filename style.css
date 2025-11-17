@@ -14,7 +14,7 @@ header.banner {
   left: 0;
   width: 100%;
   height: 100px;
-  background: url('images/revontulet.png') no-repeat center bottom;
+  background: url('revontulet.png') no-repeat center bottom;
   background-size: cover;
   background-position: center 87%;
   display: flex;
@@ -55,7 +55,13 @@ header.banner::after {
 .banner-right .icon:hover {
   transform: scale(1.1);
 }
-
+.banner-right {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* väli nappeihin */
+  position: relative;
+  right: 40px; /* jos haluat siirtää */
+}
 .banner-right img {
   height: 40px;
 }
@@ -229,6 +235,7 @@ header.banner::after {
   width: 32px;
   height: 48px;
   animation: float 3s ease-in-out infinite;
+  
 }
 
 .marker-wrapper img.pin {
@@ -252,7 +259,7 @@ header.banner::after {
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-8px); }
 }
 
 
@@ -279,18 +286,32 @@ header.banner::after {
 }
 
 .custom-popup .leaflet-popup-content-wrapper {
-  width: auto !important;
-  max-width: none !important;
+  width: 280px !important;
+  max-width: 280px !important;
 }
 
 .custom-popup .leaflet-popup-content {
   width: auto !important;
   padding: 0;
+  text-align: center;
 }
 
 .popup-stream iframe {
   display: block;
   max-width: none; /* varmistaa ettei popupin ulkopuolelle */
+}
+.custom-popup .popup-stream iframe {
+    width: 100% !important;
+    height: auto;
+}
+
+.leaflet-popup-pane {
+  z-index: 9000; 
+}
+.popup-open #locate-btn,
+.popup-open #forecast-btn,
+.popup-open #menu-btn {
+  pointer-events: none;
 }
 .weather-row {
   display: flex;
@@ -303,6 +324,7 @@ header.banner::after {
   width: 40px;
   height: 40px;
 }
+/* FAQ-osio */
 #revontuli-faq {
   max-width: 800px;
   margin: 120px auto 40px auto; /* jättää tilaa bannerille */
@@ -370,6 +392,7 @@ header.banner::after {
   border-radius: 8px;
 
 }
+
 /* Mobiili */
 @media (max-width: 768px) {
   header.banner {
@@ -378,6 +401,7 @@ header.banner::after {
     height: 100px;
     padding: 0;
   }
+/* FAQ-osio */
 
   .banner-left .logo {
     height: 60px;
@@ -400,7 +424,7 @@ header.banner::after {
     left: 10px;
     font-size: 12px;
     max-width: 70%;
-    height: auto;
+    height: 60px;
     padding: 4px 8px;
   }
 
@@ -424,6 +448,3 @@ header.banner::after {
     font-size: 24px;
   }
 }
-
-
-
