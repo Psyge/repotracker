@@ -44,7 +44,20 @@
 <div id="container" style="margin-top:120px; text-align:center;">
   <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdnjjYcD008LAMcvo0g2riXAtQ80_Xtfy-2vQ2vrEo6xbSuXQ/viewform?embedded=true" width="640" height="800" frameborder="0" marginheight="0" marginwidth="0">Loading....</iframe>
 </div>
-
+<div id="help-popup" class="popup" style="display:none;">
+  <div class="popup-content">
+    <h2>How to use RepoTracker</h2>
+    <p>Click anywhere on the map to see the aurora forecast for that location.<br>
+       Use the 📍 button to check your current position.<br><br>
+    <strong>Note:</strong> Cloud cover can affect visibility even if aurora activity is strong.
+    </p>
+    <label>
+      <input type="checkbox" id="dont-show-again"> Don’t show again
+    </label>
+    <br>
+    <button id="close-popup">Close</button>
+  </div>
+</div>
 <script>
 const menuBtn = document.getElementById("menu-btn");
 const menu = document.getElementById("menu");
@@ -55,6 +68,7 @@ menuBtn.addEventListener("click", () => {
 
 </body>
 </html>
+
 
 
 
