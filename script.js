@@ -254,31 +254,36 @@ function showAuroraAtClickedLocation(lat, lon) {
     .openOn(map);
 } 
 
-// --- Pop-up Help Logic ---
 document.addEventListener('DOMContentLoaded', () => {
   const helpPopup = document.getElementById('help-popup');
   const closePopupBtn = document.getElementById('close-popup');
   const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+  const showHelpLink = document.getElementById('show-help');
 
-  // Show popup only if user hasn't disabled it
+  // Näytä popup vain jos käyttäjä ei ole estänyt sitä
   if (!localStorage.getItem('hideHelpPopup')) {
     helpPopup.style.display = 'flex';
   }
 
-  closePopupBtn.addEventListener('click', () => {
-    if (dontShowAgainCheckbox.checked) {
-      localStorage.setItem('hideHelpPopup', 'true');
-    }
-    helpPopup.style.display = 'none';
-  });
+  // Sulkemisnappi
+  if (closePopupBtn) {
+    closePopupBtn.addEventListener('click', () => {
+      if (dontShowAgainCheckbox && dontShowAgainCheckbox.checked) {
+        localStorage.setItem('hideHelpPopup', 'true');
+      }
+      helpPopup.style.display = 'none';
+    });
+  }
+
+  // Help-linkki
+  if (showHelpLink) {
+    showHelpLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      helpPopup.style.display = 'flex';
+    });
+  }
 });
 
-
-const showHelpLink = document.getElementById('show-help');
-showHelpLink.addEventListener('click', (e) => {
-  e.preventDefault(); // estää #-linkin hyppäämisen
-  document.getElementById('help-popup').style.display = 'flex';
-});
 
 // Chart.js CDN
 // Lisää Chart.js
@@ -421,4 +426,5 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
 
