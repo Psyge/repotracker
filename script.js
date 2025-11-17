@@ -120,6 +120,8 @@ if (typeof L !== 'undefined') {
     Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
     Clouds: ${clouds}%<br>
     Temp: ${weather ? weather.temp + '°C' : 'N/A'}
+    <strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
+    <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>
   `;
 
   L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
@@ -369,3 +371,4 @@ async function fetchAuroraForecast() {
     }
   }
 }
+
