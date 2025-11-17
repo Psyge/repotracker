@@ -196,11 +196,43 @@ setInterval(fetchAuroraData, 5*60*1000);
 
 // --- Valikon toiminta ---
 document.addEventListener('DOMContentLoaded', () => {
+  // --- Menu Logic ---
   const menuBtn = document.getElementById('menu-btn');
   const menu = document.getElementById('menu');
   if (menuBtn && menu) {
     menuBtn.addEventListener('click', () => {
       menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    });
+  }
+
+  // --- Help Popup Logic ---
+  const helpPopup = document.getElementById('help-popup');
+  const closePopupBtn = document.getElementById('close-popup');
+  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+  const showHelpLink = document.getElementById('show-help');
+
+  // Näytä popup vain jos käyttäjä ei ole estänyt sitä
+  if (helpPopup && !localStorage.getItem('hideHelpPopup')) {
+    helpPopup.style.display = 'flex';
+  }
+
+  // Sulkemisnappi
+  if (closePopupBtn) {
+    closePopupBtn.addEventListener('click', () => {
+      if (dontShowAgainCheckbox && dontShowAgainCheckbox.checked) {
+        localStorage.setItem('hideHelpPopup', 'true');
+      }
+      helpPopup.style.display = 'none';
+    });
+  }
+
+  // Help-linkki
+  if (showHelpLink) {
+    showHelpLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (helpPopup) {
+        helpPopup.style.display = 'flex';
+      }
     });
   }
 });
@@ -428,6 +460,7 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
 
 
 
