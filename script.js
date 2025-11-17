@@ -189,7 +189,11 @@ function showAuroraAtClickedLocation(lat, lon) {
 
   L.popup().setLatLng([lat, lon]).setContent(message).openOn(map);
 }
-
+function hideInfoAfterDelay() {
+  setTimeout(() => {
+    document.getElementById("info").style.display = "none";
+  }, 3000); // 5 sekuntia
+}
 // --- Geolocation nappi ---
 const locateBtn = document.getElementById("locate-btn");
 if (locateBtn && navigator.geolocation && map) {
@@ -208,6 +212,7 @@ if (locateBtn && navigator.geolocation && map) {
 // --- Päivitys ---
 fetchAuroraData();
 setInterval(fetchAuroraData, 5 * 60 * 1000);
+document.addEventListener('DOMContentLoaded', hideInfoAfterDelay);
 
 // --- Chart.js ---
 const chartScript = document.createElement('script');
@@ -293,3 +298,4 @@ async function fetchAuroraForecast() {
     }
   }
 }
+
