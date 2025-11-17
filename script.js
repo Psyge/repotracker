@@ -63,7 +63,7 @@ if (info) {
   info.textContent = "Klikkaa karttaa nähdäksesi revontulien ennusteen.";
 }
 
-});
+
 
 
 // --- Hae NOAA data ---
@@ -438,6 +438,7 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
 
 
 
