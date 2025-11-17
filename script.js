@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const showHelpLink = document.getElementById('show-help');
 
   // Näytä popup vain jos käyttäjä ei ole estänyt sitä
-  if (!localStorage.getItem('hideHelpPopup')) {
+  if (helpPopup && !localStorage.getItem('hideHelpPopup')) {
     helpPopup.style.display = 'flex';
   }
 
@@ -279,7 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (showHelpLink) {
     showHelpLink.addEventListener('click', (e) => {
       e.preventDefault();
-      helpPopup.style.display = 'flex';
+      if (helpPopup) {
+        helpPopup.style.display = 'flex';
+      }
     });
   }
 });
@@ -426,5 +428,6 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
 
 
