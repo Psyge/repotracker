@@ -2,7 +2,8 @@ let auroraLayer = null;
 let userMarker = null;
 let currentData = null;
 let notificationPermissionRequested = false;
-let map
+let map;
+
 document.addEventListener('DOMContentLoaded', () => {
   const helpPopup = document.getElementById('help-popup');
   const closePopupBtn = document.getElementById('close-popup');
@@ -437,6 +438,7 @@ async function fetchAuroraForecast() {
 }
 
 fetchAuroraForecast();
+
 
 
 
