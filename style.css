@@ -303,7 +303,73 @@ header.banner::after {
   width: 40px;
   height: 40px;
 }
+#revontuli-faq {
+  max-width: 800px;
+  margin: 120px auto 40px auto; /* jättää tilaa bannerille */
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8); /* tumma tausta */
+  color: #fff; /* valkoinen teksti */
+  font-family: Arial, sans-serif;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
 
+#revontuli-faq h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #1e88e5; /* korostusväri */
+}
+
+.faq-item {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255,255,255,0.05); /* vaalea läpikuultava tausta */
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.faq-item:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.faq-item h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #cce4ff; /* vaalea sininen otsikoille */
+}
+
+.faq-item p, .faq-item ul {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #fff; /* varmistetaan valkoinen teksti */
+}
+
+.faq-item ul {
+  margin: 8px 0 0 20px;
+  padding: 0;
+}
+
+.faq-item li {
+  margin-bottom: 4px;
+}
+
+.faq-img {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  margin: 10px 0;
+  display: block;
+}
+
+#northern-lights-faq {
+  margin-top: 100px; /* bannerin korkeus + vähän tilaa */
+ padding: 20px;
+  background: rgba(0, 0, 0, 0.8); /* tumma läpikuultava tausta */
+  color: #fff; /* valkoinen teksti */
+  border-radius: 8px;
+
+}
 /* Mobiili */
 @media (max-width: 768px) {
   header.banner {
@@ -358,5 +424,6 @@ header.banner::after {
     font-size: 24px;
   }
 }
+
 
 
