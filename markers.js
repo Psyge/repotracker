@@ -10,7 +10,8 @@ async function getWeather(lat, lon) {
       feels: Math.round(data.main.feels_like),
       wind: data.wind.speed,
       desc: data.weather[0].description,
-      icon: data.weather[0].icon
+      icon: data.weather[0].icon,
+      clouds: data.clouds.all
     };
 
   } catch (err) {
@@ -28,17 +29,24 @@ const places = [
   { name: 'Beautiful Northern Lights live stream. Credits: Starlapland / Samuli Korvanen', lat: 67.41711, lon: 26.58897, url: 'https://repotracker.fi', icon: 'images/iconi.png', stream: 'https://www.youtube.com/embed/dnlQtDad6Dk', streamWidth: 320, streamHeight: 180 }
 ];
 
-const markersLayer = L.layerGroup().addTo(map);
+let markersLayer;
 
-function addMarkers() {
+function initMarkers() {
+  if (typeof map !== 'undefined' && map) {
+    markersLayer = L.layerGroup().addTo(map);
+    addMarkers(markersLayer);
+  } else {
+    console.warn("Map is not ready yet. Markers not initialized.");
+  }
+}
+
+function addMarkers(layer) {
   places.forEach(place => {
-
-    
     const customIcon = L.divIcon({
       className: 'custom-marker',
       html: `
         <div class="marker-wrapper">
-          <img src="images/pinni.png" class="pin">
+          <img src="pinni.png" class="pin">
           <img src="${place.icon}" class="pin-icon">
         </div>
       `,
@@ -47,16 +55,13 @@ function addMarkers() {
       popupAnchor: [0, -52]
     });
 
-    // Popupin perussisältö
     const popupContent = `
       <strong>${place.name}</strong><br>
       <img src="${place.icon}" alt="${place.name}" style="width:50px;height:50px;border-radius:50%;"><br>
       <a href="${place.url}" target="_blank">More info</a>
-
       <div class="weather-box" style="margin-top:10px;">
         <em>Retrieving weather data...</em>
       </div>
-
       ${place.stream ? `<div class="popup-stream" 
         data-stream="${place.stream}" 
         data-width="${place.streamWidth || 320}" 
@@ -64,21 +69,17 @@ function addMarkers() {
         style="margin-top:10px;"></div>` : ''}
     `;
 
-    // ❗️Tämä puuttui: marker pitää luoda ENNEN marker.on(...)
     const marker = L.marker([place.lat, place.lon], { icon: customIcon })
       .bindPopup(popupContent, { className: 'custom-popup' })
-      .addTo(markersLayer);
+      .addTo(layer);
 
-    // Popup avautuessa: hae sää + luo iframe
     marker.on('popupopen', async (e) => {
       const popup = e.popup;
 
-      // 1) Lataa sää
+      // Säädata
       const weatherBox = popup.getElement().querySelector('.weather-box');
       if (weatherBox && !weatherBox.dataset.loaded) {
-
         const weather = await getWeather(place.lat, place.lon);
-
         if (weather) {
           weatherBox.innerHTML = `
             <div class="weather-row">
@@ -90,11 +91,10 @@ function addMarkers() {
         } else {
           weatherBox.innerHTML = "Weather not available";
         }
-
         weatherBox.dataset.loaded = "true";
       }
 
-      // 2) Lataa YouTube-iframe (lazy load)
+      // Stream iframe
       const container = popup.getElement().querySelector('.popup-stream');
       if (container && !container.querySelector('iframe')) {
         const iframe = document.createElement('iframe');
@@ -103,27 +103,29 @@ function addMarkers() {
         iframe.height = container.dataset.height;
         iframe.style.border = 'none';
         iframe.style.display = 'block';
-
         container.appendChild(iframe);
 
-          setTimeout(() => {
-      e.popup._updateLayout();
-      e.popup._updatePosition();
-      e.popup._adjustPan();
-    }, 50);
+        setTimeout(() => {
+          e.popup._updateLayout();
+          e.popup._updatePosition();
+          e.popup._adjustPan();
+        }, 50);
       }
     });
-
   });
 
-  // Satunnainen animaatioviive markereille
+  // Animaatioviive
   document.querySelectorAll('.marker-wrapper').forEach(el => {
     el.style.animationDelay = `${Math.random() * 2}s`;
   });
 }
 
+// Käynnistä markerit vasta kun kartta on valmis
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(initMarkers, 500); // pieni viive varmistaa että map on valmis
+});
 
-addMarkers();
+
 
 
 
