@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Estä hakukoneita indeksoimasta kuvatiedostoja (valinnainen)
+# Disallow: /
+
+# Sitemap-tiedoston sijainti
+Sitemap: https://repotracker.fi/sitemap.xml
