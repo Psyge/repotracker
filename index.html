@@ -22,7 +22,28 @@
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="style.css">
-
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "RepoTracker",
+  "url": "https://repotracker.fi",
+  "description": "Track Northern Lights in real time with RepoTracker. Live map and accurate aurora forecasts for Lapland and Finland.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "RepoTracker",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://repotracker.fi/images/repo-neon.png"
+    }
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://repotracker.fi/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-21PPCXCRRH"></script>
 <script>
@@ -143,6 +164,7 @@
 
 </body>
 </html>
+
 
 
 
