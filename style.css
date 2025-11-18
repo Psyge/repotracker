@@ -402,7 +402,10 @@ header.banner::after {
     padding: 0;
   }
 /* FAQ-osio */
-
+ .banner-right {
+    position: relative;
+    right: 15px;
+}
   .banner-left .logo {
     height: 60px;
     margin: 0;
@@ -448,4 +451,5 @@ header.banner::after {
     font-size: 24px;
   }
 }
+
 
