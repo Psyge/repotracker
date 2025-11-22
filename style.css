@@ -419,6 +419,10 @@ header.banner::after {
     margin-bottom: 15px;
     font-size: 1rem;
 }
+.leaflet-tile {
+    width: 257px !important;
+    height: 257px !important;
+}
 /* Mobiili */
 @media (max-width: 768px) {
   header.banner {
@@ -477,6 +481,7 @@ header.banner::after {
     font-size: 24px;
   }
 }
+
 
 
 
