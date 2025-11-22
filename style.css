@@ -1,10 +1,12 @@
 
 /* Perusasetukset */
 body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: #000;
+ margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #000 url('revontulet.png') no-repeat center top;
+    background-size: cover;
+    background-attachment: fixed;
 }
 
 /* Banneri */
@@ -392,7 +394,34 @@ header.banner::after {
   border-radius: 8px;
 
 }
+ .aurora-section {
+        max-width: 900px;     /* kapea laatikko keskelle */
+        margin: 40px auto;    /* keskitys ja ylä/alareuna */
+        padding: 20px;
+        background: rgba(0,0,0,0.9);  /* musta tausta */
+        border-radius: 8px;           /* halutessa pyöristys */
+        color: #e0e0e0;
+        font-family: Arial, sans-serif;
+        position: relative;
+        z-index: 2;
+    }
 
+
+.aurora-section h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.aurora-section h2 {
+    margin-top: 10px;
+    color: #a8e1ff;
+}
+
+.aurora-section p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
 /* Mobiili */
 @media (max-width: 768px) {
   header.banner {
@@ -451,5 +480,6 @@ header.banner::after {
     font-size: 24px;
   }
 }
+
 
 
