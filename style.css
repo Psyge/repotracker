@@ -70,14 +70,11 @@ header.banner::after {
 
 /* Kartta */
 #map {
-  position: absolute;
-  top: 100px; /* bannerin korkeus */
-  left: 0;
-  right: 0;
-  bottom: 0;
   width: 100%;
-  height: calc(100vh - 100px); /* täyttää loput ruudusta */
-  z-index: 1;
+    height: 55vh;   /* kartta vie 45% sivusta */
+    margin-top: 100px;
+    position: relative;
+    z-index: 1;
   
 }
 
@@ -480,6 +477,7 @@ header.banner::after {
     font-size: 24px;
   }
 }
+
 
 
 
