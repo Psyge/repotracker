@@ -85,23 +85,6 @@
 
 </header>
 
-<div id="help-popup" class="popup" style="display:none;">
-  <div class="popup-content">
-    <h2>How to use RepoTracker</h2>
-    <p>Click anywhere on the map to see the aurora forecast for that location.<br>
-       Use the 📍 button to check your current position.<br><br>
-    <strong>Note:</strong> Cloud cover can affect visibility even if aurora activity is strong.
-    </p>
-    <label>
-      <input type="checkbox" id="dont-show-again"> Don’t show again
-    </label>
-    <br>
-    <button id="close-popup">Close</button>
-  </div>
-</div>
-
-
-
 <div id="container">
   <div id="map">
   <button id="locate-btn">Can I See Northern Lights now?</button>
@@ -132,7 +115,38 @@
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<section id="aurora-info" class="aurora-section">
+    <h1>Northern Lights forecast and real-time aurora map – RepoTracker</h1>
 
+    <p>
+        RepoTracker shows the Northern Lights in real time in Finland and the Nordic countries.
+        The map shows where the Northern Lights are visible right now and in the coming hours.
+</p>
+
+<h2>How does the RepoTracker forecast work?</h2>
+<p>
+RepoTracker combines geomagnetic measurements, solar wind speed,
+        the Kp index, and cloud cover data into one clear view.
+</p>
+
+<h2>How to read the aurora map</h2>
+<p>
+The colors on the map indicate the probability and intensity of the northern lights:
+        red (weak), yellow/orange (good chance), and green
+        (very strong activity) and indicate a higher probability.
+        Cloud cover may obstruct visibility.
+    </p>
+
+    <h2>Best time to see the Northern Lights</h2>
+    <p>
+        The Northern Lights occur most often from September to March, especially between 9 p.m. and 2 a.m.
+        Clear skies, high solar wind speeds, and low light pollution significantly improve
+        the chances of seeing them.
+</p>
+
+</section>
+
+Translated with DeepL.com (free version)
 <!-- Kartta ja NOAA-data -->
 <script src="script.js"></script>
 
@@ -164,6 +178,7 @@
 
 </body>
 </html>
+
 
 
 
