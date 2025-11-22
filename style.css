@@ -18,7 +18,7 @@ header.banner {
   height: 100px;
   background: url('images/revontulet.png') no-repeat center bottom;
   background-size: cover;
-  background-position: center 87%;
+  background-position: center 82%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -477,6 +477,7 @@ header.banner::after {
     font-size: 24px;
   }
 }
+
 
 
 
