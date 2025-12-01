@@ -171,32 +171,47 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
 
 let markersLayer;
 
+
 function initMarkers() {
-  if (typeof map !== 'undefined' && map) {
-    markersLayer = L.layerGroup().addTo(map);
+    if (!translations[currentLang]) {
+        console.warn("Translations not ready, waiting...");
+        return;
+    }
+    if (!map) {
+        console.warn("Map not ready, waiting...");
+        return;
+    }
+
+    // Jos markersLayer on jo luotu, tyhjennä se
+    if (markersLayer) markersLayer.clearLayers();
+    else markersLayer = L.layerGroup().addTo(map);
+
     addMarkers(markersLayer);
-  } else {
-    console.warn("Map is not ready yet. Markers not initialized.");
-  }
+
+    document.querySelectorAll('.marker-wrapper').forEach(el => {
+        el.style.animationDelay = `${Math.random() * 2}s`;
+    });
 }
 
-function addMarkers(layer) {
-  places.forEach(place => {
-    const customIcon = L.divIcon({
-      className: 'custom-marker',
-      html: `
-        <div class="marker-wrapper">
-          <img src="images/pinni.png" class="pin">
-          <img src="${place.icon}" class="pin-icon">
-        </div>
-      `,
-      iconSize: [32, 48],
-      iconAnchor: [16, 48],
-      popupAnchor: [0, -52]
-    });
 
-    const popupContent = `
-     <div class="popup-header">
+function addMarkers(layer) {
+    places.forEach(place => {
+
+        const customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `
+                <div class="marker-wrapper">
+                    <img src="pinni.png" class="pin">
+                    <img src="${place.icon}" class="pin-icon">
+                </div>
+            `,
+            iconSize: [32, 48],
+            iconAnchor: [16, 48],
+            popupAnchor: [0, -52]
+        });
+
+        const popupContent = `
+            <div class="popup-header">
                 <img src="${place.icon}" alt="${place.name}">
                 <strong class="popup-title">${place.name}</strong>
             </div>
@@ -205,7 +220,9 @@ function addMarkers(layer) {
                ${place.short || place.description}
             </div>
 
-            <a href="#" class="read-more" data-place="${place.name}">Read more</a>
+            <a href="#" class="read-more" data-place="${place.name}">
+   Read more
+</a>
 
             <div class="weather-box" style="margin-top:10px;">
                 <em>Retrieving weather data...</em>
@@ -222,50 +239,53 @@ function addMarkers(layer) {
             }
         `;
 
-    const marker = L.marker([place.lat, place.lon], { icon: customIcon })
-      .bindPopup(popupContent, { className: 'custom-popup' })
-      .addTo(layer);
+        const marker = L.marker([place.lat, place.lon], { icon: customIcon })
+            .bindPopup(popupContent, { className: 'custom-popup' })
+            .addTo(layer);
 
-    marker.on('popupopen', async (e) => {
-      const popup = e.popup;
 
-      // Säädata
-      const weatherBox = popup.getElement().querySelector('.weather-box');
-      if (weatherBox && !weatherBox.dataset.loaded) {
-        const weather = await getWeather(place.lat, place.lon);
-        if (weather) {
-          weatherBox.innerHTML = `
-            <div class="weather-row">
-              <img src="https://openweathermap.org/img/wn/${weather.icon}.png">
-              <span>${weather.temp}°C — ${weather.desc}</span>
-            </div>
-            <small>Feels like ${weather.feels}°C | Wind ${weather.wind} m/s</small>
-          `;
-        } else {
-          weatherBox.innerHTML = "Weather not available";
-        }
-        weatherBox.dataset.loaded = "true";
-      }
+        // Popup avautuu
+        marker.on('popupopen', async (e) => {
+            const popup = e.popup;
+            const weatherBox = popup.getElement().querySelector('.weather-box');
 
-      // Stream iframe
-      const container = popup.getElement().querySelector('.popup-stream');
-      if (container && !container.querySelector('iframe')) {
-        const iframe = document.createElement('iframe');
-        iframe.src = container.dataset.stream;
-        iframe.width = container.dataset.width;
-        iframe.height = container.dataset.height;
-        iframe.style.border = 'none';
-        iframe.style.display = 'block';
-        container.appendChild(iframe);
+            // Lataa sää vain kerran
+            if (weatherBox && !weatherBox.dataset.loaded) {
+                const weather = await getWeather(place.lat, place.lon);
 
-        setTimeout(() => {
-          e.popup._updateLayout();
-          e.popup._updatePosition();
-          e.popup._adjustPan();
-        }, 50);
-      }
+                if (weather) {
+                    weatherBox.innerHTML = `
+                        <div class="weather-row">
+                            <img src="https://openweathermap.org/img/wn/${weather.icon}.png">
+                            <span>${weather.temp}°C — ${weather.desc}</span>
+                        </div>
+                        <small>
+                            ${translations[currentLang].weather.feels} ${weather.feels}°C |
+                            ${translations[currentLang].weather.wind} ${weather.wind} m/s
+                        </small>
+                    `;
+                } else {
+                    weatherBox.innerHTML = translations[currentLang].weather.error;
+                }
+
+                weatherBox.dataset.loaded = "true";
+            }
+
+            // Lisää videostream vain kerran
+            const container = popup.getElement().querySelector('.popup-stream');
+
+            if (container && !container.querySelector('iframe')) {
+                const iframe = document.createElement('iframe');
+                iframe.src = container.dataset.stream;
+                iframe.width = container.dataset.width;
+                iframe.height = container.dataset.height;
+                iframe.style.border = 'none';
+                iframe.style.display = 'block';
+                container.appendChild(iframe);
+            }
+        });
     });
-  });
+}
 function showPlaceInfo(place) {
     const defaultSection = document.getElementById("aurora-default");
     const infoSection = document.getElementById("place-info");
@@ -295,18 +315,11 @@ function showPlaceInfo(place) {
         defaultSection.scrollIntoView({ behavior: "smooth" });
     };
 }
-  // Animaatioviive
-  document.querySelectorAll('.marker-wrapper').forEach(el => {
-    el.style.animationDelay = `${Math.random() * 2}s`;
-  });
-}
 
-// Käynnistä markerit vasta kun kartta on valmis
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(initMarkers, 500); // pieni viive varmistaa että map on valmis
-});
+
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
