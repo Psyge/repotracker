@@ -4,45 +4,7 @@ let userMarker = null;
 let currentData = null;
 let map;
 
-// --- DOMContentLoaded: staattiset DOM-elementit ---
-document.addEventListener('DOMContentLoaded', () => {
-  const helpPopup = document.getElementById('help-popup');
-  const closePopupBtn = document.getElementById('close-popup');
-  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
-  const showHelpLink = document.getElementById('show-help');
-
-  if (helpPopup && !localStorage.getItem('hideHelpPopup')) helpPopup.style.display = 'flex';
-
-  if (closePopupBtn) {
-    closePopupBtn.addEventListener('click', () => {
-      if (dontShowAgainCheckbox && dontShowAgainCheckbox.checked) {
-        localStorage.setItem('hideHelpPopup', 'true');
-      }
-      helpPopup.style.display = 'none';
-    });
-  }
-
-  if (showHelpLink) {
-    showHelpLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (helpPopup) helpPopup.style.display = 'flex';
-    });
-  }
-
-  const menuBtn = document.getElementById('menu-btn');
-  const menu = document.getElementById('menu');
-  if (menuBtn && menu) {
-    menuBtn.addEventListener('click', () => {
-      menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
-    });
-  }
-
-  const info = document.getElementById("info");
-  if (info) info.textContent = "Klikkaa karttaa nähdäksesi revontulien ennusteen.";
-  setTimeout(() => { if (info) info.style.display = "none"; }, 3000);
-});
-
-// --- Kartta --- 
+// --- Kartan alustaminen ---
 function initMap() {
   if (typeof L === 'undefined') return;
 
@@ -109,96 +71,40 @@ function initMap() {
   document.dispatchEvent(new Event("mapReady"));
 }
 
-// --- NOAA Data ---
-async function fetchAuroraData() {
+// --- DOMContentLoaded: staattiset elementit ja napit ---
+document.addEventListener('DOMContentLoaded', () => {
+  // Help popup
+  const helpPopup = document.getElementById('help-popup');
+  const closePopupBtn = document.getElementById('close-popup');
+  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+  const showHelpLink = document.getElementById('show-help');
+  if (helpPopup && !localStorage.getItem('hideHelpPopup')) helpPopup.style.display = 'flex';
+  if (closePopupBtn) closePopupBtn.addEventListener('click', () => {
+    if (dontShowAgainCheckbox && dontShowAgainCheckbox.checked) localStorage.setItem('hideHelpPopup', 'true');
+    helpPopup.style.display = 'none';
+  });
+  if (showHelpLink) showHelpLink.addEventListener('click', e => { e.preventDefault(); if (helpPopup) helpPopup.style.display = 'flex'; });
+
+  // Menu button
+  const menuBtn = document.getElementById('menu-btn');
+  const menu = document.getElementById('menu');
+  if (menuBtn && menu) menuBtn.addEventListener('click', () => menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex');
+
+  // Info text
   const info = document.getElementById("info");
-  if (info) { info.className = 'loading'; info.innerHTML = '⏳ Loading northern lights forecast...'; }
+  if (info) info.textContent = "Klikkaa karttaa nähdäksesi revontulien ennusteen.";
+  setTimeout(() => { if (info) info.style.display = "none"; }, 3000);
+});
 
-  const directUrl = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
-  const proxyUrl = 'https://corsproxy.io/?' + directUrl;
-
-  fetch(directUrl).catch(() => fetch(proxyUrl))
-    .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
-    .then(data => {
-      if (!data.coordinates || !Array.isArray(data.coordinates)) throw new Error("Invalid data format.");
-      currentData = data;
-      if (info) {
-        const obsTime = formatTime(data["Observation Time"]);
-        const forecastTime = formatTime(data["Forecast Time"]);
-        info.className = '';
-        info.innerHTML = `<strong>📡 Northern Lights forecast</strong><br>
-          <small>Observation: ${obsTime}<br>Forecast: ${forecastTime}<br>Points: ${data.coordinates.length}</small>`;
-      }
-      if (map) drawAuroraOverlay(data.coordinates);
-    })
-    .catch(err => {
-      console.error('Error retrieving northern light data', err);
-      if (info) {
-        info.className = 'error';
-        info.innerHTML = `<strong>❌ Error</strong><br><small>No northern lights forecast available.<br>${err.message}</small>`;
-      }
-    });
-}
-
-function formatTime(timeStr) {
-  try { return new Date(timeStr).toLocaleString('fi-FI', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }); }
-  catch { return timeStr; }
-}
-
-// --- Aurora Overlay ---
-function drawAuroraOverlay(points) {
-  if (!map) return;
-  if (auroraLayer) auroraLayer.forEach(l => map.removeLayer(l));
-  auroraLayer = [];
-
-  const canvasWidth = 3600, canvasHeight = 500;
-
-  const createCanvasOverlay = (xOffset = 0) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    const ctx = canvas.getContext('2d');
-
-    points.forEach(p => {
-      let lon = p[0]; if (lon < 0) lon += 360;
-      const lat = p[1], intensity = p[2];
-      if (intensity < 1) return;
-
-      const x = ((lon + 180) / 360) * canvasWidth + xOffset;
-      const y = ((90 - lat) / 50) * canvasHeight;
-      const radius = Math.min(60, Math.max(10, intensity * 3));
-
-      const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
-      grad.addColorStop(0, `rgba(50,255,100,${Math.min(0.3, intensity / 10)})`);
-      grad.addColorStop(0.5, `rgba(0,200,100,${Math.min(0.1, intensity / 15)})`);
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = grad;
-
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    const bounds = [[40, -180], [90, 180]];
-    const overlay = L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map);
-    auroraLayer.push(overlay);
-  };
-
-  createCanvasOverlay(0);
-  createCanvasOverlay(-canvasWidth);
-  createCanvasOverlay(canvasWidth);
-}
-
-// --- Napit ja interaktiot kartan valmistumisen jälkeen ---
+// --- MapReady: napit ja locate ---
 document.addEventListener("mapReady", () => {
-  // --- Locate Button ---
+  // Locate button
   const locateBtn = document.getElementById("locate-btn");
   if (locateBtn && navigator.geolocation && map) {
     locateBtn.addEventListener("click", () => {
       navigator.geolocation.getCurrentPosition(async pos => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
-
         map.setView([lat, lon], 6);
         if (userMarker) userMarker.setLatLng([lat, lon]);
         else userMarker = L.marker([lat, lon]).addTo(map);
@@ -229,7 +135,7 @@ document.addEventListener("mapReady", () => {
         else if (auroraScore === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
         const popupContent = `
-          <strong>Your Northern Lights chance is now:</strong><br>      
+          <strong>Your Northern Lights chance is now:</strong><br>
           <strong>${statusEmoji} ${statusText}</strong><br>
           Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
           Clouds: ${clouds}%<br>
@@ -240,26 +146,81 @@ document.addEventListener("mapReady", () => {
     });
   }
 
-  // --- Forecast Button ---
+  // Forecast popup
   const forecastBtn = document.getElementById('forecast-btn');
   const forecastPopup = document.getElementById('forecast-popup');
   const closeForecast = document.getElementById('close-forecast');
-
-  if (forecastBtn && forecastPopup) {
-    forecastBtn.addEventListener('click', () => {
-      forecastPopup.style.display = 'flex';
-      fetchAuroraForecast();
-    });
-  }
-
-  if (closeForecast && forecastPopup) {
-    closeForecast.addEventListener('click', () => {
-      forecastPopup.style.display = 'none';
-    });
-  }
+  if (forecastBtn && forecastPopup) forecastBtn.addEventListener('click', () => { forecastPopup.style.display = 'flex'; fetchAuroraForecast(); });
+  if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
 });
 
-// --- Päivitys ---
+// --- NOAA Data ---
+async function fetchAuroraData() {
+  const info = document.getElementById("info");
+  if (info) { info.className = 'loading'; info.innerHTML = '⏳ Loading northern lights forecast...'; }
+
+  const directUrl = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
+  const proxyUrl = 'https://corsproxy.io/?' + directUrl;
+
+  fetch(directUrl).catch(() => fetch(proxyUrl))
+    .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+    .then(data => {
+      if (!data.coordinates || !Array.isArray(data.coordinates)) throw new Error("Invalid data format.");
+      currentData = data;
+      if (info) {
+        const obsTime = formatTime(data["Observation Time"]);
+        const forecastTime = formatTime(data["Forecast Time"]);
+        info.className = '';
+        info.innerHTML = `<strong>📡 Northern Lights forecast</strong><br>
+          <small>Observation: ${obsTime}<br>Forecast: ${forecastTime}<br>Points: ${data.coordinates.length}</small>`;
+      }
+      if (map) drawAuroraOverlay(data.coordinates);
+    })
+    .catch(err => {
+      console.error('Error retrieving northern light data', err);
+      if (info) { info.className = 'error'; info.innerHTML = `<strong>❌ Error</strong><br><small>${err.message}</small>`; }
+    });
+}
+
+function formatTime(timeStr) {
+  try { return new Date(timeStr).toLocaleString('fi-FI', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+  catch { return timeStr; }
+}
+
+// --- Aurora overlay ---
+function drawAuroraOverlay(points) {
+  if (!map) return;
+  if (auroraLayer) auroraLayer.forEach(l => map.removeLayer(l));
+  auroraLayer = [];
+
+  const canvasWidth = 3600, canvasHeight = 500;
+  const createCanvasOverlay = (xOffset = 0) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasWidth; canvas.height = canvasHeight;
+    const ctx = canvas.getContext('2d');
+    points.forEach(p => {
+      let lon = p[0]; if (lon < 0) lon += 360;
+      const lat = p[1], intensity = p[2];
+      if (intensity < 1) return;
+      const x = ((lon + 180) / 360) * canvasWidth + xOffset;
+      const y = ((90 - lat) / 50) * canvasHeight;
+      const radius = Math.min(60, Math.max(10, intensity * 3));
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
+      grad.addColorStop(0, `rgba(50,255,100,${Math.min(0.3, intensity / 10)})`);
+      grad.addColorStop(0.5, `rgba(0,200,100,${Math.min(0.1, intensity / 15)})`);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+    });
+    const bounds = [[40, -180], [90, 180]];
+    auroraLayer.push(L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map));
+  };
+  createCanvasOverlay(0);
+  createCanvasOverlay(-canvasWidth);
+  createCanvasOverlay(canvasWidth);
+}
+
+// --- Päivitykset ---
 fetchAuroraData();
 setInterval(fetchAuroraData, 5 * 60 * 1000);
 
@@ -274,33 +235,21 @@ async function fetchAuroraForecast() {
     const response = await fetch('https://services.swpc.noaa.gov/text/3-day-forecast.txt');
     if (!response.ok) throw new Error(`Verkkovirhe: ${response.status}`);
     const text = await response.text();
-
-    const today = new Date();
-    const dayLabels = [];
-    for (let i = 0; i < 3; i++) {
-      const d = new Date(today); d.setDate(today.getDate() + i);
-      dayLabels.push(d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }));
-    }
+    const today = new Date(); const dayLabels = [];
+    for (let i = 0; i < 3; i++) { const d = new Date(today); d.setDate(today.getDate() + i); dayLabels.push(d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })); }
 
     const kpRegex = /[ \t]*(\d{2}-\d{2}UT)[ \t]+([\d\.\(\)G \t]+)/g;
-    const times = [], day1 = [], day2 = [], day3 = [];
-    let match;
-
+    const times = [], day1 = [], day2 = [], day3 = []; let match;
     while ((match = kpRegex.exec(text)) !== null) {
       const time = match[1].trim();
       const clean = match[2].replace(/\(G\d\)/g, '').replace(/[ \t]+/g, ' ').trim();
       const values = clean.split(' ').map(Number);
-      if (values.length === 3 && values.every(v => !isNaN(v))) {
-        times.push(time); day1.push(values[0]); day2.push(values[1]); day3.push(values[2]);
-      }
+      if (values.length === 3 && values.every(v => !isNaN(v))) { times.push(time); day1.push(values[0]); day2.push(values[1]); day3.push(values[2]); }
     }
-
     if (times.length === 0) throw new Error("Kp values not found.");
 
-    const ctxElement = document.getElementById('kpChart');
-    if (!ctxElement) return;
+    const ctxElement = document.getElementById('kpChart'); if (!ctxElement) return;
     const ctx = ctxElement.getContext('2d');
-
     new Chart(ctx, {
       type: 'line',
       data: {
@@ -315,32 +264,16 @@ async function fetchAuroraForecast() {
         responsive: true,
         plugins: {
           title: { display: true, text: 'Northern Lights forecast (NOAA)' },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                const kp = context.parsed.y;
-                if (kp >= 5) return `Kp ${kp} - High chance`;
-                if (kp >= 3) return `Kp ${kp} - Moderate chance`;
-                return `Kp ${kp} - Low chance`;
-              }
-            }
-          }
+          tooltip: { callbacks: { label: function(context) { const kp = context.parsed.y; if (kp >= 5) return `Kp ${kp} - High chance`; if (kp >= 3) return `Kp ${kp} - Moderate chance`; return `Kp ${kp} - Low chance`; } } }
         },
-        scales: {
-          y: { min: 0, max: 9, title: { display: true, text: 'Kp Index' } },
-          x: { title: { display: true, text: 'UT Time (3h intervals)' } }
-        }
+        scales: { y: { min: 0, max: 9, title: { display: true, text: 'Kp Index' } }, x: { title: { display: true, text: 'UT Time (3h intervals)' } } }
       }
     });
 
   } catch (error) {
     console.error("Error fetching NOAA forecast:", error);
     const container = document.getElementById('errorMessage');
-    if (container) {
-      container.textContent = "⚠️ Error downloading NOAA data: " + error.message;
-      container.style.color = 'red';
-      container.style.fontWeight = 'bold';
-    }
+    if (container) { container.textContent = "⚠️ Error downloading NOAA data: " + error.message; container.style.color = 'red'; container.style.fontWeight = 'bold'; }
   }
 }
 
