@@ -1,24 +1,20 @@
-async function getWeather(lat, lon) {
-  const url = `https://repotracker.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
-
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-
-    return {
-      temp: Math.round(data.main.temp),
-      feels: Math.round(data.main.feels_like),
-      wind: data.wind.speed,
-      desc: data.weather[0].description,
-      icon: data.weather[0].icon,
-      clouds: data.clouds.all
-    };
-
-  } catch (err) {
-    console.error("Weather fetch failed:", err);
-    return null;
-  }
-}
+window.getWeather = async function (lat, lon) {
+    const url = `https://repotracker.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+        return {
+            temp: Math.round(data.main.temp),
+            feels: Math.round(data.main.feels_like),
+            wind: data.wind.speed,
+            desc: data.weather[0].description,
+            icon: data.weather[0].icon,
+            clouds: data.clouds.all
+        };
+    } catch {
+        return null;
+    }
+};
 
 const places = [
  { name: 'Rovaniemi', lat: 66.5, lon: 25.7, url: 'https://visitrovaniemi.fi', icon: 'images/roic.png',  short: 'Rovaniemi on Lapin pääkaupunki ja Joulupukin virallinen kotikaupunki.', 
@@ -319,6 +315,7 @@ function showPlaceInfo(place) {
 
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
