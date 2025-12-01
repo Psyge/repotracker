@@ -1,4 +1,3 @@
-
 // --- Globaalit muuttujat ---
 let auroraLayer = null;
 let userMarker = null;
@@ -81,53 +80,50 @@ if (typeof L !== 'undefined') {
   map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
 
   map.on('click', async (e) => {
-  const lat = e.latlng.lat;
-  const lon = e.latlng.lng;
+    const lat = e.latlng.lat;
+    const lon = e.latlng.lng;
 
-  let score = 0;
-  let auroraIntensity = 0;
+    let score = 0;
+    let auroraIntensity = 0;
 
-  // 1. Aurora-intensiteetti NOAA:n datasta
-  if (currentData && currentData.coordinates) {
-    let nearest = null, minDist = Infinity;
-    currentData.coordinates.forEach(p => {
-      let pointLon = p[0] < 0 ? p[0] + 360 : p[0];
-      const pointLat = p[1], intensity = p[2];
-      const dist = Math.hypot(pointLat - lat, Math.abs(pointLon - lon));
-      if (dist < minDist) { minDist = dist; nearest = intensity; }
-    });
-    auroraIntensity = nearest || 0;
-    if (auroraIntensity > 60) score += 2;
-    else if (auroraIntensity > 30) score += 1;
-  }
+    if (currentData && currentData.coordinates) {
+      let nearest = null, minDist = Infinity;
+      currentData.coordinates.forEach(p => {
+        let pointLon = p[0] < 0 ? p[0] + 360 : p[0];
+        const pointLat = p[1], intensity = p[2];
+        const dist = Math.hypot(pointLat - lat, Math.abs(pointLon - lon));
+        if (dist < minDist) { minDist = dist; nearest = intensity; }
+      });
+      auroraIntensity = nearest || 0;
+      if (auroraIntensity > 60) score += 2;
+      else if (auroraIntensity > 30) score += 1;
+    }
 
-  // 2. Säädata markers.js:n funktiosta
-  const weather = await getWeather(lat, lon);
-  let clouds = weather ? weather.clouds : 100;
-  if (clouds < 30) score += 2;
-  else if (clouds < 60) score += 1;
+    const weather = await getWeather(lat, lon);
+    let clouds = weather ? weather.clouds : 100;
+    if (clouds < 30) score += 2;
+    else if (clouds < 60) score += 1;
 
-  // 3. Liikennevalo
-  let statusEmoji = '🔴';
-  let statusText = 'Low chance';
-  if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
-  else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
+    let statusEmoji = '🔴';
+    let statusText = 'Low chance';
+    if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
+    else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
-  // 4. Popup sisältö
-  const popupContent = `
-    <strong>Your Northern Lights chance is now:</strong><br>
-    ${statusEmoji} ${statusText}<br>
-    Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
-    Clouds: ${clouds}%<br>
-    Temp: ${weather ? weather.temp + '°C' : 'N/A'}
-    <strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
-    <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>
-  `;
+    const popupContent = `
+      <strong>Your Northern Lights chance is now:</strong><br>
+      ${statusEmoji} ${statusText}<br>
+      Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
+      Clouds: ${clouds}%<br>
+      Temp: ${weather ? weather.temp + '°C' : 'N/A'}
+      <br><strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
+      <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>
+    `;
 
-  L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
-});
+    L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
+  });
 
- 
+  // Kartta on nyt valmis, ilmoitetaan markers.js:lle
+  document.dispatchEvent(new Event("mapReady"));
 }
 
 const info = document.getElementById("info");
@@ -212,15 +208,6 @@ function drawAuroraOverlay(points) {
   createCanvasOverlay(canvasWidth);
 }
 
-// --- Klikkaus kartalla ---
-
-function hideInfoAfterDelay() {
-  setTimeout(() => {
-    document.getElementById("info").style.display = "none";
-  }, 3000); // 5 sekuntia
-}
-
-
 // --- Päivitys ---
 fetchAuroraData();
 setInterval(fetchAuroraData, 5 * 60 * 1000);
@@ -232,19 +219,12 @@ if (locateBtn && navigator.geolocation && map) {
     navigator.geolocation.getCurrentPosition(async pos => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-
-      // Keskitetään kartta
       map.setView([lat, lon], 6);
 
-      if (userMarker) {
-        userMarker.setLatLng([lat, lon]);
-      } else {
-        userMarker = L.marker([lat, lon]).addTo(map);
-      }
+      if (userMarker) userMarker.setLatLng([lat, lon]);
+      else userMarker = L.marker([lat, lon]).addTo(map);
 
-      // Haetaan aurora-intensiteetti
-      let auroraScore = 0;
-      let auroraIntensity = 0;
+      let auroraScore = 0, auroraIntensity = 0;
       if (currentData && currentData.coordinates) {
         let nearest = null, minDist = Infinity;
         currentData.coordinates.forEach(p => {
@@ -258,19 +238,15 @@ if (locateBtn && navigator.geolocation && map) {
         else if (auroraIntensity > 30) auroraScore += 1;
       }
 
-      // Haetaan säädata
       const weather = await getWeather(lat, lon);
       let clouds = weather ? weather.clouds : 100;
       if (clouds < 30) auroraScore += 2;
       else if (clouds < 60) auroraScore += 1;
 
-      // Liikennevalo
-      let statusEmoji = '🔴';
-      let statusText = 'Low chance';
+      let statusEmoji = '🔴', statusText = 'Low chance';
       if (auroraScore >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
       else if (auroraScore === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
-      // Popup sisältö
       const popupContent = `
         <strong>Your Northern Lights chance is now:</strong><br>      
         <strong>${statusEmoji} ${statusText}</strong><br>
@@ -286,7 +262,13 @@ if (locateBtn && navigator.geolocation && map) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', hideInfoAfterDelay);
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const infoEl = document.getElementById("info");
+    if (infoEl) infoEl.style.display = "none";
+  }, 3000);
+});
+
 // --- Chart.js ---
 const chartScript = document.createElement('script');
 chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
@@ -371,15 +353,12 @@ async function fetchAuroraForecast() {
     }
   }
 }
+
 document.addEventListener("click", function (e) {
-    if (e.target.classList.contains("read-more")) {
-        e.preventDefault();
-        const placeName = e.target.dataset.place;
-        const place = places.find(p => p.name === placeName);
-        if (place) showPlaceInfo(place);
-    }
+  if (e.target.classList.contains("read-more")) {
+    e.preventDefault();
+    const placeName = e.target.dataset.place;
+    const place = places.find(p => p.name === placeName);
+    if (place) showPlaceInfo(place);
+  }
 });
-
-document.dispatchEvent(new Event("mapReady"));
-
-
