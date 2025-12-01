@@ -206,7 +206,7 @@ function addMarkers(layer) {
             </div>
 
             <a href="#" class="read-more" data-place="${place.name}">
-   ${translations[currentLang].weather.moreInfo}
+   
 </a>
 
             <div class="weather-box" style="margin-top:10px;">
@@ -309,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
