@@ -173,10 +173,7 @@ let markersLayer;
 
 
 function initMarkers() {
-    if (!translations[currentLang]) {
-        console.warn("Translations not ready, waiting...");
-        return;
-    }
+   
     if (!map) {
         console.warn("Map not ready, waiting...");
         return;
@@ -317,8 +314,9 @@ function showPlaceInfo(place) {
 }
 
 
-document.addEventListener('languageReady', initMarkers);
+
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
