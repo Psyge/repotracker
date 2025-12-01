@@ -4,10 +4,10 @@ let userMarker = null;
 let currentData = null;
 let map;
 
-// --- Kartan alustaminen ---
-function initMap() {
+// --- Kartan ja DOM-elementtien alustaminen ---
+function initApp() {
+  // --- Kartta ---
   if (typeof L === 'undefined') return;
-
   map = L.map('map', {
     center: [65, 25],
     zoom: 4,
@@ -25,55 +25,24 @@ function initMap() {
   map.setMaxBounds([[-90, -180], [90, 180]]);
   map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
 
+  // --- Klikkaus kartalla: popup marker ---
   map.on('click', async (e) => {
     const lat = e.latlng.lat;
     const lon = e.latlng.lng;
-
-    let score = 0;
-    let auroraIntensity = 0;
-
-    if (currentData && currentData.coordinates) {
-      let nearest = null, minDist = Infinity;
-      currentData.coordinates.forEach(p => {
-        let pointLon = p[0] < 0 ? p[0] + 360 : p[0];
-        const pointLat = p[1], intensity = p[2];
-        const dist = Math.hypot(pointLat - lat, Math.abs(pointLon - lon));
-        if (dist < minDist) { minDist = dist; nearest = intensity; }
-      });
-      auroraIntensity = nearest || 0;
-      if (auroraIntensity > 60) score += 2;
-      else if (auroraIntensity > 30) score += 1;
-    }
-
-    const weather = await getWeather(lat, lon);
-    const clouds = weather ? weather.clouds : 100;
-    if (clouds < 30) score += 2;
-    else if (clouds < 60) score += 1;
-
-    let statusEmoji = '🔴';
-    let statusText = 'Low chance';
-    if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
-    else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
-
+    const scoreData = await calculateAuroraScore(lat, lon);
     const popupContent = `
       <strong>Your Northern Lights chance is now:</strong><br>
-      ${statusEmoji} ${statusText}<br>
-      Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
-      Clouds: ${clouds}%<br>
-      Temp: ${weather ? weather.temp + '°C' : 'N/A'}<br>
+      ${scoreData.statusEmoji} ${scoreData.statusText}<br>
+      Aurora intensity: ${scoreData.auroraIntensity.toFixed(1)}<br>
+      Clouds: ${scoreData.clouds}%<br>
+      Temp: ${scoreData.temp}<br>
       <strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
       <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>
     `;
-
     L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
   });
 
-  document.dispatchEvent(new Event("mapReady"));
-}
-
-// --- DOMContentLoaded: staattiset elementit ja napit ---
-document.addEventListener('DOMContentLoaded', () => {
-  // Help popup
+  // --- Help popup ---
   const helpPopup = document.getElementById('help-popup');
   const closePopupBtn = document.getElementById('close-popup');
   const dontShowAgainCheckbox = document.getElementById('dont-show-again');
@@ -85,87 +54,95 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   if (showHelpLink) showHelpLink.addEventListener('click', e => { e.preventDefault(); if (helpPopup) helpPopup.style.display = 'flex'; });
 
-  // Menu button
+  // --- Menu button ---
   const menuBtn = document.getElementById('menu-btn');
   const menu = document.getElementById('menu');
   if (menuBtn && menu) menuBtn.addEventListener('click', () => menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex');
 
-  // Info text
+  // --- Info text ---
   const info = document.getElementById("info");
   if (info) info.textContent = "Klikkaa karttaa nähdäksesi revontulien ennusteen.";
   setTimeout(() => { if (info) info.style.display = "none"; }, 3000);
-});
 
-// --- MapReady: napit ja locate ---
-document.addEventListener("mapReady", () => {
-  // Locate button
+  // --- Locate button ---
   const locateBtn = document.getElementById("locate-btn");
-  if (locateBtn && navigator.geolocation && map) {
+  if (locateBtn && navigator.geolocation) {
     locateBtn.addEventListener("click", () => {
       navigator.geolocation.getCurrentPosition(async pos => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         map.setView([lat, lon], 6);
+
         if (userMarker) userMarker.setLatLng([lat, lon]);
         else userMarker = L.marker([lat, lon]).addTo(map);
 
-        let auroraScore = 0;
-        let auroraIntensity = 0;
-        if (currentData && currentData.coordinates) {
-          let nearest = null, minDist = Infinity;
-          currentData.coordinates.forEach(p => {
-            let pointLon = p[0] < 0 ? p[0] + 360 : p[0];
-            const pointLat = p[1], intensity = p[2];
-            const dist = Math.hypot(pointLat - lat, Math.abs(pointLon - lon));
-            if (dist < minDist) { minDist = dist; nearest = intensity; }
-          });
-          auroraIntensity = nearest || 0;
-          if (auroraIntensity > 60) auroraScore += 2;
-          else if (auroraIntensity > 30) auroraScore += 1;
-        }
-
-        const weather = await getWeather(lat, lon);
-        let clouds = weather ? weather.clouds : 100;
-        if (clouds < 30) auroraScore += 2;
-        else if (clouds < 60) auroraScore += 1;
-
-        let statusEmoji = '🔴';
-        let statusText = 'Low chance';
-        if (auroraScore >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
-        else if (auroraScore === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
-
+        const scoreData = await calculateAuroraScore(lat, lon);
         const popupContent = `
           <strong>Your Northern Lights chance is now:</strong><br>
-          <strong>${statusEmoji} ${statusText}</strong><br>
-          Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
-          Clouds: ${clouds}%<br>
-          Temp: ${weather ? weather.temp + '°C' : 'N/A'}
+          ${scoreData.statusEmoji} ${scoreData.statusText}<br>
+          Aurora intensity: ${scoreData.auroraIntensity.toFixed(1)}<br>
+          Clouds: ${scoreData.clouds}%<br>
+          Temp: ${scoreData.temp}
         `;
         userMarker.bindPopup(popupContent).openPopup();
       }, err => { alert("Location failed: " + err.message); });
     });
   }
 
-  // Forecast popup
+  // --- Forecast popup ---
   const forecastBtn = document.getElementById('forecast-btn');
   const forecastPopup = document.getElementById('forecast-popup');
   const closeForecast = document.getElementById('close-forecast');
   if (forecastBtn && forecastPopup) forecastBtn.addEventListener('click', () => { forecastPopup.style.display = 'flex'; fetchAuroraForecast(); });
   if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
-});
 
-// --- NOAA Data ---
+  // --- Aloitetaan NOAA data ---
+  fetchAuroraData();
+  setInterval(fetchAuroraData, 5 * 60 * 1000);
+}
+
+// --- Aurora score laskenta ---
+async function calculateAuroraScore(lat, lon) {
+  let score = 0;
+  let auroraIntensity = 0;
+  let clouds = 100;
+  let temp = 'N/A';
+
+  if (currentData && currentData.coordinates) {
+    let nearest = null, minDist = Infinity;
+    currentData.coordinates.forEach(p => {
+      let pointLon = p[0] < 0 ? p[0] + 360 : p[0];
+      const pointLat = p[1], intensity = p[2];
+      const dist = Math.hypot(pointLat - lat, Math.abs(pointLon - lon));
+      if (dist < minDist) { minDist = dist; nearest = intensity; }
+    });
+    auroraIntensity = nearest || 0;
+    if (auroraIntensity > 60) score += 2;
+    else if (auroraIntensity > 30) score += 1;
+  }
+
+  const weather = await getWeather(lat, lon);
+  if (weather) { clouds = weather.clouds; temp = weather.temp + '°C'; }
+  if (clouds < 30) score += 2;
+  else if (clouds < 60) score += 1;
+
+  let statusEmoji = '🔴';
+  let statusText = 'Low chance';
+  if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
+  else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
+
+  return { auroraIntensity, clouds, temp, statusEmoji, statusText };
+}
+
+// --- NOAA data fetch ---
 async function fetchAuroraData() {
   const info = document.getElementById("info");
   if (info) { info.className = 'loading'; info.innerHTML = '⏳ Loading northern lights forecast...'; }
 
-  const directUrl = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
-  const proxyUrl = 'https://corsproxy.io/?' + directUrl;
-
-  fetch(directUrl).catch(() => fetch(proxyUrl))
+  const url = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
+  fetch(url)
     .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
     .then(data => {
-      if (!data.coordinates || !Array.isArray(data.coordinates)) throw new Error("Invalid data format.");
       currentData = data;
       if (info) {
         const obsTime = formatTime(data["Observation Time"]);
@@ -174,7 +151,7 @@ async function fetchAuroraData() {
         info.innerHTML = `<strong>📡 Northern Lights forecast</strong><br>
           <small>Observation: ${obsTime}<br>Forecast: ${forecastTime}<br>Points: ${data.coordinates.length}</small>`;
       }
-      if (map) drawAuroraOverlay(data.coordinates);
+      drawAuroraOverlay(data.coordinates);
     })
     .catch(err => {
       console.error('Error retrieving northern light data', err);
@@ -182,6 +159,7 @@ async function fetchAuroraData() {
     });
 }
 
+// --- Format time ---
 function formatTime(timeStr) {
   try { return new Date(timeStr).toLocaleString('fi-FI', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }); }
   catch { return timeStr; }
@@ -198,6 +176,7 @@ function drawAuroraOverlay(points) {
     const canvas = document.createElement('canvas');
     canvas.width = canvasWidth; canvas.height = canvasHeight;
     const ctx = canvas.getContext('2d');
+
     points.forEach(p => {
       let lon = p[0]; if (lon < 0) lon += 360;
       const lat = p[1], intensity = p[2];
@@ -212,13 +191,18 @@ function drawAuroraOverlay(points) {
       ctx.fillStyle = grad;
       ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
     });
+
     const bounds = [[40, -180], [90, 180]];
     auroraLayer.push(L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map));
   };
+
   createCanvasOverlay(0);
   createCanvasOverlay(-canvasWidth);
   createCanvasOverlay(canvasWidth);
 }
+
+
+
 
 // --- Päivitykset ---
 fetchAuroraData();
@@ -278,4 +262,5 @@ async function fetchAuroraForecast() {
 }
 
 // --- Aloitetaan kartta ---
-initMap();
+document.addEventListener('DOMContentLoaded', initApp);
+
