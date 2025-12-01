@@ -155,32 +155,11 @@ The colors on the map indicate the probability and intensity of the northern lig
 
 <!-- Markerit -->
 <script src="markers.js"></script>
-<script>
-  // Lisää markerit kartalle
-  addMarkers();
 
-  // Napin toiminta
-  document.getElementById('markers-btn').addEventListener('click', () => {
-    if (!map.hasLayer(markersLayer)) {
-      markersLayer.addTo(map);
-    } else {
-      map.removeLayer(markersLayer);
-    }
-  });
-
-  // Näkyvyys zoomin mukaan
-  map.on('zoomend', () => {
-    const zoom = map.getZoom();
-    if (zoom >= 6) {
-      if (!map.hasLayer(markersLayer)) markersLayer.addTo(map);
-    } else {
-      if (map.hasLayer(markersLayer)) map.removeLayer(markersLayer);
-    }
-  });
-</script>
 
 </body>
 </html>
+
 
 
 
