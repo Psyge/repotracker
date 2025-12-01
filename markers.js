@@ -257,12 +257,11 @@ function addMarkers(layer) {
                             <span>${weather.temp}°C — ${weather.desc}</span>
                         </div>
                         <small>
-                            ${translations[currentLang].weather.feels} ${weather.feels}°C |
-                            ${translations[currentLang].weather.wind} ${weather.wind} m/s
+                            Feels like ${weather.feels}°C |  Wind ${weather.wind} m/s
                         </small>
                     `;
                 } else {
-                    weatherBox.innerHTML = translations[currentLang].weather.error;
+                    weatherBox.innerHTML = "Weather not available";
                 }
 
                 weatherBox.dataset.loaded = "true";
@@ -299,7 +298,7 @@ function showPlaceInfo(place) {
         ${place.url ? `<p><a href="${place.url}" target="_blank">Visit website</a></p>` : ''}
         ${place.stream ? 
             `<iframe src="${place.stream}" width="100%" height="250" style="border:none;margin-top:10px;"></iframe>` : ''}
-        <button id="back-to-default" style="margin-top:15px;">Takaisin ohjeisiin</button>
+        <button id="back-to-default" style="margin-top:15px;">Back to instructions</button>
     `;
 
     // Scrollataan osioon
@@ -316,6 +315,7 @@ function showPlaceInfo(place) {
 
 
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
