@@ -3,7 +3,7 @@ let auroraLayer = null;
 let userMarker = null;
 let currentData = null;
 
-// --- Get weather function (same as markers.js) ---
+// --- Get weather ---
 async function getWeather(lat, lon) {
   const url = `https://repotracker.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
   try {
@@ -20,7 +20,7 @@ async function getWeather(lat, lon) {
   } catch { return null; }
 }
 
-// --- Show place info function ---
+// --- Show place info ---
 function showPlaceInfo(place) {
   const defaultSection = document.getElementById("aurora-default");
   const infoSection = document.getElementById("place-info");
@@ -53,20 +53,12 @@ function initApp() {
   map.setMaxBounds([[-90, -180], [90, 180]]);
   map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
 
- // Karttaklikkaukset
-map.on('click', async (e) => {
-  // Näytetään popup ilman Google Maps -linkkiä
-  await showAuroraPopup(e.latlng.lat, e.latlng.lng, null, true);
-});
+  map.on('click', onMapClick);
 
-
-  // Markerit
   if (typeof initMarkers === 'function') initMarkers(map, getWeather, showPlaceInfo);
 
-  // Napit ja popupit
   initButtons();
 
-  // Aurora data
   fetchAuroraData();
   setInterval(fetchAuroraData, 5 * 60 * 1000);
 }
@@ -76,7 +68,6 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
   let score = 0;
   let auroraIntensity = 0;
 
-  // 1. Aurora-intensiteetti NOAA-datasta
   if (currentData && currentData.coordinates) {
     let nearest = null, minDist = Infinity;
     currentData.coordinates.forEach(p => {
@@ -90,41 +81,31 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
     else if (auroraIntensity > 30) score += 1;
   }
 
-  // 2. Säätiedot
   const weather = await getWeather(lat, lon);
-  let clouds = weather ? weather.clouds : 100;
+  const clouds = weather ? weather.clouds : 100;
   if (clouds < 30) score += 2;
   else if (clouds < 60) score += 1;
 
-  // 3. Liikennevalo
-  let statusEmoji = '🔴';
-  let statusText = 'Low chance';
+  let statusEmoji = '🔴', statusText = 'Low chance';
   if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
   else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
-  // 4. Popup sisältö
   let popupContent = `
-    <strong>Your Northern Lights chance is now:</strong><br>
+    <strong>Your Northern Lights chance:</strong><br>
     ${statusEmoji} ${statusText}<br>
     Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
     Clouds: ${clouds}%<br>
     Temp: ${weather ? weather.temp + '°C' : 'N/A'}
   `;
 
-  // Lisää Google Maps linkki vain jos parametri true
   if (showGoogleMapsLink) {
     popupContent += `<br><strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
-    <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>`;
+      <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>`;
   }
 
-  // 5. Näytetään markerilla tai luodaan popup
-  if (marker) {
-    marker.setLatLng([lat, lon]).bindPopup(popupContent).openPopup();
-  } else {
-    L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
-  }
+  if (marker) marker.setLatLng([lat, lon]).bindPopup(popupContent).openPopup();
+  else L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
 }
-
 
 // --- Buttons ---
 function initButtons() {
@@ -149,25 +130,15 @@ function initButtons() {
   if (forecastBtn && forecastPopup) forecastBtn.addEventListener('click', () => { forecastPopup.style.display = 'flex'; fetchAuroraForecast(); });
   if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
 
-const locateBtn = document.getElementById('locate-btn');
-if(locateBtn) {
-  locateBtn.addEventListener("click", () => {
+  const locateBtn = document.getElementById('locate-btn');
+  if (locateBtn) locateBtn.addEventListener("click", async () => {
     navigator.geolocation.getCurrentPosition(async pos => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-
       map.setView([lat, lon], 6);
-
-      if (!userMarker) {
-        userMarker = L.marker([lat, lon]).addTo(map);
-      }
-
-      // Odotetaan weather fetch valmiiksi ennen popupia
+      if (!userMarker) userMarker = L.marker([lat, lon]).addTo(map);
       await showAuroraPopup(lat, lon, userMarker, false);
-
-    }, err => {
-      alert("Location failed: " + err.message);
-    });
+    }, err => alert("Location failed: " + err.message));
   });
 }
 
@@ -178,11 +149,8 @@ async function fetchAuroraData() {
   info.className = 'loading';
   info.innerHTML = '⏳ Loading northern lights forecast...';
 
-  const directUrl = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
-  const proxyUrl = 'https://corsproxy.io/?' + directUrl;
-
   try {
-    const res = await fetch(directUrl).catch(() => fetch(proxyUrl));
+    const res = await fetch('https://services.swpc.noaa.gov/json/ovation_aurora_latest.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (!data.coordinates || !Array.isArray(data.coordinates)) throw new Error("Invalid data format.");
@@ -227,26 +195,13 @@ function drawAuroraOverlay(points) {
     });
 
     const bounds = [[40, -180], [90, 180]];
-    const overlay = L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map);
-    auroraLayer.push(overlay);
+    auroraLayer.push(L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map));
   };
 
   createCanvasOverlay(0);
   createCanvasOverlay(-canvasWidth);
   createCanvasOverlay(canvasWidth);
 }
-
-
-
-
-// --- Päivitykset ---
-fetchAuroraData();
-setInterval(fetchAuroraData, 5 * 60 * 1000);
-
-// --- Chart.js ---
-const chartScript = document.createElement('script');
-chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-document.head.appendChild(chartScript);
 
 // --- Forecast Chart ---
 async function fetchAuroraForecast() {
@@ -265,7 +220,6 @@ async function fetchAuroraForecast() {
       const values = clean.split(' ').map(Number);
       if (values.length === 3 && values.every(v => !isNaN(v))) { times.push(time); day1.push(values[0]); day2.push(values[1]); day3.push(values[2]); }
     }
-    if (times.length === 0) throw new Error("Kp values not found.");
 
     const ctxElement = document.getElementById('kpChart'); if (!ctxElement) return;
     const ctx = ctxElement.getContext('2d');
@@ -283,7 +237,7 @@ async function fetchAuroraForecast() {
         responsive: true,
         plugins: {
           title: { display: true, text: 'Northern Lights forecast (NOAA)' },
-          tooltip: { callbacks: { label: function(context) { const kp = context.parsed.y; if (kp >= 5) return `Kp ${kp} - High chance`; if (kp >= 3) return `Kp ${kp} - Moderate chance`; return `Kp ${kp} - Low chance`; } } }
+          tooltip: { callbacks: { label: ctx => { const kp = ctx.parsed.y; if (kp >= 5) return `Kp ${kp} - High chance`; if (kp >= 3) return `Kp ${kp} - Moderate chance`; return `Kp ${kp} - Low chance`; } } }
         },
         scales: { y: { min: 0, max: 9, title: { display: true, text: 'Kp Index' } }, x: { title: { display: true, text: 'UT Time (3h intervals)' } } }
       }
@@ -296,11 +250,5 @@ async function fetchAuroraForecast() {
   }
 }
 
-// --- Aloitetaan kartta ---
+// --- Start app ---
 document.addEventListener('DOMContentLoaded', initApp);
-
-
-
-
-
-
