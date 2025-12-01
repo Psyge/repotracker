@@ -379,6 +379,7 @@ document.addEventListener("click", function (e) {
         if (place) showPlaceInfo(place);
     }
 });
-document.dispatchEvent(new Event("languageReady"));
+
 document.dispatchEvent(new Event("mapReady"));
+
 
