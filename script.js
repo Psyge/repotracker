@@ -145,21 +145,23 @@ function initButtons() {
   if (forecastBtn && forecastPopup) forecastBtn.addEventListener('click', () => { forecastPopup.style.display = 'flex'; fetchAuroraForecast(); });
   if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
 
-  const locateBtn = document.getElementById('locate-btn');
-  if (locateBtn && navigator.geolocation) locateBtn.addEventListener('click', async () => {
-    navigator.geolocation.getCurrentPosition(async pos => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      map.setView([lat, lon], 6);
+locateBtn.addEventListener("click", () => {
+  navigator.geolocation.getCurrentPosition(pos => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
 
-      if (userMarker) userMarker.setLatLng([lat, lon]);
-      else userMarker = L.marker([lat, lon]).addTo(map);
+    map.setView([lat, lon], 6);
 
-      const weather = await getWeather(lat, lon);
-      const popupContent = `<strong>Your Northern Lights chance:</strong><br>Temp: ${weather ? weather.temp + '°C' : 'N/A'}`;
-      userMarker.bindPopup(popupContent).openPopup();
-    });
+    if (!userMarker) {
+      userMarker = L.marker([lat, lon]).addTo(map);
+    }
+
+    showAuroraPopup(lat, lon, userMarker, false); // Google Maps linkkiä ei näytetä
+
+  }, err => {
+    alert("Location failed: " + err.message);
   });
+});
 }
 
 // --- Aurora NOAA ---
@@ -289,6 +291,7 @@ async function fetchAuroraForecast() {
 
 // --- Aloitetaan kartta ---
 document.addEventListener('DOMContentLoaded', initApp);
+
 
 
 
