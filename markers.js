@@ -91,8 +91,8 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
     <li>Alpine Skiing World Cup: Levi hosts the opening competitions of the World Cup every year. </li>
     <li>Snowmobile safaris: routes through the Lapland landscape for beginners and experienced riders alike. </li>
     <li>Husky and reindeer sleigh rides: unforgettable experiences in the winter wilderness. </li>
-    <li>Northern Lights tours: an opportunity to experience the northern sky in all its glory.
-    <li>Snowshoeing and ice sculptures – exercise and experiences in the snow.
+    <li>Northern Lights tours: an opportunity to experience the northern sky in all its glory. </li>
+    <li>Snowshoeing and ice sculptures – exercise and experiences in the snow. </li>
   </ul>
 
   <h3>Summer and fall activities</h3>
@@ -316,6 +316,7 @@ function showPlaceInfo(place) {
 
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
