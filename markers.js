@@ -139,7 +139,7 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
    Ylläs serves as a gateway to one of Finland's most beautiful national parks. Pallas-Yllästunturi National Park offers dozens of kilometers of marked hiking trails, breathtaking autumn and summer scenery, and excellent opportunities for hiking and berry picking.
 </p>
 
-  <h4>3Winter experiences</h4>
+  <h4>Winter experiences</h4>
  <p>In winter, Ylläs offers a wide range of activities, such as husky and reindeer safaris, snowmobiling, snowshoeing, fatbike cycling, northern lights tours, and photography courses. </p>
 
   <h4>Authentic Lapland tranquility</h4>
@@ -316,6 +316,7 @@ function showPlaceInfo(place) {
 
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
