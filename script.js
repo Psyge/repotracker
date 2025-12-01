@@ -1,112 +1,78 @@
-// --- Globaalit muuttujat ---
+let map;
 let auroraLayer = null;
 let userMarker = null;
 let currentData = null;
-let map;
 
-// --- Kartan ja DOM-elementtien alustaminen ---
+// --- Get weather function (same as markers.js) ---
+async function getWeather(lat, lon) {
+  const url = `https://repotracker.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    return {
+      temp: Math.round(data.main.temp),
+      feels: Math.round(data.main.feels_like),
+      wind: data.wind.speed,
+      desc: data.weather[0].description,
+      icon: data.weather[0].icon,
+      clouds: data.clouds.all
+    };
+  } catch { return null; }
+}
+
+// --- Show place info function ---
+function showPlaceInfo(place) {
+  const defaultSection = document.getElementById("aurora-default");
+  const infoSection = document.getElementById("place-info");
+  defaultSection.style.display = "none";
+  infoSection.style.display = "block";
+  infoSection.innerHTML = `
+    <p>${place.description || ''}</p>
+    ${place.url ? `<p><a href="${place.url}" target="_blank">Visit website</a></p>` : ''}
+    ${place.stream ? `<iframe src="${place.stream}" width="100%" height="250" style="border:none;margin-top:10px;"></iframe>` : ''}
+    <button id="back-to-default" style="margin-top:15px;">Back to instructions</button>
+  `;
+  infoSection.scrollIntoView({ behavior: "smooth" });
+  document.getElementById("back-to-default").onclick = () => {
+    infoSection.style.display = "none";
+    defaultSection.style.display = "block";
+    defaultSection.scrollIntoView({ behavior: "smooth" });
+  };
+}
+
+// --- Init map ---
 function initApp() {
-  // --- Kartta ---
-  if (typeof L === 'undefined') return;
-  map = L.map('map', {
-    center: [65, 25],
-    zoom: 4,
-    minZoom: 2,
-    maxZoom: 15,
-    worldCopyJump: false
-  });
+  if (typeof L === 'undefined') return console.error("Leaflet not loaded");
 
+  map = L.map('map', { center: [65, 25], zoom: 4, minZoom: 2, maxZoom: 15 });
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO',
     subdomains: 'abcd',
     maxZoom: 19
   }).addTo(map);
-
   map.setMaxBounds([[-90, -180], [90, 180]]);
   map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
 
-  // --- Klikkaus kartalla: popup marker ---
-  map.on('click', async (e) => {
-    const lat = e.latlng.lat;
-    const lon = e.latlng.lng;
-    const scoreData = await calculateAuroraScore(lat, lon);
-    const popupContent = `
-      <strong>Your Northern Lights chance is now:</strong><br>
-      ${scoreData.statusEmoji} ${scoreData.statusText}<br>
-      Aurora intensity: ${scoreData.auroraIntensity.toFixed(1)}<br>
-      Clouds: ${scoreData.clouds}%<br>
-      Temp: ${scoreData.temp}<br>
-      <strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
-      <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>
-    `;
-    L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
-  });
+  // Karttaklikkaukset
+  map.on('click', onMapClick);
 
-  // --- Help popup ---
-  const helpPopup = document.getElementById('help-popup');
-  const closePopupBtn = document.getElementById('close-popup');
-  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
-  const showHelpLink = document.getElementById('show-help');
-  if (helpPopup && !localStorage.getItem('hideHelpPopup')) helpPopup.style.display = 'flex';
-  if (closePopupBtn) closePopupBtn.addEventListener('click', () => {
-    if (dontShowAgainCheckbox && dontShowAgainCheckbox.checked) localStorage.setItem('hideHelpPopup', 'true');
-    helpPopup.style.display = 'none';
-  });
-  if (showHelpLink) showHelpLink.addEventListener('click', e => { e.preventDefault(); if (helpPopup) helpPopup.style.display = 'flex'; });
+  // Markerit
+  if (typeof initMarkers === 'function') initMarkers(map, getWeather, showPlaceInfo);
 
-  // --- Menu button ---
-  const menuBtn = document.getElementById('menu-btn');
-  const menu = document.getElementById('menu');
-  if (menuBtn && menu) menuBtn.addEventListener('click', () => menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex');
+  // Napit ja popupit
+  initButtons();
 
-  // --- Info text ---
-  const info = document.getElementById("info");
-  if (info) info.textContent = "Klikkaa karttaa nähdäksesi revontulien ennusteen.";
-  setTimeout(() => { if (info) info.style.display = "none"; }, 3000);
-
-  // --- Locate button ---
-  const locateBtn = document.getElementById("locate-btn");
-  if (locateBtn && navigator.geolocation) {
-    locateBtn.addEventListener("click", () => {
-      navigator.geolocation.getCurrentPosition(async pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        map.setView([lat, lon], 6);
-
-        if (userMarker) userMarker.setLatLng([lat, lon]);
-        else userMarker = L.marker([lat, lon]).addTo(map);
-
-        const scoreData = await calculateAuroraScore(lat, lon);
-        const popupContent = `
-          <strong>Your Northern Lights chance is now:</strong><br>
-          ${scoreData.statusEmoji} ${scoreData.statusText}<br>
-          Aurora intensity: ${scoreData.auroraIntensity.toFixed(1)}<br>
-          Clouds: ${scoreData.clouds}%<br>
-          Temp: ${scoreData.temp}
-        `;
-        userMarker.bindPopup(popupContent).openPopup();
-      }, err => { alert("Location failed: " + err.message); });
-    });
-  }
-
-  // --- Forecast popup ---
-  const forecastBtn = document.getElementById('forecast-btn');
-  const forecastPopup = document.getElementById('forecast-popup');
-  const closeForecast = document.getElementById('close-forecast');
-  if (forecastBtn && forecastPopup) forecastBtn.addEventListener('click', () => { forecastPopup.style.display = 'flex'; fetchAuroraForecast(); });
-  if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
-
-  // --- Aloitetaan NOAA data ---
+  // Aurora data
   fetchAuroraData();
   setInterval(fetchAuroraData, 5 * 60 * 1000);
 }
 
-// --- Aurora score laskenta ---
-async function calculateAuroraScore(lat, lon) {
-  let score = 0;
-  let auroraIntensity = 0;
-  let clouds = 100;
-  let temp = 'N/A';
+// --- Map click popup ---
+async function onMapClick(e) {
+  const lat = e.latlng.lat;
+  const lon = e.latlng.lng;
+
+  let score = 0, auroraIntensity = 0;
 
   if (currentData && currentData.coordinates) {
     let nearest = null, minDist = Infinity;
@@ -122,50 +88,97 @@ async function calculateAuroraScore(lat, lon) {
   }
 
   const weather = await getWeather(lat, lon);
-  if (weather) { clouds = weather.clouds; temp = weather.temp + '°C'; }
+  let clouds = weather ? weather.clouds : 100;
   if (clouds < 30) score += 2;
   else if (clouds < 60) score += 1;
 
-  let statusEmoji = '🔴';
-  let statusText = 'Low chance';
+  let statusEmoji = '🔴', statusText = 'Low chance';
   if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
   else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
-  return { auroraIntensity, clouds, temp, statusEmoji, statusText };
+  const popupContent = `
+    <strong>Your Northern Lights chance:</strong><br>
+    ${statusEmoji} ${statusText}<br>
+    Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
+    Clouds: ${clouds}%<br>
+    Temp: ${weather ? weather.temp + '°C' : 'N/A'}<br>
+    <strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
+    <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>
+  `;
+
+  L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
 }
 
-// --- NOAA data fetch ---
+// --- Buttons ---
+function initButtons() {
+  const helpPopup = document.getElementById('help-popup');
+  const closePopupBtn = document.getElementById('close-popup');
+  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+  const showHelpLink = document.getElementById('show-help');
+  if (helpPopup && !localStorage.getItem('hideHelpPopup')) helpPopup.style.display = 'flex';
+  if (closePopupBtn) closePopupBtn.addEventListener('click', () => {
+    if (dontShowAgainCheckbox && dontShowAgainCheckbox.checked) localStorage.setItem('hideHelpPopup', 'true');
+    helpPopup.style.display = 'none';
+  });
+  if (showHelpLink) showHelpLink.addEventListener('click', e => { e.preventDefault(); helpPopup.style.display = 'flex'; });
+
+  const menuBtn = document.getElementById('menu-btn');
+  const menu = document.getElementById('menu');
+  if (menuBtn && menu) menuBtn.addEventListener('click', () => { menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex'; });
+
+  const forecastBtn = document.getElementById('forecast-btn');
+  const forecastPopup = document.getElementById('forecast-popup');
+  const closeForecast = document.getElementById('close-forecast');
+  if (forecastBtn && forecastPopup) forecastBtn.addEventListener('click', () => { forecastPopup.style.display = 'flex'; fetchAuroraForecast(); });
+  if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
+
+  const locateBtn = document.getElementById('locate-btn');
+  if (locateBtn && navigator.geolocation) locateBtn.addEventListener('click', async () => {
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      map.setView([lat, lon], 6);
+
+      if (userMarker) userMarker.setLatLng([lat, lon]);
+      else userMarker = L.marker([lat, lon]).addTo(map);
+
+      const weather = await getWeather(lat, lon);
+      const popupContent = `<strong>Your Northern Lights chance:</strong><br>Temp: ${weather ? weather.temp + '°C' : 'N/A'}`;
+      userMarker.bindPopup(popupContent).openPopup();
+    });
+  });
+}
+
+// --- Aurora NOAA ---
 async function fetchAuroraData() {
   const info = document.getElementById("info");
-  if (info) { info.className = 'loading'; info.innerHTML = '⏳ Loading northern lights forecast...'; }
+  if (!info) return;
+  info.className = 'loading';
+  info.innerHTML = '⏳ Loading northern lights forecast...';
 
-  const url = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
-  fetch(url)
-    .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
-    .then(data => {
-      currentData = data;
-      if (info) {
-        const obsTime = formatTime(data["Observation Time"]);
-        const forecastTime = formatTime(data["Forecast Time"]);
-        info.className = '';
-        info.innerHTML = `<strong>📡 Northern Lights forecast</strong><br>
-          <small>Observation: ${obsTime}<br>Forecast: ${forecastTime}<br>Points: ${data.coordinates.length}</small>`;
-      }
-      drawAuroraOverlay(data.coordinates);
-    })
-    .catch(err => {
-      console.error('Error retrieving northern light data', err);
-      if (info) { info.className = 'error'; info.innerHTML = `<strong>❌ Error</strong><br><small>${err.message}</small>`; }
-    });
+  const directUrl = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
+  const proxyUrl = 'https://corsproxy.io/?' + directUrl;
+
+  try {
+    const res = await fetch(directUrl).catch(() => fetch(proxyUrl));
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!data.coordinates || !Array.isArray(data.coordinates)) throw new Error("Invalid data format.");
+    currentData = data;
+
+    const obsTime = new Date(data["Observation Time"]).toLocaleString();
+    const forecastTime = new Date(data["Forecast Time"]).toLocaleString();
+    info.className = '';
+    info.innerHTML = `<strong>📡 Northern Lights forecast</strong><br><small>Observation: ${obsTime}<br>Forecast: ${forecastTime}<br>Points: ${data.coordinates.length}</small>`;
+
+    drawAuroraOverlay(data.coordinates);
+  } catch (err) {
+    console.error('Aurora data error', err);
+    info.className = 'error';
+    info.innerHTML = `<strong>❌ Error</strong><br><small>No northern lights forecast available.<br>${err.message}</small>`;
+  }
 }
 
-// --- Format time ---
-function formatTime(timeStr) {
-  try { return new Date(timeStr).toLocaleString('fi-FI', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' }); }
-  catch { return timeStr; }
-}
-
-// --- Aurora overlay ---
 function drawAuroraOverlay(points) {
   if (!map) return;
   if (auroraLayer) auroraLayer.forEach(l => map.removeLayer(l));
@@ -179,8 +192,7 @@ function drawAuroraOverlay(points) {
 
     points.forEach(p => {
       let lon = p[0]; if (lon < 0) lon += 360;
-      const lat = p[1], intensity = p[2];
-      if (intensity < 1) return;
+      const lat = p[1], intensity = p[2]; if (intensity < 1) return;
       const x = ((lon + 180) / 360) * canvasWidth + xOffset;
       const y = ((90 - lat) / 50) * canvasHeight;
       const radius = Math.min(60, Math.max(10, intensity * 3));
@@ -193,7 +205,8 @@ function drawAuroraOverlay(points) {
     });
 
     const bounds = [[40, -180], [90, 180]];
-    auroraLayer.push(L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map));
+    const overlay = L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map);
+    auroraLayer.push(overlay);
   };
 
   createCanvasOverlay(0);
@@ -263,4 +276,5 @@ async function fetchAuroraForecast() {
 
 // --- Aloitetaan kartta ---
 document.addEventListener('DOMContentLoaded', initApp);
+
 
