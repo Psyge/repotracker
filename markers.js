@@ -23,148 +23,148 @@ async function getWeather(lat, lon) {
 const places = [
  { name: 'Rovaniemi', lat: 66.5, lon: 25.7, url: 'https://visitrovaniemi.fi', icon: 'roic.png',  short: 'Rovaniemi on Lapin pääkaupunki ja Joulupukin virallinen kotikaupunki.', 
      description: `
-        <h2>Rovaniemi – Lapin pääkaupunki ja joulupukin koti</h2>
+       <h2>Rovaniemi – Capital of Lapland and home of Santa Claus</h2>
 
   <p>
-    Rovaniemi on elinvoimainen kaupunki Suomen Lapissa, aivan Napapiirin tuntumassa. Kaupunki sijaitsee hyvien kulkuyhteyksien varrella – Rovaniemelle pääsee kätevästi sekä lentäen että junalla. Rovaniemeä pidetään yleisesti Lapin pääkaupunkina, ja se toimii koko pohjoisen Suomen tärkeänä hallinnollisena, kaupallisena ja kulttuurisena keskuksena.
+    Rovaniemi is a vibrant city in Finnish Lapland, located just above the Arctic Circle. The city is easily accessible by both air and rail. Rovaniemi is widely regarded as the capital of Lapland and serves as an important administrative, commercial, and cultural center for the whole of northern Finland.
   </p>
 
-  <p>
-    Rovaniemi tunnetaan kansainvälisesti joulupukin virallisena kotipaikkana, mikä tekee siitä yhden Suomen suosituimmista matkailukohteista. Erityisesti talvikuukausina turistit saapuvat ympäri maailmaa kokemaan Lapin taian ja ainutlaatuiset elämykset.
-  </p>
-<p>Yksi Rovaniemellä vierailevien suosikkikokemuksista on Napapiirin ylittäminen. Napapiiri kulkee kaupungin halki, ja sen voi ylittää esimerkiksi Joulupukin Pajakylässä, jossa raja on merkitty selkeästi maastoon. Napapiirin ylitys on monille matkailijoille unohtumaton hetki – se symboloi siirtymistä arktiselle alueelle.</p>
+<p>
+Rovaniemi is internationally known as the official home of Santa Claus, making it one of Finland's most popular tourist destinations. Especially during the winter months, tourists from all over the world come to experience the magic of Lapland and unique experiences.
+  </p
+One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic Circle. The Arctic Circle runs through the city and can be crossed, for example, at Santa Claus Village, where the border is clearly marked on the ground. Crossing the Arctic Circle is an unforgettable moment for many travelers – it symbolizes the transition to the Arctic region. </p>
 
-  <h3>Talvella suosituimpia aktiviteetteja on:</h3>
+  <h3>The most popular activities in winter are:</h3>
   <ul>
-    <li>Poro- ja huskyajelut</li>
-    <li>Moottorikelkkasafarit</li>
-    <li>Revontuliretket</li>
-    <li>Laskettelu, lumilautailu ja hiihtäminen Ounasvaaralla</li>
-    <li>Jääveistokset, iglut ja muut lumiaktiviteetit</li>
-    <li>Vierailut Joulupukin Pajakylässä ja Santa Parkissa</li>
+    <li>Reindeer and husky rides</li>
+    <li>Snowmobile safaris</li>
+    <li>Northern lights tours</li>
+    <li>Downhill skiing, snowboarding, and cross-country skiing in Ounasvaara</li>
+    <li>Ice sculptures, igloos, and other snow activities</li>
+    <li>Visits to Santa Claus Village and Santa Park</li>
   </ul>
 
-  <h3>Tekemistä ympäri vuoden</h3>
+  <h3>Things to do all year round</h3>
   <p>
-    Vaikka Rovaniemi on erityisen suosittu talvikohde, tarjoaa kaupunki runsaasti nähtävää ja koettavaa myös muina vuodenaikoina. Rovaniemellä voi tutustua upeisiin luontopoluihin, vierailla mielenkiintoisissa museoissa kuten Arktikum ja Pilke, sekä nauttia vilkkaasta kulttuuri- ja tapahtumatarjonnasta.
-  </p>
+    Although Rovaniemi is particularly popular as a winter destination, the city also offers plenty to see and do during other seasons. In Rovaniemi, you can explore magnificent nature trails, visit interesting museums such as Arktikum and Pilke, and enjoy a lively cultural and event scene.
+</p>
     ` 
     },
     { name: 'Joulupukin Pajakylä', lat: 66.54, lon: 25.84, url: 'https://santaclausvillage.info/', icon: 'pukki.png', stream: 'https://www.youtube.com/embed/Cp4RRAEgpeU', streamWidth: 320, streamHeight: 180, short: 'Joulupukin pajakylä - Joulupukin virallinen kotipaikka', description: ` 
-    <h2>Joulupukin Pajakylä – Taianomainen kohtaamispaikka Napapiirillä</h2>
+    <h2>Santa Claus Village – A magical meeting place on the Arctic Circle</h2>
 
   <p>
-    Joulupukin Pajakylä on yksi Rovaniemen tunnetuimmista nähtävyyksistä. Se sijaitsee aivan Napapiirillä, vain lyhyen matkan päässä keskustasta, ja toimii joulupukin virallisena kohtaamispaikkana ympäri vuoden. Pajakylä on kansainvälinen matkailun vetonaula, jossa vierailee vuosittain tuhansia turisteja eri puolilta maailmaa.
+    Santa Claus Village is one of Rovaniemi's most famous attractions. It is located right on the Arctic Circle, just a short distance from the city center, and serves as Santa Claus' official meeting place throughout the year. Pajakylä is an international tourist attraction, visited by thousands of tourists from around the world every year.
   </p>
 
-  <h3>Mitä Pajakylässä voi kokea?</h3>
+  <h3>What can you experience in Pajakylä?</h3>
   <ul>
-    <li>Tapaa itse Joulupukki – Pajakylässä voit tavata Joulupukin henkilökohtaisesti vuoden jokaisena päivänä.</li>
-    <li>Lähetä terveisiä Joulupukin pääpostista – Napapiirillä sijaitsevasta postista voi lähettää kirjeitä erikoisleimalla ja seurata tonttujen postinlajittelua.</li>
-    <li>Ylitä Napapiiri – Pajakylässä kulkee Napapiirin virallinen linja, jonka ylittäminen on monille vierailijoille ikimuistoinen hetki.</li>
-    <li>Tee ostoksia ja nauti Lapin herkuista – Pajakylästä löytyy runsaasti lahjatavarakauppoja sekä tunnelmallisia ravintoloita, joissa voi maistella paikallisia herkkuja.</li>
+    <li>Meet Santa Claus himself – In Pajakylä, you can meet Santa Claus in person every day of the year. </li>
+    <li>Send greetings from Santa Claus' main post office – At the post office located on the Arctic Circle, you can send letters with a special stamp and watch the elves sort the mail. </li>
+    <li>Cross the Arctic Circle – Pajakylä is located on the official Arctic Circle line, and crossing it is a memorable moment for many visitors. </li>
+    <li>Shop and enjoy Lapland's delicacies – Pajakylä has plenty of gift shops and atmospheric restaurants where you can sample local delicacies. </li>
     </ul>
 
-  <h3>Talven taikaa</h3>
+  <h3>Winter magic</h3>
   <p>
-    Talvikaudella Pajakylä muuttuu satumaiseksi lumikeitaaksi. Vierailijat voivat nauttia poro- ja huskysafareista, moottorikelkka-ajeluista, jää- ja lumirakennelmista sekä mahdollisesti nähdä revontulet Napapiirin yllä.
+    During the winter season, Pajakylä transforms into a fairytale snow wonderland. Visitors can enjoy reindeer and husky safaris, snowmobile rides, ice and snow sculptures, and possibly even see the Northern Lights above the Arctic Circle.
   </p>
 
-  <h3>Auki ympäri vuoden</h3>
+  <h3>Open all year round</h3>
   <p>
-    Joulupukin Pajakylä ei ole vain joulusesongin kohde – se on avoinna joka päivä vuoden ympäri. Kesällä tunnelma on rauhallisempi, ja alueeseen voi tutustua ilman talvikauden suuria kävijämääriä.
+    Santa Claus Village is not just a Christmas destination – it is open every day of the year. In summer, the atmosphere is more peaceful, and you can explore the area without the large crowds of the winter season.
 
   </p>
 
   <p>
-    Oli vuodenaika mikä tahansa, Joulupukin Pajakylä tarjoaa ikimuistoisen elämyksen kaikenikäisille vierailijoille.
+    Whatever the season, Santa Claus Village offers a memorable experience for visitors of all ages.
   </p>`
     },
     { name: 'Levi', lat: 67.80, lon: 24.80, url: 'https://www.levi.fi/', icon: 'levi.png', short: 'Levi - Suomen ehkä tunnetuin hiihtokeskus', description: 
         `
-  <h2>Levi – Suomen tunnetuin hiihtokeskus</h2>
+  <h2>Levi – Finland's most famous ski resort</h2>
 
   <p>
-    Levi sijaitsee Kittilässä, Lapissa, ja on yksi Suomen suosituimmista sekä kansainvälisimmistä matkailukohteista. Levi tunnetaan erityisesti laadukkaista rinteistään, monipuolisista aktiviteeteistaan ja vilkkaasta matkailuelämästään. Se on Suomen suurin hiihtokeskus, joka houkuttelee vierailijoita ympäri vuoden.
+    Levi is located in Kittilä, Lapland, and is one of Finland's most popular and international tourist destinations. Levi is particularly known for its high-quality slopes, diverse activities, and lively tourist life. It is Finland's largest ski resort, attracting visitors all year round.
   </p>
 
-  <h3>Talven parhaat elämykset</h3>
+  <h3>The best winter experiences</h3>
   <ul>
-    <li>Hiihto ja lumilautailu: kymmenet rinteet ja huippuluokan latuverkostot tarjoavat vaihtoehtoja kaikentasoisille laskijoille.</li>
-    <li>Alppihiihdon maailmancup: Levi isännöi vuosittain maailmancupin avauskilpailuja.</li>
-    <li>Moottorikelkkasafarit: reittejä Lapin maisemissa niin aloittelijoille kuin kokeneille.</li>
-    <li>Husky- ja poroajelut: unohtumattomia elämyksiä talvisessa luonnossa.</li>
-    <li>Revontuliretket: mahdollisuus kokea pohjoisen taivas täydessä loistossaan.</li>
-    <li>Lumikenkäily ja jäärakennelmat – liikuntaa ja elämyksiä lumen keskellä.</li>
+    <li>Skiing and snowboarding: dozens of slopes and top-class cross-country ski trails offer options for skiers of all levels. </li>
+    <li>Alpine Skiing World Cup: Levi hosts the opening competitions of the World Cup every year. </li>
+    <li>Snowmobile safaris: routes through the Lapland landscape for beginners and experienced riders alike. </li>
+    <li>Husky and reindeer sleigh rides: unforgettable experiences in the winter wilderness. </li>
+    <li>Northern Lights tours: an opportunity to experience the northern sky in all its glory.
+    <li>Snowshoeing and ice sculptures – exercise and experiences in the snow.
   </ul>
 
-  <h3>Kesän ja syksyn aktiviteetit</h3>
+  <h3>Summer and fall activities</h3>
   <p>
-    Levi on monipuolinen ympärivuotinen kohde. Kesällä ja ruska-aikaan alue houkuttelee retkeilijöitä, maastopyöräilijöitä, kalastajia ja golfaajia. Levin huipulle pääsee myös gondolihissillä, joka tarjoaa upeat maisemat jokaisena vuodenaikana.
+    Levi is a versatile year-round destination. In summer and autumn, the area attracts hikers, mountain bikers, fishermen, and golfers. The summit of Levi can also be reached by gondola lift, which offers magnificent views in every season.
   </p>
 
-  <h3>Majoitus ja palvelut</h3>
+  <h3>Accommodation and services</h3>
   <p>
-    Levin kylästä löytyy laaja valikoima majoitusvaihtoehtoja mökeistä laadukkaisiin hotelleihin. Alue tarjoaa myös runsaasti ravintoloita, kahviloita, kauppoja ja viihdepalveluita.
+    The village of Levi offers a wide range of accommodation options, from cottages to high-quality hotels. The area also has plenty of restaurants, cafes, shops, and entertainment services.
   </p>
 
-  <h3>Hyvinvointi ja spa-elämykset</h3>
+  <h3>Wellness and spa experiences</h3>
   <p>
-    Levi tunnetaan myös hyvinvointipalveluistaan – tarjolla on spa-, wellness-, rentoutumis- ja hemmottelupalveluita niin lomailijoille kuin aktiiviurheilijoille.
+    Levi is also known for its wellness services, offering spa, wellness, relaxation, and pampering services for both vacationers and active athletes.
   </p>
 
-  <h3>Tapahtumat</h3>
+  <h3>Events</h3>
   <p>
-    Levillä järjestetään ympäri vuoden erilaisia tapahtumia urheilukilpailuista musiikkitapahtumiin. Tunnelma on usein nuorekas, energinen ja kansainvälinen.
-  </p>
+    Levi hosts a variety of events throughout the year, from sports competitions to music events. The atmosphere is often youthful, energetic, and international.
+</p>
 
 `
 },
     { name: 'Ylläs', lat: 67.57, lon: 24.20, url: 'https://yllas.fi/', icon: 'yllas.png', short: 'Ylläs - Suomen suurin hiihtokeskus', description: `
-  <h2>Ylläs – Tunturien rauhaa ja Lapin upeita elämyksiä</h2>
+  <h2>Ylläs – Peaceful fells and wonderful experiences in Lapland</h2>
 
   <p>
-    Ylläs sijaitsee Kolarin kunnassa, Lapissa, ja se on yksi Suomen 
-    tunnetuimmista talvi- ja luontomatkailukohteista. Alue koostuu kahdesta 
-    tunnelmallisesta kylästä: Äkäslompulosta ja Ylläsjärvestä, jotka tarjoavat 
-    aidon lappilaisen ympäristön ja upeat tunturimaisemat.
+    Ylläs is located in the municipality of Kolari in Lapland and is one of Finland's 
+    best-known winter and nature tourism destinations. The area consists of two 
+    atmospheric villages: Äkäslompolo and Ylläsjärvi, which offer 
+    an authentic Lapland environment and magnificent fell landscapes.
   </p>
 
-  <h3>Mikä tekee Ylläksestä erityisen?</h3>
+  <h3>What makes Ylläs special?</h3>
 
-  <h4>Suomen suurimmat rinne- ja hiihtoalueet</h4>
+  <h4>Finland's largest ski slopes and ski areas</h4>
   <p>
-    Ylläs tunnetaan laajoista ja monipuolisista laskettelurinteistään. Alueelta löytyy Suomen pisimmät rinteet sekä kattava latuverkosto, josta osa kulkee upeissa Pallas–Yllästunturin kansallispuiston maisemissa.
+    Ylläs is known for its extensive and varied ski slopes. The area has Finland's longest slopes and an extensive network of ski trails, some of which run through the magnificent landscapes of the Pallas-Yllästunturi National Park.
   </p>
 
-  <h4>Kansallispuiston läheisyys</h4>
+  <h4>Proximity to a national park</h4>
   <p>
-   Ylläs toimii porttina yhteen Suomen kauneimmista kansallispuistoista. Pallas–Yllästunturin kansallispuisto tarjoaa kymmeniä kilometrejä merkittyjä vaellusreittejä, henkeäsalpaavat ruska- ja kesämaisemat sekä erinomaiset mahdollisuudet retkeilyyn ja marjastukseen.
+   Ylläs serves as a gateway to one of Finland's most beautiful national parks. Pallas-Yllästunturi National Park offers dozens of kilometers of marked hiking trails, breathtaking autumn and summer scenery, and excellent opportunities for hiking and berry picking.
+</p>
+
+  <h4>3Winter experiences</h4>
+ <p>In winter, Ylläs offers a wide range of activities, such as husky and reindeer safaris, snowmobiling, snowshoeing, fatbike cycling, northern lights tours, and photography courses. </p>
+
+  <h4>Authentic Lapland tranquility</h4>
+  <p>
+    Ylläs offers a peaceful and natural atmosphere that differs from the busier destinations in Lapland. It is the perfect place for those seeking tranquility, clean mountain air, and authentic Lapland experiences.
   </p>
 
-  <h4>3Talvikauden elämykset</h4>
- <p>Talvella Ylläksellä voi nauttia monipuolisista aktiviteeteista, kuten husky- ja porosafareista, moottorikelkkailusta, lumikenkäilystä, fatbike-pyöräilystä sekä revontuliretkistä ja valokuvauskursseista.</p>
-
-  <h4>Aito lappilainen hiljaisuus</h4>
+  <h4>Summer and autumn activities</h4>
   <p>
-    Ylläs tarjoaa rauhallisen ja luonnonläheisen tunnelman, joka eroaa vilkkaammista Lapin kohteista. Se on täydellinen paikka niille, jotka etsivät hiljaisuutta, puhdasta tunturi-ilmaa ja aitoja lappilaisia elämyksiä.
+    Ylläs is also a popular destination outside of winter. In summer and autumn, you can hike in the fells, cycle on varied trails, fish, canoe, and enjoy the Lapland midnight sun.
   </p>
 
-  <h4>Kesän ja syksyn aktiviteetit</h4>
+  <h4>Village services</h4>
   <p>
-    Ylläs on suosittu kohde myös talven ulkopuolella. Kesällä ja ruska-aikaan voi patikoida tuntureilla, pyöräillä monipuolisilla reiteillä, kalastaa, meloa sekä nauttia Lapin yöttömästä yöstä.
-  </p>
-
-  <h4>Kylien palvelut</h4>
-  <p>
-   Äkäslompolon ja Ylläsjärven kylät tarjoavat kattavat palvelut: majoitusvaihtoehtoja mökeistä hotelleihin, ravintoloita, kauppoja, välinevuokraamoja sekä paikallisia tapahtumia ja kulttuuria.
+   The villages of Äkäslompolo and Ylläsjärvi offer comprehensive services: accommodation options ranging from cottages to hotels, restaurants, shops, equipment rentals, and local events and culture.
   </p>
 
   <p>
-    Ylläs on täydellinen kohde niille, jotka etsivät yhdistelmää luonnon rauhaa, tunturien kauneutta ja monipuolisia aktiviteetteja ympäri vuoden.
+    Ylläs is the perfect destination for those seeking a combination of natural tranquility, the beauty of the fells, and a wide range of activities throughout the year.
   </p>`
 
- }
+ },
   { name: 'Apukka Resort', lat: 66.578510, lon: 26.014702, url: 'https://apukkaresort.fi/', icon: 'images/apukka.png', stream: 'https://www.youtube.com/embed/bOEvPL206Hc', streamWidth: 320, streamHeight: 180 },
   { name: 'Beautiful Northern Lights live stream. Credits: Starlapland / Samuli Korvanen', lat: 67.41711, lon: 26.58897, url: 'https://repotracker.fi', icon: 'images/iconi.png', stream: 'https://www.youtube.com/embed/dnlQtDad6Dk', streamWidth: 320, streamHeight: 180 }
 ];
@@ -309,6 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
