@@ -17,7 +17,7 @@ window.getWeather = async function (lat, lon) {
 };
 
 const places = [
- { name: 'Rovaniemi', lat: 66.5, lon: 25.7, url: 'https://visitrovaniemi.fi', icon: 'images/roic.png',  short: 'Rovaniemi on Lapin pääkaupunki ja Joulupukin virallinen kotikaupunki.', 
+ { name: 'Rovaniemi', lat: 66.5, lon: 25.7, url: 'https://visitrovaniemi.fi', icon: 'images/roic.png',  short: 'Rovaniemi is the capital of Lapland and the official home town of Santa Claus.', 
      description: `
        <h2>Rovaniemi – Capital of Lapland and home of Santa Claus</h2>
 
@@ -48,7 +48,7 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
 </p>
     ` 
     },
-    { name: 'Joulupukin Pajakylä', lat: 66.54, lon: 25.84, url: 'https://santaclausvillage.info/', icon: 'images/pukki.png', stream: 'https://www.youtube.com/embed/Cp4RRAEgpeU', streamWidth: 320, streamHeight: 180, short: 'Joulupukin pajakylä - Joulupukin virallinen kotipaikka', description: ` 
+    { name: 'Joulupukin Pajakylä', lat: 66.54, lon: 25.84, url: 'https://santaclausvillage.info/', icon: 'images/pukki.png', stream: 'https://www.youtube.com/embed/Cp4RRAEgpeU', streamWidth: 320, streamHeight: 180, short: 'Santa Claus Village - Santa Claus official home', description: ` 
     <h2>Santa Claus Village – A magical meeting place on the Arctic Circle</h2>
 
   <p>
@@ -78,7 +78,7 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
     Whatever the season, Santa Claus Village offers a memorable experience for visitors of all ages.
   </p>`
     },
-    { name: 'Levi', lat: 67.80, lon: 24.80, url: 'https://www.levi.fi/', icon: 'images/levi.png', short: 'Levi - Suomen ehkä tunnetuin hiihtokeskus', description: 
+    { name: 'Levi', lat: 67.80, lon: 24.80, url: 'https://www.levi.fi/', icon: 'images/levi.png', short: 'Levi – Finlands most famous ski resort', description: 
         `
   <h2>Levi – Finland's most famous ski resort</h2>
 
@@ -118,7 +118,7 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
 
 `
 },
-    { name: 'Ylläs', lat: 67.57, lon: 24.20, url: 'https://yllas.fi/', icon: 'images/yllas.png', short: 'Ylläs - Suomen suurin hiihtokeskus', description: `
+    { name: 'Ylläs', lat: 67.57, lon: 24.20, url: 'https://yllas.fi/', icon: 'images/yllas.png', short: 'Ylläs – Finlands largest ski resort', description: `
   <h2>Ylläs – Peaceful fells and wonderful experiences in Lapland</h2>
 
   <p>
@@ -314,6 +314,7 @@ function showPlaceInfo(place) {
 
 
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
