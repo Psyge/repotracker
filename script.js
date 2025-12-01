@@ -145,23 +145,26 @@ function initButtons() {
   if (forecastBtn && forecastPopup) forecastBtn.addEventListener('click', () => { forecastPopup.style.display = 'flex'; fetchAuroraForecast(); });
   if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
 
-locateBtn.addEventListener("click", () => {
-  navigator.geolocation.getCurrentPosition(pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+const locateBtn = document.getElementById('locate-btn');
+if(locateBtn) {
+  locateBtn.addEventListener("click", () => {
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
 
-    map.setView([lat, lon], 6);
+      map.setView([lat, lon], 6);
 
-    if (!userMarker) {
-      userMarker = L.marker([lat, lon]).addTo(map);
-    }
+      if (!userMarker) {
+        userMarker = L.marker([lat, lon]).addTo(map);
+      }
 
-    showAuroraPopup(lat, lon, userMarker, false); // Google Maps linkkiä ei näytetä
+      // Odotetaan weather fetch valmiiksi ennen popupia
+      await showAuroraPopup(lat, lon, userMarker, false);
 
-  }, err => {
-    alert("Location failed: " + err.message);
+    }, err => {
+      alert("Location failed: " + err.message);
+    });
   });
-});
 }
 
 // --- Aurora NOAA ---
@@ -291,6 +294,7 @@ async function fetchAuroraForecast() {
 
 // --- Aloitetaan kartta ---
 document.addEventListener('DOMContentLoaded', initApp);
+
 
 
 
