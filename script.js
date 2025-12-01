@@ -3,7 +3,7 @@ let auroraLayer = null;
 let userMarker = null;
 let currentData = null;
 
-// --- Get weather ---
+// --- Get weather function ---
 async function getWeather(lat, lon) {
   const url = `https://repotracker.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
   try {
@@ -17,7 +17,9 @@ async function getWeather(lat, lon) {
       icon: data.weather[0].icon,
       clouds: data.clouds.all
     };
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 // --- Show place info ---
@@ -40,6 +42,13 @@ function showPlaceInfo(place) {
   };
 }
 
+// --- Handle map clicks ---
+async function onMapClick(e) {
+  const lat = e.latlng.lat;
+  const lon = e.latlng.lng;
+  await showAuroraPopup(lat, lon, null, true);
+}
+
 // --- Init map ---
 function initApp() {
   if (typeof L === 'undefined') return console.error("Leaflet not loaded");
@@ -55,6 +64,7 @@ function initApp() {
 
   map.on('click', onMapClick);
 
+  // Initialize markers if available
   if (typeof initMarkers === 'function') initMarkers(map, getWeather, showPlaceInfo);
 
   initButtons();
@@ -63,11 +73,12 @@ function initApp() {
   setInterval(fetchAuroraData, 5 * 60 * 1000);
 }
 
-// --- Map click popup ---
+// --- Show aurora popup ---
 async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = true) {
   let score = 0;
   let auroraIntensity = 0;
 
+  // Aurora intensity
   if (currentData && currentData.coordinates) {
     let nearest = null, minDist = Infinity;
     currentData.coordinates.forEach(p => {
@@ -81,17 +92,19 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
     else if (auroraIntensity > 30) score += 1;
   }
 
+  // Weather
   const weather = await getWeather(lat, lon);
-  const clouds = weather ? weather.clouds : 100;
+  let clouds = weather ? weather.clouds : 100;
   if (clouds < 30) score += 2;
   else if (clouds < 60) score += 1;
 
+  // Traffic light status
   let statusEmoji = '🔴', statusText = 'Low chance';
   if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
   else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
   let popupContent = `
-    <strong>Your Northern Lights chance:</strong><br>
+    <strong>Your Northern Lights chance is now:</strong><br>
     ${statusEmoji} ${statusText}<br>
     Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
     Clouds: ${clouds}%<br>
@@ -103,8 +116,11 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
       <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>`;
   }
 
-  if (marker) marker.setLatLng([lat, lon]).bindPopup(popupContent).openPopup();
-  else L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
+  if (marker) {
+    marker.setLatLng([lat, lon]).bindPopup(popupContent).openPopup();
+  } else {
+    L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
+  }
 }
 
 // --- Buttons ---
@@ -131,15 +147,17 @@ function initButtons() {
   if (closeForecast && forecastPopup) closeForecast.addEventListener('click', () => { forecastPopup.style.display = 'none'; });
 
   const locateBtn = document.getElementById('locate-btn');
-  if (locateBtn) locateBtn.addEventListener("click", async () => {
-    navigator.geolocation.getCurrentPosition(async pos => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      map.setView([lat, lon], 6);
-      if (!userMarker) userMarker = L.marker([lat, lon]).addTo(map);
-      await showAuroraPopup(lat, lon, userMarker, false);
-    }, err => alert("Location failed: " + err.message));
-  });
+  if(locateBtn) {
+    locateBtn.addEventListener("click", async () => {
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        map.setView([lat, lon], 6);
+        if (!userMarker) userMarker = L.marker([lat, lon]).addTo(map);
+        await showAuroraPopup(lat, lon, userMarker, false);
+      }, err => alert("Location failed: " + err.message));
+    });
+  }
 }
 
 // --- Aurora NOAA ---
@@ -149,8 +167,11 @@ async function fetchAuroraData() {
   info.className = 'loading';
   info.innerHTML = '⏳ Loading northern lights forecast...';
 
+  const directUrl = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
+  const proxyUrl = 'https://corsproxy.io/?' + directUrl;
+
   try {
-    const res = await fetch('https://services.swpc.noaa.gov/json/ovation_aurora_latest.json');
+    const res = await fetch(directUrl).catch(() => fetch(proxyUrl));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     if (!data.coordinates || !Array.isArray(data.coordinates)) throw new Error("Invalid data format.");
@@ -195,7 +216,8 @@ function drawAuroraOverlay(points) {
     });
 
     const bounds = [[40, -180], [90, 180]];
-    auroraLayer.push(L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map));
+    const overlay = L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map);
+    auroraLayer.push(overlay);
   };
 
   createCanvasOverlay(0);
@@ -203,25 +225,39 @@ function drawAuroraOverlay(points) {
   createCanvasOverlay(canvasWidth);
 }
 
-// --- Forecast Chart ---
+// --- Chart.js ---
+const chartScript = document.createElement('script');
+chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+document.head.appendChild(chartScript);
+
+// --- Forecast chart ---
 async function fetchAuroraForecast() {
   try {
     const response = await fetch('https://services.swpc.noaa.gov/text/3-day-forecast.txt');
     if (!response.ok) throw new Error(`Verkkovirhe: ${response.status}`);
     const text = await response.text();
-    const today = new Date(); const dayLabels = [];
-    for (let i = 0; i < 3; i++) { const d = new Date(today); d.setDate(today.getDate() + i); dayLabels.push(d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })); }
+    const today = new Date(); 
+    const dayLabels = [];
+    for (let i = 0; i < 3; i++) { 
+      const d = new Date(today); d.setDate(today.getDate() + i); 
+      dayLabels.push(d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })); 
+    }
 
     const kpRegex = /[ \t]*(\d{2}-\d{2}UT)[ \t]+([\d\.\(\)G \t]+)/g;
-    const times = [], day1 = [], day2 = [], day3 = []; let match;
+    const times = [], day1 = [], day2 = [], day3 = []; 
+    let match;
     while ((match = kpRegex.exec(text)) !== null) {
       const time = match[1].trim();
       const clean = match[2].replace(/\(G\d\)/g, '').replace(/[ \t]+/g, ' ').trim();
       const values = clean.split(' ').map(Number);
-      if (values.length === 3 && values.every(v => !isNaN(v))) { times.push(time); day1.push(values[0]); day2.push(values[1]); day3.push(values[2]); }
+      if (values.length === 3 && values.every(v => !isNaN(v))) { 
+        times.push(time); day1.push(values[0]); day2.push(values[1]); day3.push(values[2]); 
+      }
     }
+    if (times.length === 0) throw new Error("Kp values not found.");
 
-    const ctxElement = document.getElementById('kpChart'); if (!ctxElement) return;
+    const ctxElement = document.getElementById('kpChart'); 
+    if (!ctxElement) return;
     const ctx = ctxElement.getContext('2d');
     new Chart(ctx, {
       type: 'line',
@@ -237,7 +273,7 @@ async function fetchAuroraForecast() {
         responsive: true,
         plugins: {
           title: { display: true, text: 'Northern Lights forecast (NOAA)' },
-          tooltip: { callbacks: { label: ctx => { const kp = ctx.parsed.y; if (kp >= 5) return `Kp ${kp} - High chance`; if (kp >= 3) return `Kp ${kp} - Moderate chance`; return `Kp ${kp} - Low chance`; } } }
+          tooltip: { callbacks: { label: function(context) { const kp = context.parsed.y; if (kp >= 5) return `Kp ${kp} - High chance`; if (kp >= 3) return `Kp ${kp} - Moderate chance`; return `Kp ${kp} - Low chance`; } } }
         },
         scales: { y: { min: 0, max: 9, title: { display: true, text: 'Kp Index' } }, x: { title: { display: true, text: 'UT Time (3h intervals)' } } }
       }
@@ -246,7 +282,11 @@ async function fetchAuroraForecast() {
   } catch (error) {
     console.error("Error fetching NOAA forecast:", error);
     const container = document.getElementById('errorMessage');
-    if (container) { container.textContent = "⚠️ Error downloading NOAA data: " + error.message; container.style.color = 'red'; container.style.fontWeight = 'bold'; }
+    if (container) { 
+      container.textContent = "⚠️ Error downloading NOAA data: " + error.message; 
+      container.style.color = 'red'; 
+      container.style.fontWeight = 'bold'; 
+    }
   }
 }
 
