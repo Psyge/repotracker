@@ -53,8 +53,12 @@ function initApp() {
   map.setMaxBounds([[-90, -180], [90, 180]]);
   map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
 
-  // Karttaklikkaukset
-  map.on('click', onMapClick);
+ // Karttaklikkaukset
+map.on('click', async (e) => {
+  // Näytetään popup ilman Google Maps -linkkiä
+  await showAuroraPopup(e.latlng.lat, e.latlng.lng, null, true);
+});
+
 
   // Markerit
   if (typeof initMarkers === 'function') initMarkers(map, getWeather, showPlaceInfo);
@@ -294,6 +298,7 @@ async function fetchAuroraForecast() {
 
 // --- Aloitetaan kartta ---
 document.addEventListener('DOMContentLoaded', initApp);
+
 
 
 
