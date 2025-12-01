@@ -29,7 +29,9 @@ const places = [
 <p>
 Rovaniemi is internationally known as the official home of Santa Claus, making it one of Finland's most popular tourist destinations. Especially during the winter months, tourists from all over the world come to experience the magic of Lapland and unique experiences.
   </p>
-<p>One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic Circle. The Arctic Circle runs through the city and can be crossed, for example, at Santa Claus Village, where the border is clearly marked on the ground. Crossing the Arctic Circle is an unforgettable moment for many travelers – it symbolizes the transition to the Arctic region. </p>
+<p>
+One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic Circle. The Arctic Circle runs through the city and can be crossed, for example, at Santa Claus Village, where the border is clearly marked on the ground. Crossing the Arctic Circle is an unforgettable moment for many travelers – it symbolizes the transition to the Arctic region. 
+</p>
 
   <h3>The most popular activities in winter are:</h3>
   <ul>
@@ -140,7 +142,8 @@ Rovaniemi is internationally known as the official home of Santa Claus, making i
 </p>
 
   <h4>Winter experiences</h4>
- <p>In winter, Ylläs offers a wide range of activities, such as husky and reindeer safaris, snowmobiling, snowshoeing, fatbike cycling, northern lights tours, and photography courses. </p>
+ <p>In winter, Ylläs offers a wide range of activities, such as husky and reindeer safaris, snowmobiling, snowshoeing, fatbike cycling, northern lights tours, and photography courses. 
+ </p>
 
   <h4>Authentic Lapland tranquility</h4>
   <p>
@@ -316,6 +319,7 @@ function showPlaceInfo(place) {
 
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
