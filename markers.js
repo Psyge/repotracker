@@ -1,4 +1,4 @@
-console.log("Markers.js loaded");
+
 window.getWeather = async function (lat, lon) {
     const url = `https://repotracker.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
     try {
@@ -319,6 +319,7 @@ function showPlaceInfo(place) {
 
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
