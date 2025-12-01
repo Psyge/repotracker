@@ -170,25 +170,30 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
 
 let markersLayer;
 
-
+// Alusta markerit heti, kun kartta on valmis
 function initMarkers() {
-   
-    if (!map) {
+    if (!window.map) { // varmista, että map on globalissa
         console.warn("Map not ready, waiting...");
+        setTimeout(initMarkers, 500); // kokeillaan uudelleen puolen sekunnin päästä
         return;
     }
 
-    // Jos markersLayer on jo luotu, tyhjennä se
-    if (markersLayer) markersLayer.clearLayers();
-    else markersLayer = L.layerGroup().addTo(map);
+    // Luo tai tyhjennä markersLayer
+    if (markersLayer) {
+        markersLayer.clearLayers();
+    } else {
+        markersLayer = L.layerGroup().addTo(map);
+    }
 
     addMarkers(markersLayer);
-console.log("initMarkers called");
+
+    // Lisää satunnainen delay markerien animaatioon
     document.querySelectorAll('.marker-wrapper').forEach(el => {
         el.style.animationDelay = `${Math.random() * 2}s`;
     });
-}
 
+    console.log("initMarkers called and markers added");
+}
 
 function addMarkers(layer) {
     places.forEach(place => {
@@ -217,13 +222,13 @@ function addMarkers(layer) {
             </div>
 
             <a href="#" class="read-more" data-place="${place.name}">
-   Read more
-</a>
+               Read more
+            </a>
 
             <div class="weather-box" style="margin-top:10px;">
                 <em>Retrieving weather data...</em>
             </div>
-            
+
             ${place.stream
                 ? `<div class="popup-stream" 
                         data-stream="${place.stream}" 
@@ -239,16 +244,13 @@ function addMarkers(layer) {
             .bindPopup(popupContent, { className: 'custom-popup' })
             .addTo(layer);
 
-
         // Popup avautuu
         marker.on('popupopen', async (e) => {
             const popup = e.popup;
             const weatherBox = popup.getElement().querySelector('.weather-box');
 
-            // Lataa sää vain kerran
             if (weatherBox && !weatherBox.dataset.loaded) {
                 const weather = await getWeather(place.lat, place.lon);
-
                 if (weather) {
                     weatherBox.innerHTML = `
                         <div class="weather-row">
@@ -262,13 +264,10 @@ function addMarkers(layer) {
                 } else {
                     weatherBox.innerHTML = "Weather not available";
                 }
-
                 weatherBox.dataset.loaded = "true";
             }
 
-            // Lisää videostream vain kerran
             const container = popup.getElement().querySelector('.popup-stream');
-
             if (container && !container.querySelector('iframe')) {
                 const iframe = document.createElement('iframe');
                 iframe.src = container.dataset.stream;
@@ -281,39 +280,15 @@ function addMarkers(layer) {
         });
     });
 }
-function showPlaceInfo(place) {
-    const defaultSection = document.getElementById("aurora-default");
-    const infoSection = document.getElementById("place-info");
 
-    // Piilotetaan oletussisältö
-    defaultSection.style.display = "none";
-
-    // Näytetään paikan sisältö
-    infoSection.style.display = "block";
-
-    infoSection.innerHTML = `
-        
-        <p>${place.description || ''}</p>
-        ${place.url ? `<p><a href="${place.url}" target="_blank">Visit website</a></p>` : ''}
-        ${place.stream ? 
-            `<iframe src="${place.stream}" width="100%" height="250" style="border:none;margin-top:10px;"></iframe>` : ''}
-        <button id="back-to-default" style="margin-top:15px;">Back to instructions</button>
-    `;
-
-    // Scrollataan osioon
-    infoSection.scrollIntoView({ behavior: "smooth" });
-
-    // Lisää takaisin-napin toiminto
-    document.getElementById("back-to-default").onclick = () => {
-        infoSection.style.display = "none";
-        defaultSection.style.display = "block";
-        defaultSection.scrollIntoView({ behavior: "smooth" });
-    };
+// Käynnistä markerien luonti heti ja myös, kun kartta ilmoittaa valmiista
+if (window.map && window.map._loaded) {
+    initMarkers();
+} else {
+    document.addEventListener('mapReady', initMarkers);
 }
 
 
-
-document.addEventListener('mapReady', initMarkers);
 
 
 
