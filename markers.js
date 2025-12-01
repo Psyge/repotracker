@@ -205,12 +205,10 @@ function addMarkers(layer) {
                ${place.short || place.description}
             </div>
 
-            <a href="#" class="read-more" data-place="${place.name}">
-   
-</a>
+            <a href="#" class="read-more" data-place="${place.name}">Read more</a>
 
             <div class="weather-box" style="margin-top:10px;">
-                <em>${translations[currentLang].weather.loading}</em>
+                <em>Retrieving weather data...</em>
             </div>
             
             ${place.stream
@@ -309,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 document.addEventListener('languageReady', initMarkers);
 document.addEventListener('mapReady', initMarkers);
+
 
 
 
