@@ -68,12 +68,11 @@ function initApp() {
 }
 
 // --- Map click popup ---
-async function onMapClick(e) {
-  const lat = e.latlng.lat;
-  const lon = e.latlng.lng;
+async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = true) {
+  let score = 0;
+  let auroraIntensity = 0;
 
-  let score = 0, auroraIntensity = 0;
-
+  // 1. Aurora-intensiteetti NOAA-datasta
   if (currentData && currentData.coordinates) {
     let nearest = null, minDist = Infinity;
     currentData.coordinates.forEach(p => {
@@ -87,27 +86,41 @@ async function onMapClick(e) {
     else if (auroraIntensity > 30) score += 1;
   }
 
+  // 2. Säätiedot
   const weather = await getWeather(lat, lon);
   let clouds = weather ? weather.clouds : 100;
   if (clouds < 30) score += 2;
   else if (clouds < 60) score += 1;
 
-  let statusEmoji = '🔴', statusText = 'Low chance';
+  // 3. Liikennevalo
+  let statusEmoji = '🔴';
+  let statusText = 'Low chance';
   if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
   else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
-  const popupContent = `
-    <strong>Your Northern Lights chance:</strong><br>
+  // 4. Popup sisältö
+  let popupContent = `
+    <strong>Your Northern Lights chance is now:</strong><br>
     ${statusEmoji} ${statusText}<br>
     Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
     Clouds: ${clouds}%<br>
-    Temp: ${weather ? weather.temp + '°C' : 'N/A'}<br>
-    <strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
-    <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>
+    Temp: ${weather ? weather.temp + '°C' : 'N/A'}
   `;
 
-  L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
+  // Lisää Google Maps linkki vain jos parametri true
+  if (showGoogleMapsLink) {
+    popupContent += `<br><strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
+    <a href="https://www.google.com/maps?q=${lat},${lon}" target="_blank" style="color:#1e88e5;">Open in Google Maps</a>`;
+  }
+
+  // 5. Näytetään markerilla tai luodaan popup
+  if (marker) {
+    marker.setLatLng([lat, lon]).bindPopup(popupContent).openPopup();
+  } else {
+    L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
+  }
 }
+
 
 // --- Buttons ---
 function initButtons() {
@@ -276,5 +289,6 @@ async function fetchAuroraForecast() {
 
 // --- Aloitetaan kartta ---
 document.addEventListener('DOMContentLoaded', initApp);
+
 
 
