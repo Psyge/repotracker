@@ -90,6 +90,7 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
   <ul>
     <li>Skiing and snowboarding: dozens of slopes and top-class cross-country ski trails offer options for skiers of all levels. </li>
     <li>Alpine Skiing World Cup: Levi hosts the opening competitions of the World Cup every year. </li>
+    <li>Usually the first place where the slopes open at the beginning of the ski season.</li>
     <li>Snowmobile safaris: routes through the Lapland landscape for beginners and experienced riders alike. </li>
     <li>Husky and reindeer sleigh rides: unforgettable experiences in the winter wilderness. </li>
     <li>Northern Lights tours: an opportunity to experience the northern sky in all its glory. </li>
@@ -164,6 +165,45 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
   </p>`
 
  },
+  { name: 'Saariselkä', lat: 68.41975, lon: 27.41246, url: 'https://skisaariselka.com/', icon: 'images/saaris.png', short: 'Saariselkä – Laplands year-round tourist gem in the fells.', description: `
+  
+<h2>Saariselkä – The jewel of Lapland's fells</h2>
+
+<p>
+  Saariselkä is located in the municipality of Inari, Lapland, and is one of Finland's northernmost and most diverse tourist destinations. It is known for its magnificent fell landscapes, extensive outdoor activities, and peaceful Lapland atmosphere. Saariselkä attracts tourists all year round.
+</p>
+
+<h3>The best winter experiences</h3>
+<ul>
+  <li>Downhill skiing and snowboarding: The Saariselkä Ski Center offers several slopes and excellent conditions for skiers of all levels. </li>
+  <li>Cross-country skiing: Over 200 km of groomed trails run through the fells and forests. </li>
+  <li>Snowmobile safaris: Routes in the Lapland wilderness for both beginners and experienced drivers. </li>
+  <li>Husky and reindeer rides: Unforgettable experiences in the snowy wilderness. </li>
+  <li>Northern lights tours: A chance to see the magical northern lights from fall to spring. </li>
+  <li>Snowshoeing and sledding: Saariselkä has Finland's longest sledding hill (1.8 km) and many snowshoeing trails. </li>
+</ul>
+
+<h3>Summer and autumn activities</h3>
+<p>
+  Saariselkä is a versatile destination even when there is no snow. Hiking trails in Urho Kekkonen National Park, mountain biking, fishing, and gold panning in Tankavaara attract nature lovers. Fell tops, such as Kaunispää, offer magnificent scenery and viewing points.
+</p>
+
+<h3>Accommodation and services</h3>
+<p>
+  The village of Saariselkä offers a wide range of accommodation options: cabins, apartments, and hotels. The area also has restaurants, cafés, shops, and program services that make your vacation easy and enjoyable.
+</p>
+
+<h3>Wellness and spa experiences</h3>
+<p>
+  Saariselkä offers relaxation in spas and saunas. Traditional smoke saunas, hot tubs, and pampering treatments complement an active day in the fells.
+</p>
+
+<h3>Events</h3>
+<p>
+  Saariselkä hosts various events throughout the year, such as skiing competitions, gold events, and local cultural events. The atmosphere is peaceful, close to nature, and uniquely Lapland.
+</p>
+  `
+  },
   { name: 'Apukka Resort', lat: 66.578510, lon: 26.014702, url: 'https://apukkaresort.fi/', icon: 'images/apukka.png', stream: 'https://www.youtube.com/embed/bOEvPL206Hc', streamWidth: 320, streamHeight: 180 },
   { name: 'Beautiful Northern Lights live stream. Credits: Starlapland / Samuli Korvanen', lat: 67.41711, lon: 26.58897, url: 'https://repotracker.fi', icon: 'images/iconi.png', stream: 'https://www.youtube.com/embed/dnlQtDad6Dk', streamWidth: 320, streamHeight: 180 }
 ];
@@ -238,6 +278,7 @@ if (window.map && window.map._loaded) {
 } else {
     document.addEventListener('mapReady', initMarkers);
 }
+
 
 
 
