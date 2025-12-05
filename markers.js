@@ -97,7 +97,7 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
     <li>Snowshoeing and ice sculptures – exercise and experiences in the snow. </li>
   </ul>
   
-  <img src="images/levipic.png" alt="Levi first snow">
+  <img src="images/levipic.png" alt="Levi first snow" width="400" height="264">
   
   <h3>Summer and fall activities</h3>
   <p>
@@ -321,6 +321,7 @@ if (window.map && window.map._loaded) {
 } else {
     document.addEventListener('mapReady', initMarkers);
 }
+
 
 
 
