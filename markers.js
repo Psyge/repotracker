@@ -96,7 +96,9 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
     <li>Northern Lights tours: an opportunity to experience the northern sky in all its glory. </li>
     <li>Snowshoeing and ice sculptures – exercise and experiences in the snow. </li>
   </ul>
-
+  
+  <img src="images/levipic.png" alt="Levi first snow">
+  
   <h3>Summer and fall activities</h3>
   <p>
     Levi is a versatile year-round destination. In summer and autumn, the area attracts hikers, mountain bikers, fishermen, and golfers. The summit of Levi can also be reached by gondola lift, which offers magnificent views in every season.
@@ -319,6 +321,7 @@ if (window.map && window.map._loaded) {
 } else {
     document.addEventListener('mapReady', initMarkers);
 }
+
 
 
 
