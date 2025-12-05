@@ -204,6 +204,47 @@ One of the favorite experiences for visitors to Rovaniemi is crossing the Arctic
 </p>
   `
   },
+  { name: 'Ruka', lat: 66.167296, lon: 29.139433, url: 'https://www.ruka.fi/en', icon: 'images/ruka.png', short: 'Ruka – One of Finlands most popular ski resorts', description: `
+  <h2>Ruka – Finland's classic winter destination</h2>
+
+<p>
+  Ruka is located in Kuusamo, Northern Ostrobothnia, and is one of Finland's most famous ski resorts.
+  It offers diverse slopes, a wide range of services, and stunning natural surroundings that attract tourists all year round.
+  Ruka is also known for its early season start – its slopes are often among the first to open in Finland.
+</p>
+
+<h3>Parhaat talvielämykset</h3>
+<ul>
+  <li>Laskettelu ja lumilautailu: yli 30 rinnettä ja modernit hissit palvelevat kaiken tasoisia laskijoita.</li>
+  <li>Maastohiihto: laaja latuverkosto Kuusamon hienoissa maisemissa.</li>
+  <li>Moottorikelkkasafarit: reittejä erämaan halki sekä aloittelijoille että kokeneille kuljettajille.</li>
+  <li>Husky- ja poroajelut: unohtumattomia elämyksiä lumisessa luonnossa.</li>
+  <li>Revontuliretket: mahdollisuus nähdä taianomaiset revontulet talvitaivaalla.</li>
+  <li>Lumikenkäily ja talviretket: luonnonrauhaa ja liikuntaa tuntureilla.</li>
+</ul>
+<h3>Summer and autumn activities</h3>
+<p>
+  Ruka is also popular during the snow-free season. Hiking trails in Oulanka National Park and the classic Karhunkierros trail,
+  mountain biking, canoeing, and fishing offer unforgettable experiences for nature lovers.
+</p>
+
+<h3>Accommodation and services</h3>
+<p>
+  The village of Ruka offers a wide range of accommodation options: cottages, apartments, and hotels. The area has plenty of restaurants,
+  cafes, shops, and entertainment services to make your vacation easy and enjoyable.
+</p>
+
+<h3>Wellness and spa experiences</h3>
+<p>
+  Ruka offers relaxation in spas and saunas. Pampering treatments and wellness services complement an active day in the fells.
+</p>
+<h3>Events</h3>
+<p>
+  Events are held in Ruka throughout the year: skiing competitions, music events, and local
+  cultural experiences. The atmosphere is energetic, close to nature, and easily accessible.
+</p>
+`
+  },  
   { name: 'Apukka Resort', lat: 66.578510, lon: 26.014702, url: 'https://apukkaresort.fi/', icon: 'images/apukka.png', stream: 'https://www.youtube.com/embed/bOEvPL206Hc', streamWidth: 320, streamHeight: 180 },
   { name: 'Beautiful Northern Lights live stream. Credits: Starlapland / Samuli Korvanen', lat: 67.41711, lon: 26.58897, url: 'https://repotracker.fi', icon: 'images/iconi.png', stream: 'https://www.youtube.com/embed/dnlQtDad6Dk', streamWidth: 320, streamHeight: 180 }
 ];
@@ -278,6 +319,7 @@ if (window.map && window.map._loaded) {
 } else {
     document.addEventListener('mapReady', initMarkers);
 }
+
 
 
 
