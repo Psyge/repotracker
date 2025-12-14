@@ -1,0 +1,9 @@
+{
+  "name": "Levi",
+  "lat": 67.80,
+  "lon": 24.80,
+  "url": "https://www.levi.fi/",
+  "icon": "levi.png",
+  "short": "Levi – Suomen ehkä tunnetuin hiihtokeskus",
+  "descriptionFile": "levi.html"
+}
