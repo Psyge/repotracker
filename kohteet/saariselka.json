@@ -1,0 +1,9 @@
+{
+  "name": "Saariselkä",
+  "lat": 68.41975,
+  "lon": 27.41246,
+  "url": "https://skisaariselka.com/",
+  "icon": "images/saaris.png",
+  "short": "Saariselkä – Laplands year-round tourist gem in the fells.",
+  "descriptionFile": "saariselka.html"
+} 
