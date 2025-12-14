@@ -1,3 +1,12 @@
 {
-
+ "name": "Beautiful Northern Lights live stream. Credits: Starlapland / Samuli Korvanen", 
+    "lat": 67.41711, 
+    "lon": 26.58897, 
+    "url": "https://repotracker.fi", 
+    "icon": "images/iconi.png", 
+    "stream": "https://www.youtube.com/embed/dnlQtDad6Dk", 
+    "streamWidth": 320, 
+    "streamHeight": 180, 
+    "short": "Northern Lights live streaming from lapland", 
+    
 }
