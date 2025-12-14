@@ -4,7 +4,7 @@
   "lat": 66.5,
   "lon": 25.7,
   "url": "https://visitrovaniemi.fi",
-  "icon": "roic.png",
-  "short": "Rovaniemi – Lapin pääkaupunki ja Joulupukin virallinen kotikaupunki",
+  "icon": "images/roic.png",
+  "short": "Rovaniemi is the capital of Lapland and the official home town of Santa Claus.",
   "descriptionFile": "rovaniemi.html"
 }
