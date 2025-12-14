@@ -3,7 +3,7 @@
   "lat": 67.80,
   "lon": 24.80,
   "url": "https://www.levi.fi/",
-  "icon": "levi.png",
-  "short": "Levi – Suomen ehkä tunnetuin hiihtokeskus",
+  "icon": "images/levi.png",
+  "short": "Levi – Finlands most famous ski resort",
   "descriptionFile": "levi.html"
 }
