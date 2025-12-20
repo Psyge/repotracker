@@ -225,6 +225,7 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
 // UI-painikkeiden init
 // ------------------------
 
+
 function initButtons() {
   const helpPopup = document.getElementById('help-popup');
   const closePopupBtn = document.getElementById('close-popup');
@@ -244,7 +245,8 @@ function initButtons() {
   }
   if (showHelpLink && helpPopup) {
     showHelpLink.addEventListener('click', (e) => {
-      e.preventDefault();
+      e.preventDefault();     // tämä linkki avaa popupin
+      e.stopPropagation();
       helpPopup.style.display = 'flex';
     });
   }
@@ -256,31 +258,45 @@ function initButtons() {
   const closeForecast = document.getElementById('close-forecast');
   const locateBtn = document.getElementById('locate-btn');
 
-  // 🔒 Estä kuplinta kaikista UI-kontrolleista, jotta kartta ei saa niiden klikkejä
-  [menuBtn, menu, forecastBtn, forecastPopup, closeForecast, locateBtn, helpPopup, closePopupBtn, showHelpLink]
+  // 1) Nappulat (eivät navigoi)
+  [menuBtn, forecastBtn, closeForecast, locateBtn, closePopupBtn]
     .filter(Boolean)
     .forEach(el => {
-      // DOM-tasolla
       el.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
       });
+    });
 
-      // Leaflet-tasolla
+  // 2) Kontit (menu, forecastPopup, helpPopup): EI preventDefault
+  [menu, forecastPopup, helpPopup]
+    .filter(Boolean)
+    .forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
       if (typeof L !== 'undefined') {
         L.DomEvent.disableClickPropagation(el);
         L.DomEvent.disableScrollPropagation(el);
       }
     });
 
-  // Menu toggle
+  // 3) Menun linkit: navigoivat
+  document.querySelectorAll('#menu a[href]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.stopPropagation(); // sallitaan navigointi, estetään vain kartan reagointi
+      // a.target = '_self'; // halutessa varmistus
+    });
+  });
+
+  // 4) Menu toggle
   if (menuBtn && menu) {
     menuBtn.addEventListener('click', () => {
       menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
     });
   }
 
-  // “Can I see” –popup (ennallaan, mutta suojattu)
+  // 5) Forecast-popup avaus/sulku
   if (forecastBtn && forecastPopup) {
     forecastBtn.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -298,7 +314,7 @@ function initButtons() {
     });
   }
 
-  // Geolokaatio (lisätty stopPropagation varmuuden vuoksi)
+  // 6) Geolokaatio
   if (locateBtn) {
     locateBtn.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -321,6 +337,7 @@ function initButtons() {
     });
   }
 }
+
 
 
 // ------------------------
@@ -478,5 +495,6 @@ async function fetchAuroraForecast() {
 // Käynnistys
 // ------------------------
 document.addEventListener('DOMContentLoaded', initApp);
+
 
 
