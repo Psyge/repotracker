@@ -172,9 +172,46 @@ async function initAppMap() {
   // NOAA-data + päivitys
   fetchAuroraData();
   setInterval(fetchAuroraData, 5 * 60 * 1000);
-
+await openPlaceFromUrlParam();
   // Mahdollinen muu karttaan liittyvä initialisointi...
 }
+
+async function openPlaceFromUrlParam() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const kohdeId = params.get('kohde');
+    if (!kohdeId) return;
+
+    const res = await fetch(`kohteet/${encodeURIComponent(kohdeId)}.json`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Kohteen ${kohdeId} lataus epäonnistui`);
+    const data = await res.json();
+
+    const lat = parseFloat(data.lat);
+    const lon = parseFloat(data.lon);
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+      throw new Error('Virheelliset koordinaatit JSONissa');
+    }
+
+    const title = data.name || kohdeId;
+    const desc  = data.description || data.kuvaus || '';
+    const img   = data.image ? `<p>${data.image}</p>` : (data.kuva ? `<p>${data.kuva}</p>` : '');
+
+    const marker = L.marker([lat, lon]).addTo(map);
+    marker.bindPopup(
+      `<div>
+        <h3>${title}</h3>
+        ${img}
+        <p>${desc}</p>
+        <p><small>(${lat.toFixed(5)}, ${lon.toFixed(5)})</small></p>
+      </div>`
+    ).openPopup();
+
+    map.setView([lat, lon], 12);
+  } catch (e) {
+    console.error(e);
+  }
+}
+``
 
 
 // ---------------------------------------
@@ -499,19 +536,23 @@ async function fetchAuroraForecast() {
   }
 }
 
+
 document.addEventListener('DOMContentLoaded', async () => {
-  // A) Alusta UI (menu jne.) AINA
+  // 1) UI-napit (menu, help-popup, forecast, locate, jne.) AINA
   if (typeof initButtons === 'function') {
     try { initButtons(); } catch (e) { console.error('initButtons error:', e); }
   }
 
-  // B) Aja kartta vain, jos #map + Leaflet
+  // 2) Kartta vain jos #map löytyy ja Leaflet on ladattu
   const hasMap = !!document.getElementById('map');
   const leafletLoaded = (typeof L !== 'undefined');
+
   if (hasMap && leafletLoaded && typeof initAppMap === 'function') {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
+
 
 
 
