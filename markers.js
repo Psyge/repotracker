@@ -1,5 +1,4 @@
 
-
 // ===============================
 // Markers (Leaflet) for RepoTracker
 // ===============================
@@ -27,8 +26,25 @@
   // markersLayer pidetään moduulin sisällä, ei globaalina
   let markersLayer = null;
 
+  // Olemassa olevien markkereiden indeksi: id -> L.Marker
+  // (pidetään moduulin sisällä, ei globaalia vuotoa)
+  const placeMarkers = new Map();
+
   // Estä delegoitu kuuntelija lisääntymästä moneen kertaan
   let readMoreBound = false;
+
+  /**
+   * Pieni apu id:n muodostukseen, jos place.id puuttuu.
+   * Yritetään slugata nimi: "Olkkajärvi parking lot" -> "olkkajarvi-parking-lot"
+   */
+  function toSlug(name) {
+    if (typeof name !== 'string') return null;
+    return name
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // poista diakriitit
+      .trim().toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-');
+  }
 
   /**
    * Luo markerit kartalle annetusta places-listasta
@@ -46,6 +62,8 @@
     } else {
       markersLayer = L.layerGroup().addTo(map);
     }
+    // Nollaa indeksi aina kun luodaan uudelleen
+    placeMarkers.clear();
 
     places.forEach(place => {
       const customIcon = L.divIcon({
@@ -91,6 +109,14 @@
         .bindPopup(popupContent, { className: 'custom-popup' })
         .addTo(markersLayer);
 
+      // 🔑 Tallenna marker indeksiin id:llä (ensisijaisesti place.id)
+      const id = place.id ?? toSlug(place.name);
+      if (id) {
+        placeMarkers.set(id, marker);
+      } else {
+        console.warn('Kohteelta puuttuu tunniste id/name → ei voida avata URL-parametrilla:', place);
+      }
+
       marker.on('popupopen', async (e) => {
         const popupEl = e.popup.getElement();
 
@@ -100,7 +126,11 @@
           const weather = await (getWeatherFn || getWeatherGlobal)(place.lat, place.lon);
           if (weather) {
             weatherBox.innerHTML = `
-              <div class="weather-row"><img src="https://openweathermap.org/img/wn/${weather.icon}.png"><span>${weather.temp}°C — ${weather.desc}</span></div><small>Feels like ${weather.feels}°C | Wind ${weather.wind} m/s</small>
+              <div class="weather-row">
+                <img src="https://openweathermap.org/img/wn/${weather.icon}.png">
+                <span>${weather.temp}°C — ${weather.desc}</span>
+              </div>
+              <small>Feels like ${weather.feels}°C | Wind ${weather.wind} m/s</small>
             `;
           } else {
             weatherBox.textContent = 'Weather not available';
@@ -138,7 +168,28 @@
     }
   }
 
-  // Vie julkinen API vain yhtenä nimenä
-  window.initMarkers = initMarkers;
-})();
+  /**
+   * Avaa olemassa olevan markerin pop-upin ja keskittää kartan siihen.
+   * Ei luo uutta markkeria.
+   * @param {string} id - Kohteen tunniste (esim. "oukku")
+   * @param {number} [zoom=12] - Zoom-taso kun keskitetään.
+   * @returns {boolean} - true jos marker löytyi ja avattiin; muuten false.
+   */
+  function openExistingMarkerById(id, zoom = 12) {
+    if (!id) return false;
+    const m = placeMarkers.get(id);
+    if (!m) return false;
+    const ll = m.getLatLng();
+    // map on saatavilla Leafletin markerin _map kautta; mieluummin käytä globaalin map-viitettä
+    const theMap = m._map || (typeof window.map !== 'undefined' ? window.map : null);
+    if (theMap) {
+      theMap.setView(ll, Math.max(theMap.getZoom(), zoom));
+    }
+    m.openPopup();
+    return true;
+  }
 
+  // Vie julkinen API
+  window.initMarkers = initMarkers;
+  window.openExistingMarkerById = openExistingMarkerById;
+})();
