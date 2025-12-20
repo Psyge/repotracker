@@ -141,21 +141,26 @@ const t = e.originalEvent?.target;
 // ---------------------
 // App init / Leaflet
 // ---------------------
-async function initApp() {
-  if (typeof L === 'undefined') return console.error('Leaflet not loaded');
 
+async function initAppMap() {
+  if (typeof L === 'undefined') {
+    console.error('Leaflet not loaded');
+    return;
+  }
+
+  // --- kaikki vanhasta initApp:sta karttaan liittyvä ---
   map = L.map('map', { center: [65, 25], zoom: 4, minZoom: 2, maxZoom: 15 });
+
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO',
     subdomains: 'abcd',
     maxZoom: 19
   }).addTo(map);
+
   map.setMaxBounds([[-90, -180], [90, 180]]);
   map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
 
   map.on('click', onMapClick);
-
-  initButtons();
 
   // Lataa paikat ja luo markerit
   const places = await loadPlaces();
@@ -164,10 +169,13 @@ async function initApp() {
   }
   initMarkers(map, getWeather, showPlaceInfo, places);
 
-  // NOAA-data
+  // NOAA-data + päivitys
   fetchAuroraData();
   setInterval(fetchAuroraData, 5 * 60 * 1000);
+
+  // Mahdollinen muu karttaan liittyvä initialisointi...
 }
+
 
 // ---------------------------------------
 // Auroran mahdollisuus -popup valitusta
@@ -512,6 +520,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initApp(); } catch (e) { console.error('initApp error:', e); }
   }
 });
+
 
 
 
