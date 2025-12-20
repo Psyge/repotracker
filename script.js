@@ -183,7 +183,7 @@ await openPlaceFromUrlParam();
 
 
 
-
+console.debug('Saatavilla marker-id:t:', Array.from(placeMarkers.keys()));
 async function openPlaceFromUrlParam() {
   const params = new URLSearchParams(window.location.search);
   const kohdeIdRaw = params.get('kohde'); // määritellään ensin
@@ -544,6 +544,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
