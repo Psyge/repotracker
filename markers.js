@@ -109,6 +109,7 @@
         .bindPopup(popupContent, { className: 'custom-popup' })
         .addTo(markersLayer);
 
+      placeMarkers.set(place.id, marker);
       // 🔑 Tallenna marker indeksiin id:llä (ensisijaisesti place.id)
       const id = place.id ?? toSlug(place.name);
       if (id) {
@@ -193,3 +194,4 @@
   window.initMarkers = initMarkers;
   window.openExistingMarkerById = openExistingMarkerById;
 })();
+
