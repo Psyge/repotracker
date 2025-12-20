@@ -1,0 +1,19 @@
+
+<script>
+// 1. Hae URL-parametri
+const params = new URLSearchParams(window.location.search);
+const kohdeId = params.get('kohde');
+
+if (kohdeId) {
+  // 2. Hae kohteen data
+  fetch(`https://repotracker.fi/kohteet/${kohdeId}.json`)
+    .then(response => response.json())
+    .then(data => {
+      // 3. Lisää marker kartalle ja avaa popup
+      const marker = L.marker([data.lat, data.lon]).addTo(map);
+      marker.bindPopup(`<h3>${data.nimi}</h3><p>${data.kuvaus}</p>`).openPopup();
+      map.setView([data.lat, data.lon], 12); // Zoomaa kohteeseen
+    })
+    .catch(err => console.error('Virhe ladattaessa kohdetta:', err));
+}
+</script>
