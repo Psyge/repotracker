@@ -1,19 +1,36 @@
 
-<script>
-// 1. Hae URL-parametri
-const params = new URLSearchParams(window.location.search);
-const kohdeId = params.get('kohde');
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>Kohteen tiedot</title>
+<style>
+  #json-container {
+    white-space: pre-wrap;
+    background: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+<h1>Kohteen tiedot</h1>
+<div id="json-container">Ladataan...</div>
 
-if (kohdeId) {
-  // 2. Hae kohteen data
-  fetch(`https://repotracker.fi/kohteet/${kohdeId}.json`)
-    .then(response => response.json())
-    .then(data => {
-      // 3. Lisää marker kartalle ja avaa popup
-      const marker = L.marker([data.lat, data.lon]).addTo(map);
-      marker.bindPopup(`<h3>${data.nimi}</h3><p>${data.kuvaus}</p>`).openPopup();
-      map.setView([data.lat, data.lon], 12); // Zoomaa kohteeseen
-    })
-    .catch(err => console.error('Virhe ladattaessa kohdetta:', err));
+<script>
+async function loadJson() {
+  try {
+    const res = await fetch('https://repotracker.fi/kohteet/oukku.json');
+    if (!res.ok) throw new Error('Virhe ladattaessa JSON');
+    const data = await res.json();
+    document.getElementById('json-container').textContent =
+      JSON.stringify(data, null, 2); // kauniisti muotoiltu
+  } catch (err) {
+    document.getElementById('json-container').textContent = 'Virhe: ' + err.message;
+  }
 }
+loadJson();
 </script>
+</body>
+</html>
