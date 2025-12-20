@@ -497,7 +497,23 @@ async function fetchAuroraForecast() {
 
 // ... kaikki funktiot (initButtons, initAppMap jne.)
 
-document.addEventListener('DOMContentLoaded', initApp);
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1) Alusta UI-napit AINA
+  if (typeof initButtons === 'function') {
+    try { initButtons(); } catch (e) { console.error('initButtons error:', e); }
+  }
+
+  // 2) Aja kartta vain jos sivulla on #map JA Leaflet on ladattu
+  const hasMap = !!document.getElementById('map');
+  const leafletLoaded = (typeof L !== 'undefined');
+
+  if (hasMap && leafletLoaded && typeof initApp === 'function') {
+    try { await initApp(); } catch (e) { console.error('initApp error:', e); }
+  }
+});
+
+
 
 
 
