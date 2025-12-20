@@ -183,27 +183,25 @@ await openPlaceFromUrlParam();
 
 
 
-async function openPlaceFromUrlParam() {
-  
-console.debug('URL kohde=', kohdeIdRaw, 'norm=', kohdeId);
-console.debug('placeMarkers keys=', Array.from(placeMarkers.keys()));
 
+async function openPlaceFromUrlParam() {
   const params = new URLSearchParams(window.location.search);
-  const kohdeIdRaw = params.get('kohde');
+  const kohdeIdRaw = params.get('kohde'); // määritellään ensin
   if (!kohdeIdRaw) return;
 
-  const kohdeId = kohdeIdRaw.toLowerCase(); // normalisoi samaan muotoon kuin indeksi
+  const kohdeId = kohdeIdRaw.toLowerCase(); // normalisointi
   const existing = placeMarkers.get(kohdeId);
 
   if (!existing) {
     console.warn(`Markeria ei löytynyt id:llä "${kohdeId}". Saatavilla:`, Array.from(placeMarkers.keys()));
-    return; // ⬅️ ei fallbackia → ei enää “valinnaista” popupia
+    return; // ei fallbackia → ei luoda uutta popupia
   }
 
   const ll = existing.getLatLng();
   map.setView(ll, Math.max(map.getZoom(), 12));
   existing.openPopup();
 }
+
 
 
 
@@ -546,6 +544,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
