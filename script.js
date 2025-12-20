@@ -181,11 +181,22 @@ await openPlaceFromUrlParam();
 }
 
 
+
 async function openPlaceFromUrlParam() {
   const params = new URLSearchParams(window.location.search);
   const kohdeId = params.get('kohde');
   if (!kohdeId) return;
 
+  // 1) Avaa jo olemassa oleva marker
+  const existing = placeMarkers.get(kohdeId);
+  if (existing) {
+    const ll = existing.getLatLng();
+    map.setView(ll, Math.max(map.getZoom(), 12));
+    existing.openPopup();
+    return;
+  }
+
+  // 2) Fallback (valinnainen): jos marker puuttuu manifestista
   try {
     const res = await fetch(`kohteet/${encodeURIComponent(kohdeId)}.json`, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Kohteen ${kohdeId} lataus epäonnistui`);
@@ -197,18 +208,22 @@ async function openPlaceFromUrlParam() {
       throw new Error('Virheelliset koordinaatit JSONissa');
     }
 
-    const marker = L.marker([lat, lon]).addTo(map);
-    marker.bindPopup(`
-      <h3>${data.name || kohdeId}</h3>
-      <p>${data.description || ''}</p>
-      <p><strong>Koordinaatit:</strong> ${lat}, ${lon}</p>
-    `).openPopup();
+    // Näytä väliaikainen popup ilman pysyvää markkeria
+    L.popup()
+      .setLatLng([lat, lon])
+      .setContent(`
+        <h3>${data.name || kohdeId}</h3>
+        <p>${data.description || ''}</p>
+        <p><strong>Koordinaatit:</strong> ${lat}, ${lon}</p>
+      `)
+      .openOn(map);
 
     map.setView([lat, lon], 12);
   } catch (e) {
     console.error(e);
   }
 }
+
 
 
 
@@ -549,6 +564,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
