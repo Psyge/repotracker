@@ -245,7 +245,6 @@ function initButtons() {
   if (showHelpLink && helpPopup) {
     showHelpLink.addEventListener('click', (e) => {
       e.preventDefault();
-      e.stopPropagation();
       helpPopup.style.display = 'flex';
     });
   }
@@ -479,4 +478,5 @@ async function fetchAuroraForecast() {
 // Käynnistys
 // ------------------------
 document.addEventListener('DOMContentLoaded', initApp);
+
 
