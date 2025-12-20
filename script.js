@@ -182,47 +182,29 @@ await openPlaceFromUrlParam();
 
 
 
+
 async function openPlaceFromUrlParam() {
+  
+console.debug('URL kohde=', kohdeIdRaw, 'norm=', kohdeId);
+console.debug('placeMarkers keys=', Array.from(placeMarkers.keys()));
+
   const params = new URLSearchParams(window.location.search);
-  const kohdeId = params.get('kohde');
-  if (!kohdeId) return;
+  const kohdeIdRaw = params.get('kohde');
+  if (!kohdeIdRaw) return;
 
-  // 1) Avaa jo olemassa oleva marker
+  const kohdeId = kohdeIdRaw.toLowerCase(); // normalisoi samaan muotoon kuin indeksi
   const existing = placeMarkers.get(kohdeId);
-  if (existing) {
-    const ll = existing.getLatLng();
-    map.setView(ll, Math.max(map.getZoom(), 12));
-    existing.openPopup();
-    return;
+
+  if (!existing) {
+    console.warn(`Markeria ei löytynyt id:llä "${kohdeId}". Saatavilla:`, Array.from(placeMarkers.keys()));
+    return; // ⬅️ ei fallbackia → ei enää “valinnaista” popupia
   }
 
-  // 2) Fallback (valinnainen): jos marker puuttuu manifestista
-  try {
-    const res = await fetch(`kohteet/${encodeURIComponent(kohdeId)}.json`, { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Kohteen ${kohdeId} lataus epäonnistui`);
-    const data = await res.json();
-
-    const lat = parseFloat(data.lat);
-    const lon = parseFloat(data.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-      throw new Error('Virheelliset koordinaatit JSONissa');
-    }
-
-    // Näytä väliaikainen popup ilman pysyvää markkeria
-    L.popup()
-      .setLatLng([lat, lon])
-      .setContent(`
-        <h3>${data.name || kohdeId}</h3>
-        <p>${data.description || ''}</p>
-        <p><strong>Koordinaatit:</strong> ${lat}, ${lon}</p>
-      `)
-      .openOn(map);
-
-    map.setView([lat, lon], 12);
-  } catch (e) {
-    console.error(e);
-  }
+  const ll = existing.getLatLng();
+  map.setView(ll, Math.max(map.getZoom(), 12));
+  existing.openPopup();
 }
+
 
 
 
@@ -564,6 +546,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
