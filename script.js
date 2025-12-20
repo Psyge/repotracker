@@ -7,6 +7,7 @@ let map;
 let auroraLayer = null;        // array of overlays
 let userMarker = null;
 let currentData = null;        // NOAA JSON
+let placeMarkers = new Map(); // id -> Leaflet marker
 
 // ------------------------------
 // Weather from Cloudflare Worker
@@ -548,6 +549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
