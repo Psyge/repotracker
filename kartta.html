@@ -18,19 +18,42 @@
 <h1>Kohteen tiedot</h1>
 <div id="json-container">Ladataan...</div>
 
+
 <script>
-async function loadJson() {
-  try {
-    const res = await fetch('https://repotracker.fi/kohteet/oukku.json');
-    if (!res.ok) throw new Error('Virhe ladattaessa JSON');
-    const data = await res.json();
-    document.getElementById('json-container').textContent =
-      JSON.stringify(data, null, 2); // kauniisti muotoiltu
-  } catch (err) {
-    document.getElementById('json-container').textContent = 'Virhe: ' + err.message;
+document.addEventListener('DOMContentLoaded', async () => {
+  // Alusta Leaflet-kartta
+  const map = L.map('map').setView([65, 25], 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Lue URL-parametri
+  const params = new URLSearchParams(window.location.search);
+  const kohdeId = params.get('kohde');
+
+  if (kohdeId) {
+    try {
+      const res = await fetch(`kohteet/${kohdeId}.json`);
+      if (!res.ok) throw new Error('Kohteen lataus epäonnistui');
+      const data = await res.json();
+
+      // Lisää marker ja popup
+      const marker = L.marker([data.lat, data.lon]).addTo(map);
+      marker.bindPopup(`
+        <h3>${data.name || 'Kohde'}</h3>
+        <p>${data.description || ''}</p>
+        <p><strong>Koordinaatit:</strong> ${data.lat}, ${data.lon}</p>
+      `).openPopup();
+
+      // Zoomaa kohteeseen
+      map.setView([data.lat, data.lon], 12);
+    } catch (err) {
+      console.error(err);
+      alert('Virhe ladattaessa kohdetta.');
+    }
   }
-}
-loadJson();
+});
 </script>
+
 </body>
 </html>
