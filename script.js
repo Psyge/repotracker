@@ -176,12 +176,13 @@ await openPlaceFromUrlParam();
   // Mahdollinen muu karttaan liittyvä initialisointi...
 }
 
-async function openPlaceFromUrlParam() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const kohdeId = params.get('kohde');
-    if (!kohdeId) return;
 
+async function openPlaceFromUrlParam() {
+  const params = new URLSearchParams(window.location.search);
+  const kohdeId = params.get('kohde');
+  if (!kohdeId) return;
+
+  try {
     const res = await fetch(`kohteet/${encodeURIComponent(kohdeId)}.json`, { cache: 'no-store' });
     if (!res.ok) throw new Error(`Kohteen ${kohdeId} lataus epäonnistui`);
     const data = await res.json();
@@ -192,26 +193,19 @@ async function openPlaceFromUrlParam() {
       throw new Error('Virheelliset koordinaatit JSONissa');
     }
 
-    const title = data.name || kohdeId;
-    const desc  = data.description || data.kuvaus || '';
-    const img   = data.image ? `<p>${data.image}</p>` : (data.kuva ? `<p>${data.kuva}</p>` : '');
-
     const marker = L.marker([lat, lon]).addTo(map);
-    marker.bindPopup(
-      `<div>
-        <h3>${title}</h3>
-        ${img}
-        <p>${desc}</p>
-        <p><small>(${lat.toFixed(5)}, ${lon.toFixed(5)})</small></p>
-      </div>`
-    ).openPopup();
+    marker.bindPopup(`
+      <h3>${data.name || kohdeId}</h3>
+      <p>${data.description || ''}</p>
+      <p><strong>Koordinaatit:</strong> ${lat}, ${lon}</p>
+    `).openPopup();
 
     map.setView([lat, lon], 12);
   } catch (e) {
     console.error(e);
   }
 }
-``
+
 
 
 // ---------------------------------------
@@ -551,6 +545,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
