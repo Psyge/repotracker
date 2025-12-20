@@ -2,22 +2,31 @@
 <!DOCTYPE html>
 <html lang="fi">
 <head>
-<meta charset="UTF-8">
-<title>Kohteen tiedot</title>
-<style>
-  #json-container {
-    white-space: pre-wrap;
-    background: #f4f4f4;
-    padding: 10px;
-    border: 1px solid #ccc;
-    font-family: monospace;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kartta – RepoTracker</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    #map {
+      width: 100%;
+      height: 100vh; /* koko näkymä */
+    }
+  </style>
 </head>
 <body>
-<h1>Kohteen tiedot</h1>
-<div id="json-container">Ladataan...</div>
 
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
@@ -33,20 +42,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (kohdeId) {
     try {
-      const res = await fetch(`kohteet/${kohdeId}.json`);
+      const res = await fetch(`kohteet/${encodeURIComponent(kohdeId)}.json`);
       if (!res.ok) throw new Error('Kohteen lataus epäonnistui');
       const data = await res.json();
 
       // Lisää marker ja popup
-      const marker = L.marker([data.lat, data.lon]).addTo(map);
+      const lat = parseFloat(data.lat);
+      const lon = parseFloat(data.lon);
+      const marker = L.marker([lat, lon]).addTo(map);
       marker.bindPopup(`
         <h3>${data.name || 'Kohde'}</h3>
         <p>${data.description || ''}</p>
-        <p><strong>Koordinaatit:</strong> ${data.lat}, ${data.lon}</p>
+        <p><strong>Koordinaatit:</strong> ${lat}, ${lon}</p>
       `).openPopup();
 
       // Zoomaa kohteeseen
-      map.setView([data.lat, data.lon], 12);
+      map.setView([lat, lon], 12);
     } catch (err) {
       console.error(err);
       alert('Virhe ladattaessa kohdetta.');
