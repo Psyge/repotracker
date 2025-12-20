@@ -47,6 +47,8 @@ async function loadPlaces() {
         if (!metaRes.ok) throw new Error(`Virhe ladattaessa ${file}`);
         const meta = await metaRes.json();
 
+        const id = file.replace(/\.json$/i, '');
+
         // Tuki joko suoraan JSON "description" -kentälle tai erilliselle HTML-tiedostolle "descriptionFile"
         let description = meta.description || '';
         if (!description && meta.descriptionFile) {
@@ -55,6 +57,7 @@ async function loadPlaces() {
         }
 
         return {
+          id,
           name: meta.name,
           lat: meta.lat,
           lon: meta.lon,
@@ -545,6 +548,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
