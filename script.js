@@ -95,7 +95,7 @@ function showPlaceInfo(place) {
     infoSection.style.display = 'block';
 
     const linkHtml = place.url
-      ? `<p><a href="${place.url}" target="_blank">Visit website</a></p>`
+      ? `<p><a href="${place.url}" target="_blank" rel="noopener noreferrer">Visit website</a></p>`
       : '';
 
     const streamHtml = place.stream
@@ -704,6 +704,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
