@@ -1,4 +1,17 @@
+.ads-img {
+    width: 650px; 
+    height: 60px; 
+    border: 0;
+    overflow: hidden; /* Varmistaa ettei kuva tule yli reunojen */
+    margin: 20px auto; /* Keskittää mainoksen sivulla */
+}
 
+.ads-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Pitää kuvan suhteet oikeana laatikon sisällä */
+    display: block;
+}
 /* --- PC-NÄKYMÄ (Oletus) --- */
 .mobile-only {
     display: none;
@@ -572,6 +585,20 @@ header.banner .logo, .banner-right {
     .mobile-only {
         display: block !important;
     }
+    .ads-img {
+    width: 340px; 
+    height: 32px; 
+    border: 0;
+    overflow: hidden; /* Varmistaa ettei kuva tule yli reunojen */
+    margin: 20px auto; /* Keskittää mainoksen sivulla */
+}
+
+.ads-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Pitää kuvan suhteet oikeana laatikon sisällä */
+    display: block;
+}
 }
 @media (min-width: 769px) {
     #kp-restore-btn { display: none !important; }
@@ -579,5 +606,6 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
 
