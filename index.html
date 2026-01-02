@@ -57,78 +57,109 @@
 </head>
 <body>
 
-<header class="banner">
-  <h1 style="position:absolute; left:-9999px;">RepoTracker – Track the Northern Lights in real time</h1>
-  <div id="menu-btn">☰</div>
-
-  <div class="banner-left">
-    <img src="images/repo-neon.png" alt="RepoTracker Logo" class="logo">
-  </div>
-
-  <div class="banner-right">
-    <a href="https://instagram.com/repotracker_" target="_blank" class="social-btn instagram">
-      <img src="images/ig-icon.png" alt="Instagram" class="icon">
-    </a>
-    <a href="https://www.tiktok.com/@repotracker" target="_blank">
-    <img src="images/tiktok.png" alt="Seuraa TikTokissa" class="icon">
-    </a>
- <a href="https://www.buymeacoffee.com/repotracker" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 50px; width: auto;"></a>
-
-  </div>
-  
-<nav id="menu">
-  <a href="index.html">Front page</a>
-  <a href="/faq/">FAQ</a>
-  <a href="/contact/">Contact / Feedback</a>
- </nav>
-
-</header>
-
-<div id="container">
-  <div id="map">
-  <button id="locate-btn">Can I See Northern Lights now?</button>
-  <button id="markers-btn">Show markers</button>  
-  <button id="forecast-btn">3 Day Forecast</button>  
-  </div>
-</div>
-
-
-<div id="forecast-popup" class="popup" style="display:none;">
-  <div class="popup-content">
-    <h2>Northern Lights forecast (NOAA)</h2>
-    <canvas id="kpChart" width="280" height="180"></canvas>
-    
-<div class="kp-legend">
-      <p><span class="kp-dot" style="color:green;">●</span> Kp 0–2: No northern lights</p>
-      <p><span class="kp-dot" style="color:orange;">●</span> Kp 3–4: Opportunity to see Lapland</p>
-      <p><span class="kp-dot" style="color:red;">●</span> Kp 5 or more: Widely visible</p>
+<div id="mobile-splash">
+        <img src="repo-neon.png" alt="RepoTracker Logo">
     </div>
 
- 
-    <button id="close-forecast">Close</button>
-  </div>
-</div>
+    <header class="banner">
+        <div id="menu-btn">☰</div>
+        <div class="banner-left">
+            <img src="repo-neon.png" alt="RepoTracker Logo" class="logo">
+        </div>
+        <div class="banner-right">
+            <a href="https://instagram.com/repotracker_" target="_blank" class="social-btn"><img src="ig-icon.png" class="icon"></a>
+            <a href="https://www.tiktok.com/@repotracker" target="_blank" class="social-btn"><img src="tiktok.png" class="icon"></a>
+            <a href="https://www.buymeacoffee.com/repotracker" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 50px; width: auto;"></a>
+        </div>
+        <nav id="menu">
+            <a href="index.html">Front page</a>
+            <a href="faq/">FAQ</a>
+            <a href="contact/">Contact</a>
+        </nav>
+    </header>
 
-  
-<div id="info" class="loading">⏳ Loading northern lights forecast...</div>
+    <div id="container">
+        <div id="map">
+            <button id="locate-btn">Can I See Northern Lights now?</button>
+            <button id="markers-btn">Show markers</button>  
+            <button id="forecast-btn">3 Day Forecast</button>  
+        </div>
+    </div>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <div class="info-panel" id="kp-info-box">
+        <div id="kp-restore-btn">KP</div>
+        <div id="idesc" style="font-size: 10px; color: #00ffcc; opacity: 0.8; margin-bottom: 2px;">KP-INDEX</div>
+        <div class="kp-badge" id="kpVal">--</div>
+        <div id="kpDesc" style="font-size: 11px; color: #fff; margin-top: 5px; opacity: 0.9;">Loading...</div> 
+    </div>
+
+    <div class="mobile-only-panels">
+        <div class="side-panel right-panel closed" id="actions-panel">
+            <div class="panel-tab" id="actions-tab">⚙️</div>
+            <div class="panel-content" id="actions-content">
+                </div>
+        </div>
+        
+        <div class="side-panel right-panel closed" id="social-panel">
+            <div class="panel-tab" id="social-tab">📱</div>
+            <div class="panel-content">
+                <a href="https://instagram.com/repotracker_" target="_blank" class="soc-icon"><img src="ig-icon.png"></a>
+                <a href="https://www.tiktok.com/@repotracker" target="_blank" class="soc-icon"><img src="tiktok.png"></a>
+                <a href="https://www.buymeacoffee.com/repotracker" target="_blank" class="soc-icon">☕</a>
+            </div>
+        </div>
+    </div>
+  <div id="forecast-popup">
+    <div class="forecast-card">
+      <span id="close-forecast">&times;</span>
+
+      <div class="forecast-header">
+        <h2>3-Päivän Kp-Ennuste</h2>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="kpChart"></canvas>
+      </div>
+
+      <div class="forecast-info">
+        <div class="info-item"><span class="dot low"></span> Matala (0-3)</div>
+        <div class="info-item"><span class="dot mod"></span> Kohtalainen (4)</div>
+        <div class="info-item"><span class="dot high"></span> Korkea (5+)</div>
+      </div>
+
+      <div id="errorMessage"></div>
+    </div>
+  </div>      
 <section id="aurora-info" class="aurora-section">
-  <a href="https://www.anrdoezrs.net/click-101584868-15877142" target="_top">
-<img src="https://www.tqlkg.com/image-101584868-15877142" width="650" height="60" alt="" border="0"/></a>
-    <div id="aurora-default">
     <h2>Northern Lights forecast and real-time aurora map – RepoTracker</h2>
+    <p></p>RepoTracker shows the Northern Lights in real time in Finland and the Nordic countries.
+        The map shows where the Northern Lights are visible right now and in the coming hours.</p>
+ <div class="mobile-only" id="aurora-mobile-instructions">
+    <h2>How to track Auroras on Mobile</h2>
+    
+    <p><strong>Explore the Map:</strong> Tap any location on the map to see a detailed real-time aurora and cloud cover forecast for that spot.</p>
 
-    <p>
-        RepoTracker shows the Northern Lights in real time in Finland and the Nordic countries or anywhere else in the northern hemisphere.
-        The map shows where the Northern Lights are visible right now and in the coming hours.
+    <div class="instruction-box" style="background: rgba(0, 255, 204, 0.1); border-left: 3px solid #00ffcc; padding: 10px; margin: 15px 0; border-radius: 0 8px 8px 0;">
+        <p style="margin: 0;"><strong>Quick Tools (⚙️):</strong> Tap the settings icon on the right to open your toolkit:</p>
+        <ul style="margin: 10px 0 0 20px; padding: 0;">
+            <li><strong>🧭 Locate:</strong> Find auroras at your current position.</li>
+            <li><strong>📊 Forecast:</strong> View the 3-day geomagnetic (Kp) outlook.</li>
+        </ul>
+    </div>
+
+    <p><strong>Stay Connected (📱):</strong> Tap the phone icon to follow our real-time updates on Instagram and TikTok or support the project with a coffee.</p>
+
+    <p style="font-size: 0.9em; opacity: 0.8;"><em>Note: The KP-index (bottom left) updates automatically. If it disappears, tap the small "KP" tab to bring it back.</em></p>
+</div>
+    
+    <div class="desktop-only" id="aurora-desktop-instructions">
+        <h2>Northern Lights forecast – PC Instructions</h2>
+        
 </p>
   <p>Click anywhere on the map or use the "Can i see the Northern Lights" -button to see the aurora forecast for that location.<br>
-  Note: Cloud cover can affect visibility even if aurora activity is strong, but it's worth keeping an eye on the sky if the intensity of the northern lights is over 40 because there's always a chance you might see them.
-  </p>
-
+  Note: Cloud cover can affect visibility even if aurora activity is strong.
+  </p></div>
+<div id="place-info" style="display:none;"></div>
 <h2>How does the RepoTracker forecast work?</h2>
 <p>
 RepoTracker combines geomagnetic measurements, solar wind speed,
@@ -149,21 +180,162 @@ The colors on the map indicate the probability and intensity of the northern lig
         Clear skies, high solar wind speeds, and low light pollution significantly improve
         the chances of seeing them.
 </p>
-      <p>You can also click on the pins shown on the map, which provide information about the location in question.</p>
     </div>      
 <div id="place-info" style="display:none;"></div>
 </section>
 
-
-<!-- Kartta ja NOAA-data -->
-<script src="script.js"></script>
-
-<!-- Markerit -->
-<script src="markers.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script src="markers.js"></script>
+    <script src="script.js"></script>
 
 
+<script>
+
+
+let kpHideTimeout = null;
+
+// 1. Paneelien hallinta
+function setupMobilePanels() {
+    ['actions', 'social'].forEach(id => {
+        const panel = document.getElementById(id + '-panel');
+        const tab = document.getElementById(id + '-tab');
+        if (panel && tab) {
+            // Estetään klikkauksen meneminen karttaan
+            if (typeof L !== 'undefined' && L.DomEvent) {
+                L.DomEvent.disableClickPropagation(panel);
+            }
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                panel.classList.toggle('closed');
+                console.log(id + " paneeli klikattu");
+            });
+        }
+    });
+}
+
+// 2. KP-laatikon näkyvyys
+function handleKpVisibility() {
+    const kpBox = document.getElementById('kp-info-box'); 
+    if (!kpBox) return;
+
+    if (window.innerWidth > 768) {
+        kpBox.classList.remove('fade-out');
+        return;
+    }
+
+    if (kpHideTimeout) clearTimeout(kpHideTimeout);
+    kpBox.classList.remove('fade-out');
+
+    kpHideTimeout = setTimeout(() => {
+        kpBox.classList.add('fade-out');
+    }, 8000); 
+}
+
+// 3. KP-datan haku
+async function fetchKPData() {
+    try {
+        const res = await fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json');
+        const data = await res.json();
+        
+        if (data && data.length > 1) {
+            const lastRow = data[data.length - 1];
+            const kpVal = parseFloat(lastRow[1]);
+            const badge = document.getElementById('kpVal');
+            const desc = document.getElementById('kpDesc');
+            if (badge) {
+                badge.innerText = isNaN(kpVal) ? "--" : kpVal.toFixed(1);
+                if (kpVal >= 5) {
+                    badge.style.color = "#ff3366";
+                    desc.innerText = "● Widely visible";
+                    desc.style.color = "#ff3366";
+                } else if (kpVal >= 3) {
+                    badge.style.color = "#ffcc00";
+                    desc.innerText = "● Chance to see";
+                    desc.style.color = "#ffcc00";
+                } else {
+                    badge.style.color = "#00ffcc";
+                    desc.innerText = "● No northern lights";
+                    desc.style.color = "#00ffcc";
+                }
+            }
+            handleKpVisibility();
+        }
+    } catch(e) {
+        console.error("Haku epäonnistui", e);
+    }
+}
+
+// 4. ALUSTUS (Kaikki tapahtuu tässä)
+document.addEventListener('DOMContentLoaded', () => {
+    // Käynnistetään paneelit
+    setupMobilePanels();
+    
+    // Haetaan KP-data
+    fetchKPData();
+
+    // Mobiilinappien siirto
+    if (window.innerWidth <= 768) {
+        const actionsContent = document.getElementById('actions-content');
+        const locateBtn = document.getElementById('locate-btn');
+        const forecastBtn = document.getElementById('forecast-btn');
+
+        if (actionsContent) {
+            if (locateBtn) actionsContent.appendChild(locateBtn);
+            if (forecastBtn) actionsContent.appendChild(forecastBtn);
+            // Markers-nappi jää nyt kartalle (tai minne se on HTML:ssä laitettu)
+        }
+    }
+
+    // Ennuste-popupin toiminta
+    const forecastBtn = document.getElementById('forecast-btn');
+    const forecastPopup = document.getElementById('forecast-popup');
+    const closeForecast = document.getElementById('close-forecast');
+
+    if (forecastBtn && forecastPopup) {
+        forecastBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            forecastPopup.style.display = 'flex';
+            // Jos updateKpChart on markers.js tai script.js tiedostossa:
+            if (typeof updateKpChart === 'function') updateKpChart();
+        });
+    }
+
+    if (closeForecast) {
+        closeForecast.addEventListener('click', () => {
+            forecastPopup.style.display = 'none';
+        });
+    }
+
+    // Splash screen
+    const splash = document.getElementById('mobile-splash');
+    if (splash) {
+        setTimeout(() => {
+            splash.classList.add('hidden');
+            setTimeout(() => splash.remove(), 1000); 
+        }, 3000);
+    }
+
+    // KP palautus
+    const restoreBtn = document.getElementById('kp-restore-btn');
+    if (restoreBtn) {
+        restoreBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleKpVisibility(); 
+        });
+    }
+
+    document.addEventListener('touchstart', (e) => {
+        if (e.target.closest('#kp-restore-btn') || e.target.closest('.side-panel')) return;
+        handleKpVisibility();
+    });
+});
+</script>
 </body>
 </html>
+
 
 
 
