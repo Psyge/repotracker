@@ -321,10 +321,11 @@ function initButtons() {
     });
 
   // 2) Kontit (menu, forecastPopup, helpPopup): EI preventDefault
-if (menuBtn && menu) {
-    menuBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+ if (menuBtn && menu) {
+    menuBtn.addEventListener('click', () => {
+      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    });
+  }
       
       // Luetaan todellinen tila CSS:stä (tärkeää alasivuilla)
       const currentDisplay = window.getComputedStyle(menu).display;
@@ -352,11 +353,7 @@ if (menuBtn && menu) {
   });
 
   // 4) Menu toggle
-  if (menuBtn && menu) {
-    menuBtn.addEventListener('click', () => {
-      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
-    });
-  }
+ 
 
   // 5) Forecast-popup avaus/sulku
   if (forecastBtn && forecastPopup) {
@@ -696,5 +693,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
