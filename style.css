@@ -1,508 +1,577 @@
-/* Perusasetukset */
+
+/* --- PC-NÄKYMÄ (Oletus) --- */
+.mobile-only {
+    display: none;
+}
+
+/* PC-ohjeiden tyyli */
+.desktop-only {
+    display: block;
+}
+.mobile-only-panels, #kp-restore-btn { display: none; }
+/* --- KP-INFO PANEELI --- */
+.info-panel {
+    position: fixed; /* Käytetään fixed, jotta pysyy paikoillaan suhteessa ruutuun */
+    top: 195px; 
+    left: 10px;
+    background: rgba(10, 15, 25, 0.85); 
+    padding: 12px; 
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 204, 0.2); 
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    min-width: 120px;
+    text-align: left;
+    
+    /* Lisätään transition tässä, jotta se on olemassa piilotusta varten */
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out, visibility 1s !important;
+    opacity: 1;
+    visibility: visible;
+}
+
+.kp-badge { 
+    font-size: 1.4rem; 
+    font-weight: 800; 
+    color: #00ffcc; 
+}
+
+#kpDesc {
+    font-family: sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- 3-PÄIVÄN FORECAST POPUP (ERISTETTY) --- */
+#forecast-popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.forecast-card {
+    background: rgba(10, 15, 25, 0.98);
+    border: 1px solid rgba(0, 255, 204, 0.4);
+    border-radius: 20px;
+    padding: 30px;
+    width: 60%;
+    max-width: 650px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0, 255, 204, 0.15);
+    color: white;
+}
+
+#close-forecast {
+    position: absolute; top: 15px; right: 20px;
+    font-size: 32px; cursor: pointer;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.forecast-header h2 {
+    margin: 0 0 25px 0; text-align: center;
+    font-size: 1.4rem; color: #00ffcc;
+    text-transform: uppercase; letter-spacing: 2px;
+}
+
+.chart-container {
+    position: relative; height: 300px; width: 100%; margin-bottom: 20px;
+}
+
+.forecast-info {
+    display: flex; justify-content: center; gap: 20px;
+    margin-top: 20px; padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-item { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot.low { background: #00ffcc; box-shadow: 0 0 8px #00ffcc; }
+.dot.mod { background: #ffcc00; box-shadow: 0 0 8px #ffcc00; }
+.dot.high { background: #ff3366; box-shadow: 0 0 8px #ff3366; }
+
+/* --- PERUSASETUKSET & PINNIT (PALAUTETTU ALKUPERÄISEKSI) --- */
 .popup-header {
-      position: relative;
-    text-align: center;      /* Keskittää tekstin */
-    margin-bottom: 8px;
-    min-height: 32px;       /* Kuvan ja tekstin väli */
+    position: relative; text-align: center; margin-bottom: 8px; min-height: 32px;
 }
-
 .popup-header img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;    /* Estää kuvan pienentymisen */
+    position: absolute; top: 0; left: 0; width: 30px; height: 30px; border-radius: 50%;
 }
-.popup-title {
-    font-size: 1.1em;
-    display: inline-block;
-}
+.popup-title { font-size: 1.1em; display: inline-block; }
+
 body, html {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
+    margin: 0; padding: 0; min-height: 100%;
     background: #000 url('images/revontulet.png') no-repeat center top;
-    background-size: cover;
-    background-attachment: fixed;
+    background-size: cover; background-attachment: fixed;
 }
 
-/* Banneri */
 header.banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100px;
-  background: url('images/revontulet.png') no-repeat center bottom;
+    position: fixed;
+    top: 15px; /* Nostetaan irti yläreunasta */
+    left: 50%;
+    transform: translateX(-50%); /* Keskitys */
+    width: 95%; /* Ei koko leveyttä */
+    max-width: 1400px;
+    height: 70px;
+    background: rgba(5, 12, 24, 0.7); /* Erittäin tumma lasi */
+     background: url('images/revontulet.png') no-repeat center bottom;
   background-size: cover;
   background-position: center 87%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  z-index: 1000;
+    backdrop-filter: blur(25px) saturate(150%);
+    -webkit-backdrop-filter: blur(25px) saturate(150%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    z-index: 10000;
+    border-radius: 20px; /* Pyöristetyt kulmat */
+    border: 1px solid rgba(0, 255, 204, 0.3); /* Kirkas neon-reunus */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), 
+                0 0 15px rgba(0, 255, 204, 0.1);
+}
+header.banner::after { display: none; }
+header.banner::before {
+    content: "";
+    position: absolute;
+    inset: -1px; /* Hieman isompi kuin laatikko */
+    border-radius: 20px;
+    padding: 1px; /* Reunan paksuus */
+    background: linear-gradient(90deg, #00ffcc, #007bff, #00ffcc);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
 }
 
-/* Gradientti bannerin alareunaan */
-header.banner::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 15px;
-  background: linear-gradient(to bottom, rgba(30,136,229,1), rgba(30,136,229,0));
-  pointer-events: none;
+.banner-left {
+    display: flex;
+    align-items: center;
+    position: relative;
 }
-
-/* Logo */
 .banner-left .logo {
-  height: 210px;
-  padding-left: 20px;
+    height: 120px; /* Reilusti isompi logo */
+    width: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 60px; /* Jätetään tilaa menu-napille */
+    filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.4));
+    transition: all 0.4s ease;
+    z-index: 10001;
+    pointer-events: none; /* Logo ei estä klikkauksia sen alta */
 }
-
-.banner-right .icon {
-  width: 32px;
-  height: 32px;
-  filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
-  transition: transform 0.2s ease;
-  padding-right: 10px;
-  padding-bottom: 10px;
-}
-
-.banner-right .icon:hover {
-  transform: scale(1.1);
+.banner-left .logo:hover {
+    filter: drop-shadow(0 0 20px #00ffcc);
+    transform: scale(1.05);
 }
 .banner-right {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* väli nappeihin */
-  position: relative;
-  right: 40px; /* jos haluat siirtää */
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
-.banner-right img {
-  height: 40px;
+.banner-right img, .banner-right .icon {
+    height: 35px;
+    width: auto;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    border: 1px solid rgba(0, 255, 204, 0.2);
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-/* Kartta */
+.banner-right img:hover {
+    background: rgba(0, 255, 204, 0.2);
+    border-color: #00ffcc;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+}
+
 #map {
-    width: 100%;
-    height: 60vh;   /* kartta vie 45% sivusta */
-    margin-top: 100px;
-    position: relative;
-    z-index: 1;
-}
-
-/* Info-paneeli */
-#info {
-  position: absolute;
-  top: 190px;
-  left: 10px;
-  z-index: 500;
-  color: white;
-  background: rgba(0,0,0,0.5);
-  padding: 5px 10px;
-  border-radius: 5px;
-}
-
-/* Locate-painike */
-#locate-btn {
-  position: absolute;
-  top: 20px;
-  right: 10px;
-  z-index: 1001;
-  background: #1e88e5;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 8px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-
-#locate-btn:hover {
-  background: #1565c0;
-}
-
-/* Menu-nappi */
-#menu-btn {
-  font-size: 24px;
-  cursor: pointer;
-  position: absolute;
-  left: 20px;
-  top: 30px;
-  z-index: 2000;
-  user-select: none;
-  color: white;
-}
-
-#menu-btn:hover {
-  color: #cce4ff;
-}
-
-/* Menu */
-#menu {
-  display: none;
-  position: fixed;
-  top: 100px;
-  left: 0;
-  background: rgba(30,136,229,0.95);
-  width: 220px;
-  box-shadow: 2px 4px 8px rgba(0,0,0,0.4);
-  flex-direction: column;
-  padding: 10px 0;
-  z-index: 7000;
-}
-
-#menu a {
-  display: block;
-  padding: 12px 20px;
-  color: white;
-  text-decoration: none;
-  font-family: Arial, sans-serif;
-}
-
-#menu a:hover {
-  background: rgba(255,255,255,0.15);
-}
-
-/* Pop-up */
-.popup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.popup-content {
-  background: #222;
-  color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  max-width: 300px;
-  text-align: center;
-  box-shadow: 0 0 10px rgba(0,0,0,0.8);
-}
-
-.popup-content button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background: #4caf50;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.popup-content button:hover {
-  background: #45a049;
-}
-.popup-img {
-  width: 60px;       /* haluttu koko */
-  height: 60px;      /* sama kuin leveys */
-  border-radius: 50%; /* tekee kuvasta pyöreän */
-  object-fit: cover; /* varmistaa ettei kuva veny */
-  display: block;
-  margin: 8px auto;  /* keskittää kuvan popupissa */
-}
-
-.circle-icon {
-  border-radius: 50%;
-  border: 2px solid #fff;
-}
-#forecast-btn {
-  position: absolute;
-  top: 90px; /* Show my location on top, markers below, forecast next */
-  right: 10px;
-  padding: 8px 12px;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  cursor: pointer;
-  z-index: 1000;
-}
-
-#forecast-overlay {
-  position: absolute;
-  top: 140px;
-  right: 20px;
-  background: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  z-index: 2000;
-}
-
-.kp-dot {
-  font-size: 24px; /* isompi koko */
-  font-weight: bold; /* tekee pisteestä paksumman */
-}
-
-
-.marker-wrapper {
-  position: relative;
-  width: 32px;
-  height: 48px;
-  animation: float 2s infinite;
-  
-}
-
-.marker-wrapper img.pin {
-  width: 32px !important;
-  height: 48px !important;
-  object-fit: contain;
-}
-
-.marker-wrapper img.pin-icon {
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px !important;
-  height: 20px !important;
-  border-radius: 50%;
-  background: white;
-  padding: 2px;
-  box-shadow: 0 0 2px rgba(0,0,0,0.3);
-}
-
-@keyframes float  {
-    0% { transform: scale(0.9); }
-    50% { transform: scale(1.2); }
-}
-
-
-.pin {
- 
- width: 100%;
-  height: auto;
-  max-width: 32px;   /* pakottaa oikean koon */
-  max-height: 48px;
-
-}
-
-.pin-icon {
-  position: absolute;
-  top: 4px; /* siirtää ympyrän yläosaan */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: white;
-  padding: 2px;
-  box-shadow: 0 0 2px rgba(0,0,0,0.3);
-}
-
-.custom-popup .leaflet-popup-content-wrapper {
-  width: 280px !important;
-  max-width: 280px !important;
-}
-
-.custom-popup .leaflet-popup-content {
-  width: auto !important;
-  padding: 0;
-  text-align: center;
-}
-
-.popup-stream iframe {
-  display: block;
-  max-width: none; /* varmistaa ettei popupin ulkopuolelle */
-}
-.custom-popup .popup-stream iframe {
-    width: 100% !important;
-    height: auto;
-}
-
-.leaflet-popup-pane {
-  z-index: 9000; 
-}
-.popup-open #locate-btn,
-.popup-open #forecast-btn,
-.popup-open #menu-btn {
-  pointer-events: none;
-}
-.weather-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 2px;
-}
-
-.weather-row img {
-  width: 40px;
-  height: 40px;
-}
-/* FAQ-osio */
-#revontuli-faq {
-  max-width: 800px;
-  margin: 120px auto 40px auto; /* jättää tilaa bannerille */
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.8); /* tumma tausta */
-  color: #fff; /* valkoinen teksti */
-  font-family: Arial, sans-serif;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-
-#revontuli-faq h2 {
-  font-size: 28px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: #1e88e5; /* korostusväri */
-}
-
-.faq-item {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: rgba(255,255,255,0.05); /* vaalea läpikuultava tausta */
-  border-radius: 6px;
-  transition: background 0.3s ease;
-}
-
-.faq-item:hover {
-  background: rgba(255,255,255,0.15);
-}
-
-.faq-item h3 {
-  font-size: 20px;
-  margin-bottom: 8px;
-  color: #cce4ff; /* vaalea sininen otsikoille */
-}
-
-.faq-item p, .faq-item ul {
-  font-size: 16px;
-  line-height: 1.5;
-  color: #fff; /* varmistetaan valkoinen teksti */
-}
-
-.faq-item ul {
-  margin: 8px 0 0 20px;
-  padding: 0;
-}
-
-.faq-item li {
-  margin-bottom: 4px;
-}
-
-.faq-img {
-  width: 100%;
-  max-width: 600px;
-  border-radius: 8px;
-  margin: 10px 0;
-  display: block;
-}
-
-#northern-lights-faq {
-
-  margin-top: 100px; /* bannerin korkeus + vähän tilaa */
- padding: 20px;
-  background: rgba(0, 0, 0, 0.8); /* tumma läpikuultava tausta */
-  color: #fff; /* valkoinen teksti */
-  border-radius: 8px;
-
-}
-
-
-    .aurora-section {
-        max-width: 900px;     /* kapea laatikko keskelle */
-        margin: 40px auto;    /* keskitys ja ylä/alareuna */
-        padding: 20px;
-        background: rgba(0,0,0,0.9);  /* musta tausta */
-        border-radius: 8px;           /* halutessa pyöristys */
-        color: #e0e0e0;
-        font-family: Arial, sans-serif;
-        position: relative;
-        z-index: 2;
-    }
-
-
-.aurora-section h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #ffffff;
-}
-
-.aurora-section h2 {
-    margin-top: 10px;
-    color: #a8e1ff;
-}
-
-.aurora-section p {
-    margin-bottom: 15px;
-    font-size: 1rem;
-}
-.leaflet-tile {
-    width: 257px !important;
-    height: 257px !important;
-    image-rendering: pixelated;
-}
-
-/* Mobiili */
-@media (max-width: 768px) {
-  header.banner {
-    flex-direction: row; /* korjattu virhe */
-    justify-content: space-between;
-    height: 100px;
-    padding: 0;
-  }
-/* FAQ-osio */
- .banner-right {
+     width: 100%;
+    height: 75vh;   /* kartta vie 45% sivusta */
     
     position: relative;
-    right: 15px;
+    z-index: 1; /* Sopiva väli leijuvaan banneriin */
 }
 
-  .banner-left .logo {
-    height: 60px;
-    margin: 0;
-    padding-left: 40px;
-  }
+#info {
+    position: absolute; top: 190px; left: 10px; z-index: 500;
+    color: white; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px;
+}
 
-  .banner-right img {
-    height: 22px;
-  }
+#locate-btn {
+    position: absolute; top: 120px; right: 10px; z-index: 1001;
+    background: #1e88e5; color: white; border: none; border-radius: 5px;
+    padding: 8px 12px; font-size: 14px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+#locate-btn:hover { background: #1565c0; }
 
-  .banner-right .icon {
-    width: 22px;
-    height: 22px;
-  }
+#menu-btn {
+    position: relative; 
+    z-index: 10002 !important; /* Varmistetaan, että on logon ja bannerin päällä */
+    color: #00ffcc;
+    font-size: 35px; /* Hieman isompi */
+    cursor: pointer !important;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    user-select: none;
+    transition: 0.3s;
+}
+#menu {
+    display: none; position: fixed; top: 75px; left: 0;
+    background: rgba(5, 12, 24, 0.9); width: 220px;
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.4); flex-direction: column; padding: 10px 0; z-index: 7000;
+}
+#menu-btn:hover {
+    color: #fff;
+    text-shadow: 0 0 15px #00ffcc;
+    transform: scale(1.1);
+}
+#menu a { display: block; padding: 12px 20px; color: white; text-decoration: none; font-family: Arial, sans-serif; }
+#menu a:hover { background: rgba(255,255,255,0.15); }
 
-  #info {
-    position: fixed;
-    bottom: 10px;
+/* ALKUPERÄISET POPUP-TYYLIT (Nämä vaikuttavat kartan pinneihin) */
+.popup {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 9999;
+}
+.popup-content {
+    background: #222; color: #fff; padding: 20px; border-radius: 8px;
+    max-width: 300px; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+.popup-content button {
+    margin-top: 10px; padding: 8px 16px; background: #4caf50;
+    color: #fff; border: none; border-radius: 4px; cursor: pointer;
+}
+.popup-img {
+    width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+    display: block; margin: 8px auto;
+}
+.circle-icon { border-radius: 50%; border: 2px solid #fff; }
+
+#forecast-btn {
+    position: absolute; top: 170px; right: 10px; padding: 8px 12px;
+    background: #fff; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; z-index: 1000;
+}
+
+/* MARKERIT JA PINNIT */
+.marker-wrapper { position: relative; width: 32px; height: 48px; animation: float 2s infinite; }
+.marker-wrapper img.pin { width: 32px !important; height: 48px !important; object-fit: contain; }
+.marker-wrapper img.pin-icon {
+    position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+    width: 20px !important; height: 20px !important; border-radius: 50%;
+    background: white; padding: 2px; box-shadow: 0 0 2px rgba(0,0,0,0.3);
+}
+@keyframes float { 0% { transform: scale(0.9); } 50% { transform: scale(1.2); } }
+
+@keyframes aurora-move {
+    from { transform: translateX(-10%) skewX(-10deg); opacity: 0.5; }
+    to { transform: translateX(50%) skewX(10deg); opacity: 0.8; }
+}
+.pin { width: 100%; height: auto; max-width: 32px; max-height: 48px; }
+.pin-icon {
+    position: absolute; top: 4px; left: 50%; transform: translateX(-50%);
+    width: 20px; height: 20px; border-radius: 50%; background: white; padding: 2px;
+}
+
+/* LEAFLET POPUP KORJAUKSET */
+.custom-popup .leaflet-popup-content-wrapper { width: 280px !important; }
+.custom-popup .leaflet-popup-content { width: auto !important; padding: 0; text-align: center; }
+.popup-stream iframe { display: block; max-width: none; }
+.custom-popup .popup-stream iframe { width: 100% !important; height: auto; }
+
+/* FAQ & MUUT */
+#revontuli-faq, #northern-lights-faq {
+    max-width: 800px; margin: 120px auto 40px auto; padding: 20px;
+    background: rgba(0, 0, 0, 0.8); color: #fff; border-radius: 8px;
+}
+.faq-item { margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 6px; }
+
+.aurora-section {
+    max-width: 900px; margin: 40px auto; padding: 20px;
+    background: rgba(0,0,0,0.9); border-radius: 8px; color: #e0e0e0; position: relative; z-index: 2;
+}
+.leaflet-tile { width: 257px !important; height: 257px !important; image-rendering: pixelated; }
+.leaflet-top .leaflet-control
+ {
+    margin-top: 120px;
+}
+/* MOBIILI */
+@media (max-width: 768px) {
+  header.banner {
+        background: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        width: auto !important;
+        height: auto !important;
+        top: 0 !important;
+        left: 0 !important;
+        padding: 0 !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+header.banner .logo, .banner-right {
+        display: none !important; /* Piilotetaan logo ja muut ikonit */
+    }
+    #menu-btn {
+        position: fixed !important;
+        top: 5px !important;
+        left: 5px !important;
+        width: 50px;
+        height: 50px;
+        background: rgba(5, 12, 24, 0.9);
+        border: 1px solid rgba(0, 255, 204, 0.4);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999 !important; /* Varmasti kaiken päällä */
+        margin: 0 !important;
+    }
+
+    /* Oikean puolen ikonit mobiilissa */
+    .banner-right {
+        gap: 8px;
+    }
+
+    .banner-right img, .banner-right .icon {
+        height: 28px; /* Pienemmät napit */
+        padding: 6px;
+        border-radius: 10px;
+    }
+
+    /* Säädetään valikon (menu) paikkaa mobiilissa */
+    #menu {
+        top: 80px !important;
+        left: 3% !important;
+        width: 180px;
+    }
+    #map {
+        height: 80vh !important; /* Nostettu 60vh -> 80vh */
+        width: 100%;
+        margin-top: 0;
+    }
+
+    /* Varmistetaan, että infoteksti alkaa heti kartan jälkeen */
+    .aurora-section {
+        margin-top: 20px;
+        padding-bottom: 50px; /* Lisätilaa loppuun, jotta rullaus tuntuu hyvältä */
+    }
+#container {
+    overflow: hidden;
+}
+    #info { position: fixed; bottom: 10px; left: 10px; font-size: 12px; height: 60px; }
+ .leaflet-top.leaflet-left {
+        top: -25px !important; /* Lasketaan valikon alapuolelle */
+     
+    }
+
+    #locate-btn {
+        top: 5px; right: 5px; width: 50px; height: 50px; border-radius: 50%; font-size: 0;
+        display: flex; align-items: center; justify-content: center;
+    }
+    #locate-btn::before { content: "🧭"; font-size: 24px; }
+#forecast-btn {
+        top: 65px;; right: 5px; width: 50px; height: 50px; border-radius: 50%; font-size: 0;
+        display: flex; align-items: center; justify-content: center;
+        
+    }
+#forecast-btn::before { content: "📊"; font-size: 24px; }  
+.info-panel { min-width: auto; }    
+#kpDesc { display: none; }
+#idesc {
+        font-size: 0 !important;
+    }
+
+    /* Lisätään uusi teksti tilalle */
+    #idesc::after {
+        content: "KP-IND";
+        font-size: 10px; /* Palautetaan haluttu koko */
+        color: #00ffcc;
+        opacity: 0.8;
+        display: block;
+    } 
+#kp-info-box {
+        top: 170px !important; /* Lasketaan zoom-nappien alle mobiilissa */
+        opacity: 1;
+        visibility: visible;
     left: 10px;
-    font-size: 12px;
-    max-width: 70%;
-    height: 60px;
-    padding: 4px 8px;
-  }
-
-  #locate-btn {
-    bottom: 80px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 0;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s !important;
+        z-index: 9999;
+    }
+#kp-restore-btn {
+        display: flex; /* Aktivoituu mobiilissa */
+        position: absolute;
+        top: 0;
+        left: 100%; /* Siirtyy laatikon oikealle puolelle */
+        width: 30px;
+        height: 100%;
+        background: rgba(10, 15, 25, 0.9);
+        border: 1px solid rgba(0, 255, 204, 0.3);
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+        color: #00ffcc;
+        font-size: 10px;
+        font-weight: bold;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0; /* Piilossa kun paneeli on esillä */
+        visibility: hidden;
+        transition: opacity 0.3s;
+    pointer-events: auto !important;
+    }
+    /* TÄMÄ ON TÄRKEIN: Piilotusluokka */
+   div#kp-info-box.fade-out {
+      transform: translateX(calc(-100% - 10px)) !important; /* Liukuu kokonaan reunan yli */
+        opacity: 1 !important; /* Pidetään näkyvissä, jotta kieleke näkyy */
+        visibility: visible !important;
+       pointer-events: none !important;
+    }
+    #kp-info-box.fade-out #kp-restore-btn {
+        opacity: 1;
+        visibility: visible;
+    }
+    #mobile-splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #050c18; /* Sama tumma väri kuin bannerissa */
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #1e88e5;
-    color: white;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
-
-  #locate-btn::before {
-    content: "🧭";
-    font-size: 24px;
-  }
+    z-index: 999999; /* Kaiken päällä */
+    transition: opacity 1s ease-in-out, visibility 1s;
 }
 
+#mobile-splash img {
+    width: 200px; /* Säädä logon kokoa tästä */
+    height: auto;
+    filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.5));
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Pieni syke-efekti logoon */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* Luokka jolla logo poistetaan */
+#mobile-splash.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+    .mobile-only-panels {
+        display: block; /* Aktivoituu mobiilissa */
+    }
+
+    /* Muutetaan alkuperäiset napit mobiilipalloiksi */
+    #locate-btn, #markers-btn, #forecast-btn {
+        position: static !important; /* Poistaa PC-paikoituksen */
+        width: 45px !important;
+        height: 45px !important;
+        border-radius: 50% !important;
+        font-size: 0 !important; /* Piilottaa tekstin */
+        margin: 5px auto;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Lisätään ikonit mobiilissa */
+    #locate-btn::before { content: "🧭"; font-size: 20px; }
+    #markers-btn::before { content: "📍"; font-size: 20px; }
+    #forecast-btn::before { content: "📊"; font-size: 20px; }
+
+    /* Paneelin tyylit (kuten aiemmin sovittiin) */
+.side-panel {
+        position: fixed !important;
+        right: 0 !important;
+        width: 60px !important;
+        background: rgba(10, 15, 25, 0.95) !important;
+        
+        border-right: none !important;
+        border-radius: 15px 0 0 15px !important;
+        z-index: 20000 !important;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding: 10px 5px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        box-sizing: border-box !important;
+        
+        /* Oletuksena paneeli on kokonaan piilossa oikealla */
+        transform: translateX(100%); 
+    }
+    #actions-panel { top: 10px !important; height: auto !important; }
+    #social-panel { top: 170px !important; height: auto !important; }
+    .side-panel.closed {
+        transform: translateX(100%) !important;
+    }
+    .side-panel:not(.closed) {
+        transform: translateX(0) !important;
+    }
+ .panel-tab {
+        position: absolute !important;
+        left: -40px !important; /* Kieleke näkyy aina paneelin vasemmalla puolella */
+        top: 10px !important;
+        width: 40px !important;
+        height: 50px !important;
+        background: rgba(10, 15, 25, 0.95) !important;
+       
+        border-right: none !important;
+        border-radius: 10px 0 0 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 20px !important;
+        cursor: pointer !important;
+    }
+    .panel-content {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+        align-items: center !important;
+    }
+    .soc-icon img, .social-btn img {
+        width: 35px !important; /* Pakotetaan ikonit pieneen kokoon */
+        height: 35px !important;
+        object-fit: contain !important;
+    }
+    #actions-content button {
+        width: 45px !important;
+        height: 45px !important;
+        border-radius: 50% !important;
+        font-size: 0 !important;
+        background: #1a2639 !important;
+        border: 1px solid #00ffcc !important;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+.desktop-only {
+        display: none !important;
+    }
+    .mobile-only {
+        display: block !important;
+    }
+}
+@media (min-width: 769px) {
+    #kp-restore-btn { display: none !important; }
+    .side-panel, #kp-restore-btn, #actions-panel, #social-panel {
+        display: none !important;
+    }
+}
