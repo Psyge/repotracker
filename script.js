@@ -300,38 +300,54 @@ function initButtons() {
   const locateBtn = document.getElementById('locate-btn');
 
   // 1) Nappulat (eivät navigoi)
-  [forecastBtn, closeForecast, locateBtn, typeof closePopupBtn !== 'undefined' ? closePopupBtn : null]
-  .filter(Boolean)
-  .forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+  [forecastBtn, closeForecast, locateBtn, closePopupBtn]
+    .filter(Boolean)
+    .forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
     });
-  });
+  [menu, forecastPopup, helpPopup]
+    .filter(Boolean)
+    .forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+      if (typeof L !== 'undefined') {
+        L.DomEvent.disableClickPropagation(el);
+        L.DomEvent.disableScrollPropagation(el);
+      }
+    });
 
   // 2) Kontit (menu, forecastPopup, helpPopup): EI preventDefault
 if (menuBtn && menu) {
-  menuBtn.addEventListener('click', (e) => {
-    e.preventDefault(); // Estetään mahdollinen # hyppy
-    e.stopPropagation(); // Estetään kartan klikkaus
-    
-    // Tarkistetaan nykyinen tila suoraan tyyleistä
-    const isFlex = window.getComputedStyle(menu).display === 'flex';
-    menu.style.display = isFlex ? 'none' : 'flex';
-    
-    console.log("Menu tila: " + menu.style.display); // Debuggausta varten
-  });
-}
-// Lisätään vielä: Sulje menu jos klikataan muualle sivulla
-document.addEventListener('click', () => {
-  if (menu) menu.style.display = 'none';
-});
+    menuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Luetaan todellinen tila CSS:stä (tärkeää alasivuilla)
+      const currentDisplay = window.getComputedStyle(menu).display;
+      if (currentDisplay === 'none') {
+        menu.style.display = 'flex';
+      } else {
+        menu.style.display = 'none';
+      }
+    });
+
+    // Suljetaan menu, jos klikataan muualle sivulla
+    document.addEventListener('click', (e) => {
+      // Tarkistetaan ettei klikattu itse nappia tai menua
+      if (menu.style.display === 'flex' && e.target !== menuBtn && !menu.contains(e.target)) {
+        menu.style.display = 'none';
+      }
+    });
+  }
   
   // 3) Menun linkit: navigoivat
   document.querySelectorAll('#menu a[href]').forEach(a => {
     a.addEventListener('click', (e) => {
-      e.stopPropagation(); // sallitaan navigointi, estetään vain kartan reagointi
-      // a.target = '_self'; // halutessa varmistus
+      e.stopPropagation(); 
     });
   });
 
@@ -680,4 +696,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
