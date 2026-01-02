@@ -1,13 +1,15 @@
 
-// ===============================
-// Aurora/RepoTracker main script
-// ===============================
-
 let map;
-let auroraLayer = null;        // array of overlays
+let auroraCanvas = null; // Alustetaan nulliksi
+let ctx = null;          // Alustetaan nulliksi
 let userMarker = null;
-let currentData = null;        // NOAA JSON
-let placeMarkers = new Map(); // id -> Leaflet marker
+let currentData = null;
+let placeMarkers = new Map();
+let animationFrameId;
+let kpChartInstance = null;
+
+// Spritet ja säädöt
+let spriteGreen, spriteYellow, spriteRed, currentRadius = 0;
 
 // ------------------------------
 // Weather from Cloudflare Worker
@@ -152,26 +154,27 @@ async function initAppMap() {
     return;
   }
 
-  // --- kaikki vanhasta initApp:sta karttaan liittyvä ---
   map = L.map('map', { center: [65, 25], zoom: 4, minZoom: 2, maxZoom: 15 });
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    attribution: '© OpenStreetMap © CARTO',
     subdomains: 'abcd',
     maxZoom: 19
   }).addTo(map);
 
-  map.setMaxBounds([[-90, -180], [90, 180]]);
-  map.on('drag', () => map.panInsideBounds([[-90, -180], [90, 180]], { animate: false }));
+  // --- LISÄÄ TÄMÄ OSA ---
+  // Aktivoidaan revontulitaso
+  const auroraLayerInstance = new AuroraLayer();
+  map.addLayer(auroraLayerInstance);
+  // ----------------------
 
+  map.setMaxBounds([[-90, -180], [90, 180]]);
   map.on('click', onMapClick);
 
-  // Lataa paikat ja luo markerit
   const places = await loadPlaces();
-  if (places.length === 0) {
-    console.warn('Ei kohteita manifestista: lisää /kohteet/index.json ja per-kohde tiedostot.');
+  if (places.length > 0 && typeof initMarkers === 'function') {
+      initMarkers(map, getWeather, showPlaceInfo, places);
   }
-  initMarkers(map, getWeather, showPlaceInfo, places);
 
   // NOAA-data + päivitys
   fetchAuroraData();
@@ -355,25 +358,59 @@ function initButtons() {
   // 6) Geolokaatio
   if (locateBtn) {
     locateBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (!navigator.geolocation) {
-        alert('Geolocation not supported in this browser.');
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          map.setView([lat, lon], 6);
-          if (!userMarker) userMarker = L.marker([lat, lon]).addTo(map);
-          await showAuroraPopup(lat, lon, userMarker, false);
-        },
-        (err) => alert('Location failed: ' + err.message),
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-      );
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!navigator.geolocation) {
+            alert('Geolocation not supported in this browser.');
+            return;
+        }
+
+        // Lisätään visuaalinen palaute, että jotain tapahtuu
+        const originalText = locateBtn.innerText;
+        if (window.innerWidth <= 768) {
+            locateBtn.innerText = "⏳"; // Vaihdetaan ikoni lataukseksi mobiilissa
+        } else {
+            locateBtn.innerText = "Locating...";
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+                // Palautetaan nappi normaaliksi
+                locateBtn.innerText = window.innerWidth <= 768 ? "" : originalText;
+                
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                map.setView([lat, lon], 6);
+                
+                if (!userMarker) {
+                    userMarker = L.marker([lat, lon]).addTo(map);
+                } else {
+                    userMarker.setLatLng([lat, lon]);
+                }
+                
+                await showAuroraPopup(lat, lon, userMarker, false);
+            },
+            (err) => {
+                // Palautetaan nappi virheen sattuessa
+                locateBtn.innerText = window.innerWidth <= 768 ? "" : originalText;
+                
+                if (err.code === 1) {
+                    alert('Salli paikannus selaimen asetuksista.');
+                } else if (err.code === 3) {
+                    alert('Paikannus aikakatkaistiin. Yritä uudelleen, laite herää yleensä toisella kerralla.');
+                } else {
+                    alert('Location failed: ' + err.message);
+                }
+            },
+            { 
+                enableHighAccuracy: false, // NOPEAMPI: käyttää WiFi/mobiiliverkkoa GPS:n sijaan
+                timeout: 15000,            // Hieman enemmän pelivaraa (15s)
+                maximumAge: 60000          // Käyttää max 1min vanhaa sijaintia (erittäin nopea!)
+            }
+        );
     });
-  }
+}
 }
 
 
@@ -381,74 +418,140 @@ function initButtons() {
 // ------------------------
 // NOAA (Ovation) overlay
 // ------------------------
-async function fetchAuroraData() {
-  const info = document.getElementById('info');
-  if (!info) return;
-  info.className = 'loading';
-  info.innerHTML = '⏳ Loading northern lights forecast...';
+const AuroraLayer = L.Layer.extend({
+    onAdd: function(map) {
+        this._container = L.DomUtil.create('div', 'leaflet-aurora-layer');
+        this._canvas = L.DomUtil.create('canvas', 'aurora-canvas', this._container);
+        map.getPanes().overlayPane.appendChild(this._container);
+        auroraCanvas = this._canvas;
+        ctx = auroraCanvas.getContext('2d');
+        
+        map.on('move moveend zoomend', this._update, this);
+        this._startAnimation(); // Käynnistetään liike
+        this._update();
+    },
+    onRemove: function(map) {
+        cancelAnimationFrame(animationFrameId);
+    },
+    _startAnimation: function() {
+        const render = () => {
+            if (currentData) drawAuroraOverlay(currentData.coordinates);
+            animationFrameId = requestAnimationFrame(render);
+        };
+        render();
+    },
+    _update: function() {
+        const size = map.getSize();
+        const topLeft = map.containerPointToLayerPoint([0, 0]);
+        L.DomUtil.setPosition(this._canvas, topLeft);
+        auroraCanvas.width = size.x;
+        auroraCanvas.height = size.y;
+        
+        const zoom = map.getZoom();
+        const blurValue = zoom > 8 ? 20 : Math.max(12, zoom * 3.5);
+        this._canvas.style.filter = `blur(${blurValue}px)`;
+    }
+});
 
-  const directUrl = 'https://services.swpc.noaa.gov/json/ovation_aurora_latest.json';
-  const proxyUrl = 'https://corsproxy.io/?' + directUrl;
-
-  try {
-    const res = await fetch(directUrl, { cache: 'no-cache' }).catch(() => fetch(proxyUrl, { cache: 'no-cache' }));
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (!data.coordinates || !Array.isArray(data.coordinates)) throw new Error('Invalid data format.');
-    currentData = data;
-
-    const obsTime = new Date(data['Observation Time']).toLocaleString();
-    const forecastTime = new Date(data['Forecast Time']).toLocaleString();
-    info.className = '';
-    info.innerHTML = `<strong>📡 Northern Lights forecast</strong><br><small>Observation: ${obsTime}<br>Forecast: ${forecastTime}<br>Points: ${data.coordinates.length}</small>`;
-
-    drawAuroraOverlay(data.coordinates);
-  } catch (err) {
-    console.error('Aurora data error', err);
-    info.className = 'error';
-    info.innerHTML = `<strong>❌ Error</strong><br><small>No northern lights forecast available.<br>${err.message}</small>`;
-  }
+function createSprites(radius) {
+    if (radius === currentRadius) return;
+    currentRadius = radius;
+    
+    const create = (color) => {
+        const s = document.createElement('canvas');
+        s.width = s.height = radius * 4;
+        const c = s.getContext('2d');
+        const center = s.width / 2;
+        const g = c.createRadialGradient(center, center, 0, center, center, radius);
+        g.addColorStop(0, `rgba(${color}, 0.9)`); // Vahva keskusta
+        g.addColorStop(0.4, `rgba(${color}, 0.2)`); 
+        g.addColorStop(1, `rgba(${color}, 0)`);
+        c.fillStyle = g;
+        c.fillRect(0, 0, s.width, s.height);
+        return s;
+    };
+    
+    // Neon-värikoodit
+    spriteGreen = create('50, 255, 150');  // Sähköinen vihreä
+    spriteYellow = create('200, 255, 0'); // Neon lime
+    spriteRed = create('255, 0, 100');    // Neon pinkki/punainen
 }
 
 function drawAuroraOverlay(points) {
-  if (!map) return;
+    if (!ctx || !points || !auroraCanvas) return;
+    ctx.clearRect(0, 0, auroraCanvas.width, auroraCanvas.height);
+    
+    const zoom = map.getZoom();
+    const time = Date.now() * 0.001; // Aika sekunteina animaatiota varten
 
-  // Poista vanhat overlayt
-  if (auroraLayer) auroraLayer.forEach((l) => map.removeLayer(l));
-  auroraLayer = [];
+    // JÄTTIKOKO LÄHELLÄ:
+    let radius = zoom * 10;
+    if (zoom > 7) radius = zoom * 50; 
+    if (zoom > 10) radius = zoom * 100; // Massiivinen peitto
 
-  const canvasWidth = 3600, canvasHeight = 500;
+    createSprites(radius);
+    ctx.globalCompositeOperation = 'screen';
 
-  const createCanvasOverlay = (xOffset = 0) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvasWidth; canvas.height = canvasHeight;
-    const ctx = canvas.getContext('2d');
+    points.forEach((p, index) => {
+        const lat = p[1];
+        const intensity = p[2];
 
-    points.forEach((p) => {
-      let lon = p[0]; if (lon < 0) lon += 360;
-      const lat = p[1], intensity = p[2]; if (intensity < 1) return;
-      const x = ((lon + 180) / 360) * canvasWidth + xOffset;
-      const y = ((90 - lat) / 50) * canvasHeight;
-      const radius = Math.min(60, Math.max(10, intensity * 3));
-      const grad = ctx.createRadialGradient(x, y, 0, x, y, radius);
-      grad.addColorStop(0, `rgba(50,255,100,${Math.min(0.3, intensity / 10)})`);
-      grad.addColorStop(0.5, `rgba(0,200,100,${Math.min(0.1, intensity / 15)})`);
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill();
+        if (lat < 45 || intensity < 4) return;
+
+        let lon = p[0];
+        if (lon > 180) lon -= 360;
+
+        // LIIKE: Lisätään pieni aaltoilu sijaintiin
+        const offsetLat = Math.sin(time + index) * 0.2; 
+        const offsetLon = Math.cos(time * 0.8 + index) * 0.2;
+
+        const pos = map.latLngToContainerPoint([lat + offsetLat, lon + offsetLon]);
+
+        if (pos.x < -radius * 2 || pos.x > auroraCanvas.width + radius * 2 || 
+            pos.y < -radius * 2 || pos.y > auroraCanvas.height + radius * 2) return;
+
+        let sprite = spriteGreen;
+        if (intensity > 35) sprite = spriteYellow;
+        if (intensity > 70) sprite = spriteRed;
+
+        // KIRKKAUS: Nostettu alpha, jotta värit loistavat
+        const zoomAlpha = zoom > 8 ? 0.6 : 0.4;
+        ctx.globalAlpha = Math.min(zoomAlpha, (intensity / 100));
+        
+        ctx.drawImage(sprite, pos.x - sprite.width / 2, pos.y - sprite.height / 2);
+
+        // Lisäkerros syvyyttä varten
+        if (zoom > 8) {
+            ctx.globalAlpha *= 0.4;
+            const pulse = Math.sin(time * 2 + index) * 0.1 + 1; // Pieni sykintä
+            ctx.drawImage(sprite, 
+                pos.x - (sprite.width * 1.8 * pulse) / 2, 
+                pos.y - (sprite.height * 1.8 * pulse) / 2, 
+                sprite.width * 1.8 * pulse, 
+                sprite.height * 1.8 * pulse
+            );
+        }
     });
-
-    const bounds = [[40, -180], [90, 180]];
-    const overlay = L.imageOverlay(canvas.toDataURL(), bounds, { opacity: 0.75 }).addTo(map);
-    auroraLayer.push(overlay); // tallenna overlay arrayhin
-  };
-
-  // Wrap-around kolmella kopioinnilla
-  createCanvasOverlay(0);
-  createCanvasOverlay(-canvasWidth);
-  createCanvasOverlay(canvasWidth);
 }
 
+async function fetchAuroraData() {
+    try {
+        const res = await fetch('https://services.swpc.noaa.gov/json/ovation_aurora_latest.json');
+        const data = await res.json();
+        currentData = data;
+        
+        if (document.getElementById('loader')) {
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        // Kutsutaan piirtoa vain jos karttataso on jo valmis
+        if (ctx) {
+            drawAuroraOverlay(data.coordinates);
+        }
+    } catch (err) {
+        console.error('Aurora data error:', err);
+    }
+}
 // ------------------------
 // Chart.js latausvarmistus
 // ------------------------
@@ -497,33 +600,61 @@ async function fetchAuroraForecast() {
     const ctxElement = document.getElementById('kpChart'); 
     if (!ctxElement) return;
     const ctx = ctxElement.getContext('2d');
-    new Chart(ctx, {
+
+    // --- TÄRKEÄ KORJAUS: TUHOTAAN VANHA KAAVIO ---
+    if (kpChartInstance) {
+      kpChartInstance.destroy();
+    }
+
+    // Luodaan uusi kaavio ja tallennetaan se muuttujaan
+    kpChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: times,
         datasets: [
-          { label: dayLabels[0], data: day1, borderColor: '#007bff', pointBackgroundColor: day1.map(kp => kp < 3 ? 'green' : kp < 5 ? 'orange' : 'red'), pointRadius: 6, tension: 0.3 },
-          { label: dayLabels[1], data: day2, borderColor: '#6f42c1', pointBackgroundColor: day2.map(kp => kp < 3 ? 'green' : kp < 5 ? 'orange' : 'red'), pointRadius: 6, tension: 0.3 },
-          { label: dayLabels[2], data: day3, borderColor: '#20c997', pointBackgroundColor: day3.map(kp => kp < 3 ? 'green' : kp < 5 ? 'orange' : 'red'), pointRadius: 6, tension: 0.3 }
+          { label: dayLabels[0], data: day1, borderColor: '#00ffcc', pointBackgroundColor: day1.map(kp => kp < 3 ? '#00ffcc' : kp < 5 ? '#ffcc00' : '#ff3366'), pointRadius: 5, tension: 0.3, fill: false },
+          { label: dayLabels[1], data: day2, borderColor: '#6f42c1', pointBackgroundColor: day2.map(kp => kp < 3 ? '#00ffcc' : kp < 5 ? '#ffcc00' : '#ff3366'), pointRadius: 5, tension: 0.3, fill: false },
+          { label: dayLabels[2], data: day3, borderColor: '#20c997', pointBackgroundColor: day3.map(kp => kp < 3 ? '#00ffcc' : kp < 5 ? '#ffcc00' : '#ff3366'), pointRadius: 5, tension: 0.3, fill: false }
         ]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-          title: { display: true, text: 'Northern Lights forecast (NOAA)' },
-          tooltip: { callbacks: { label: function(context) { const kp = context.parsed.y; if (kp >= 5) return `Kp ${kp} - High chance`; if (kp >= 3) return `Kp ${kp} - Moderate chance`; return `Kp ${kp} - Low chance`; } } }
+          legend: { labels: { color: '#fff' } },
+          tooltip: { 
+            callbacks: { 
+              label: function(context) { 
+                const kp = context.parsed.y; 
+                if (kp >= 5) return `Kp ${kp} - High chance`; 
+                if (kp >= 3) return `Kp ${kp} - Moderate chance`; 
+                return `Kp ${kp} - Low chance`; 
+              } 
+            } 
+          }
         },
-        scales: { y: { min: 0, max: 9, title: { display: true, text: 'Kp Index' } }, x: { title: { display: true, text: 'UT Time (3h intervals)' } } }
+        scales: { 
+          y: { 
+            min: 0, max: 9, 
+            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            ticks: { color: '#fff' },
+            title: { display: true, text: 'Kp Index', color: '#fff' } 
+          }, 
+          x: { 
+            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+            ticks: { color: '#fff' },
+            title: { display: true, text: 'UT Time', color: '#fff' } 
+          } 
+        }
       }
     });
-
 
   } catch (error) {
     console.error('Error fetching NOAA forecast:', error);
     const container = document.getElementById('errorMessage');
     if (container) {
       container.textContent = '⚠️ Error downloading NOAA data: ' + error.message;
-      container.style.color = 'red';
+      container.style.color = '#ff3366';
       container.style.fontWeight = 'bold';
     }
   }
@@ -544,23 +675,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
