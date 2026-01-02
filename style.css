@@ -11,7 +11,7 @@
 .mobile-only-panels, #kp-restore-btn { display: none; }
 /* --- KP-INFO PANEELI --- */
 .info-panel {
-    position: fixed; /* Käytetään fixed, jotta pysyy paikoillaan suhteessa ruutuun */
+    position: absolute; /* Käytetään fixed, jotta pysyy paikoillaan suhteessa ruutuun */
     top: 195px; 
     left: 10px;
     background: rgba(10, 15, 25, 0.85); 
@@ -579,4 +579,5 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
