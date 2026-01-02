@@ -294,6 +294,10 @@ header.banner::before {
 }
 .faq-item { margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 6px; }
 
+img.faq-img {
+    width: 350px;
+}
+
 .aurora-section {
     max-width: 900px; margin: 40px auto; padding: 20px;
     background: rgba(0,0,0,0.9); border-radius: 8px; color: #e0e0e0; position: relative; z-index: 2;
@@ -575,3 +579,4 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
