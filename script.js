@@ -439,40 +439,44 @@ function initButtons() {
 // ------------------------
 // NOAA (Ovation) overlay
 // ------------------------
-const AuroraLayer = L.Layer.extend({
-    onAdd: function(map) {
-        this._container = L.DomUtil.create('div', 'leaflet-aurora-layer');
-        this._canvas = L.DomUtil.create('canvas', 'aurora-canvas', this._container);
-        map.getPanes().overlayPane.appendChild(this._container);
-        auroraCanvas = this._canvas;
-        ctx = auroraCanvas.getContext('2d');
-        
-        map.on('move moveend zoomend', this._update, this);
-        this._startAnimation(); // Käynnistetään liike
-        this._update();
-    },
-    onRemove: function(map) {
-        cancelAnimationFrame(animationFrameId);
-    },
-    _startAnimation: function() {
-        const render = () => {
-            if (currentData) drawAuroraOverlay(currentData.coordinates);
-            animationFrameId = requestAnimationFrame(render);
-        };
-        render();
-    },
-    _update: function() {
-        const size = map.getSize();
-        const topLeft = map.containerPointToLayerPoint([0, 0]);
-        L.DomUtil.setPosition(this._canvas, topLeft);
-        auroraCanvas.width = size.x;
-        auroraCanvas.height = size.y;
-        
-        const zoom = map.getZoom();
-        const blurValue = zoom > 8 ? 20 : Math.max(12, zoom * 3.5);
-        this._canvas.style.filter = `blur(${blurValue}px)`;
-    }
-});
+if (typeof L !== 'undefined') {
+    
+    window.AuroraLayer = L.Layer.extend({
+        onAdd: function(map) {
+            this._container = L.DomUtil.create('div', 'leaflet-aurora-layer');
+            this._canvas = L.DomUtil.create('canvas', 'aurora-canvas', this._container);
+            map.getPanes().overlayPane.appendChild(this._container);
+            auroraCanvas = this._canvas;
+            ctx = auroraCanvas.getContext('2d');
+            
+            map.on('move moveend zoomend', this._update, this);
+            this._startAnimation();
+            this._update();
+        },
+        onRemove: function(map) {
+            cancelAnimationFrame(animationFrameId);
+        },
+        _startAnimation: function() {
+            const render = () => {
+                if (currentData) drawAuroraOverlay(currentData.coordinates);
+                animationFrameId = requestAnimationFrame(render);
+            };
+            render();
+        },
+        _update: function() {
+            const size = map.getSize();
+            const topLeft = map.containerPointToLayerPoint([0, 0]);
+            L.DomUtil.setPosition(this._canvas, topLeft);
+            auroraCanvas.width = size.x;
+            auroraCanvas.height = size.y;
+            
+            const zoom = map.getZoom();
+            const blurValue = zoom > 8 ? 20 : Math.max(12, zoom * 3.5);
+            this._canvas.style.filter = `blur(${blurValue}px)`;
+        }
+    });
+
+} 
 
 function createSprites(radius) {
     if (radius === currentRadius) return;
@@ -696,6 +700,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
