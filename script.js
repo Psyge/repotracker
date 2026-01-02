@@ -86,37 +86,41 @@ async function loadPlaces() {
 // "Read more" -paneeli (place-info DIV)
 // ------------------------------------
 function showPlaceInfo(place) {
-  const defaultSection = document.getElementById('aurora-default');
+  // Etsitään uusi yhteinen ohje-elementti
+  const instructions = document.getElementById('aurora-instructions');
   const infoSection = document.getElementById('place-info');
 
-  if (defaultSection) defaultSection.style.display = 'none';
-  if (infoSection) infoSection.style.display = 'block';
-
-  const linkHtml = place.url
-    ? `<p>${place.url}Visit website</a></p>`
-    : '';
-
-  const streamHtml = place.stream
-    ? `${place.stream}</iframe>`
-    : '';
-
+  if (instructions) instructions.style.display = 'none';
   if (infoSection) {
+    infoSection.style.display = 'block';
+
+    const linkHtml = place.url
+      ? `<p><a href="${place.url}" target="_blank">Visit website</a></p>`
+      : '';
+
+    const streamHtml = place.stream
+      ? `<div class="video-container">${place.stream}</div>`
+      : '';
+
     infoSection.innerHTML = `
+      <h2>${place.name}</h2>
       ${place.description || ''}
       ${linkHtml}
       ${streamHtml}
-      <button id="back-to-default" style="margin-top:15px;">Back to instructions</button>
+      <button id="back-to-default" class="back-btn" style="margin-top:20px;">Back to instructions</button>
     `;
+    
     infoSection.scrollIntoView({ behavior: 'smooth' });
-  }
 
-  const backBtn = document.getElementById('back-to-default');
-  if (backBtn) {
-    backBtn.onclick = () => {
-      if (infoSection) infoSection.style.display = 'none';
-      if (defaultSection) defaultSection.style.display = 'block';
-      if (defaultSection) defaultSection.scrollIntoView({ behavior: 'smooth' });
-    };
+    // "Takaisin" -napin logiikka
+    const backBtn = document.getElementById('back-to-default');
+    if (backBtn) {
+      backBtn.onclick = () => {
+        infoSection.style.display = 'none';
+        if (instructions) instructions.style.display = 'block';
+        if (instructions) instructions.scrollIntoView({ behavior: 'smooth' });
+      };
+    }
   }
 }
 
@@ -700,6 +704,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
