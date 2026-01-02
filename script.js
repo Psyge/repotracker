@@ -300,58 +300,47 @@ function initButtons() {
   const locateBtn = document.getElementById('locate-btn');
 
   // 1) Nappulat (eivät navigoi)
-  [forecastBtn, closeForecast, locateBtn, closePopupBtn]
-    .filter(Boolean)
-    .forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      });
+  [forecastBtn, closeForecast, locateBtn, closePopupBtn].filter(Boolean).forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
     });
-  [menu, forecastPopup, helpPopup]
-    .filter(Boolean)
-    .forEach(el => {
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-      if (typeof L !== 'undefined') {
-        L.DomEvent.disableClickPropagation(el);
-        L.DomEvent.disableScrollPropagation(el);
-      }
-    });
+  });
 
-  // 2) Kontit (menu, forecastPopup, helpPopup): EI preventDefault
- if (menuBtn && menu) {
-    menuBtn.addEventListener('click', () => {
-      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+  // 2) Kontit (estetään klikkaus valumasta kartalle)
+  [menu, forecastPopup, helpPopup].filter(Boolean).forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
     });
-  }
-      
-      // Luetaan todellinen tila CSS:stä (tärkeää alasivuilla)
+    if (typeof L !== 'undefined') {
+      L.DomEvent.disableClickPropagation(el);
+      L.DomEvent.disableScrollPropagation(el);
+    }
+  });
+
+  // 3) Menu Toggle (KORJATTU LOGIIKKA)
+  if (menuBtn && menu) {
+    menuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const currentDisplay = window.getComputedStyle(menu).display;
-      if (currentDisplay === 'none') {
-        menu.style.display = 'flex';
-      } else {
-        menu.style.display = 'none';
-      }
+      menu.style.display = (currentDisplay === 'none') ? 'flex' : 'none';
     });
 
     // Suljetaan menu, jos klikataan muualle sivulla
     document.addEventListener('click', (e) => {
-      // Tarkistetaan ettei klikattu itse nappia tai menua
       if (menu.style.display === 'flex' && e.target !== menuBtn && !menu.contains(e.target)) {
         menu.style.display = 'none';
       }
     });
   }
-  
-  // 3) Menun linkit: navigoivat
+
+  // 4) Menun linkit
   document.querySelectorAll('#menu a[href]').forEach(a => {
     a.addEventListener('click', (e) => {
-      e.stopPropagation(); 
+      e.stopPropagation();
     });
   });
-
   // 4) Menu toggle
  
 
@@ -693,6 +682,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
