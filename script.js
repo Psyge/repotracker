@@ -170,7 +170,7 @@ async function initAppMap() {
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '© OpenStreetMap © CARTO',
         subdomains: 'abcd',
-        maxZoom: 19
+        maxZoom: 15
     }).addTo(map);
 
     // Pakotetaan koon tunnistus
@@ -704,6 +704,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
