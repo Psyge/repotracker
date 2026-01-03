@@ -1,3 +1,50 @@
+#northern-lights-faq h2, 
+#contact-section h2 {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px rgba(0, 255, 204, 0.3); /* Lisätään pieni hohde */
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Laatikoiden tyyli - vaaleampi tausta ja musta teksti */
+.con-item {
+    /* Poistetaan aiempi absolute-sijainti, jos se on vielä siellä */
+    position: relative !important; 
+    top: auto !important;
+    left: auto !important;
+    
+    color: #000000; /* Musta teksti */
+    background: rgba(255, 255, 255, 0.85); /* Enemmän valkoinen ja peittävämpi tausta */
+    padding: 20px; 
+    border-radius: 12px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+}
+
+/* Varmistetaan, että myös otsikot laatikon sisällä ovat mustia */
+.faq-item h3 {
+    color: #000000 !important;
+    border-bottom: 2px solid #00ffcc; /* Lisää pienen neon-viivan kysymyksen alle */
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+/* Linkit laatikon sisällä - säädetään väriä jotta ne erottuvat vaalealta pohjalta */
+.faq-item a {
+    color: #0056b3;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.faq-item a:hover {
+    color: #003d80;
+}
+img.faq-img {
+    height: 300px;
+}
 a:link {
     color: #0056b3;
 }
@@ -609,6 +656,7 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
 
 
