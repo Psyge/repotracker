@@ -1,3 +1,6 @@
+a:link {
+    color: #0056b3;
+}
 .ads-img {
     width: 650px; 
     height: 60px; 
@@ -606,6 +609,7 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
 
 
