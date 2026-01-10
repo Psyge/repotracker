@@ -153,53 +153,55 @@ const t = e.originalEvent?.target;
 // ---------------------
 
 async function initAppMap() {
-    if (typeof L === 'undefined') {
-        console.error('Leaflet not loaded');
-        return;
-    }
+  if (typeof L === 'undefined') return;
 
-    // Alustetaan kartta
-    map = L.map('map', { 
-        center: [64.5, 26.0], 
-        zoom: 5, 
-        minZoom: 2, 
-        maxZoom: 15 
-    });
+  // 1. Alustetaan kartta
+  map = L.map('map', { 
+    center: [65, 25], 
+    zoom: 4, 
+    minZoom: 3, // NOSTETTU: Estää karttaa näkymästä liian pienenä (poistaa valkoiset reunat)
+    maxZoom: 18, 
+    worldCopyJump: false, 
+    maxBoundsViscosity: 1.0, 
+    bounceAtZoomLimits: true
+  });
 
-    // Lisätään karttataso
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap © CARTO',
-        subdomains: 'abcd',
-        maxZoom: 15
-    }).addTo(map);
+  // 2. Taustaväri Leaflet-konttiin (viimeinen lukko valkoista vastaan)
+  document.getElementById('map').style.background = '#000000';
 
-    // Pakotetaan koon tunnistus
-    setTimeout(() => { map.invalidateSize(); }, 200);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    noWrap: true, // Karttaa näkyy vain yksi kappale
+    bounds: [[-90, -180], [90, 180]],
+    maxZoom: 22
+  }).addTo(map);
 
-    // Lisätään revontulet
-    if (typeof AuroraLayer !== 'undefined') {
-        const auroraLayerInstance = new AuroraLayer();
-        map.addLayer(auroraLayerInstance);
-    }
+  // 3. Tiukat rajat, jotka estävät selaamisen tyhjyyteen
+  const bounds = [[-85, -180], [85, 180]];
+  map.setMaxBounds(bounds);
 
-    map.on('click', onMapClick);
+  // --- KORJAUS TÖKSÄHDYKSEEN ---
+  // Odotetaan hetki, että DOM on varmasti asettunut
+  setTimeout(() => {
+    map.invalidateSize(); // Pakottaa kartan täyttämään tilan oikein
+    document.getElementById('map').classList.add('map-ready');
+  }, 50);
 
-    // TÄMÄ OLI VIRHEEN SYY: await pitää olla async-funktion sisällä
-    try {
-        const places = await loadPlaces(); 
-        if (places && places.length > 0 && typeof initMarkers === 'function') {
-            initMarkers(map, getWeather, showPlaceInfo, places);
-        }
-    } catch (e) {
-        console.error("Paikkojen lataus epäonnistui:", e);
-    }
+  const auroraLayerInstance = new AuroraLayer();
+  map.addLayer(auroraLayerInstance);
 
-  // NOAA-data + päivitys
+  map.setMaxBounds([[-90, -180], [90, 180]]);
+  map.on('click', onMapClick);
+
+  const places = await loadPlaces();
+  if (places.length > 0 && typeof initMarkers === 'function') {
+      initMarkers(map, getWeather, showPlaceInfo, places);
+  }
+
   fetchAuroraData();
   setInterval(fetchAuroraData, 5 * 60 * 1000);
-await openPlaceFromUrlParam();
-  // Mahdollinen muu karttaan liittyvä initialisointi...
+  await openPlaceFromUrlParam();
 }
+
 
 
 
@@ -704,6 +706,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
