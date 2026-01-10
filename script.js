@@ -462,24 +462,37 @@ if (typeof L !== 'undefined') {
         onRemove: function(map) {
             cancelAnimationFrame(animationFrameId);
         },
-        _startAnimation: function() {
-            const render = () => {
-                if (currentData) drawAuroraOverlay(currentData.coordinates);
-                animationFrameId = requestAnimationFrame(render);
-            };
-            render();
-        },
-        _update: function() {
-            const size = map.getSize();
-            const topLeft = map.containerPointToLayerPoint([0, 0]);
-            L.DomUtil.setPosition(this._canvas, topLeft);
-            auroraCanvas.width = size.x;
-            auroraCanvas.height = size.y;
-            
-            const zoom = map.getZoom();
-            const blurValue = zoom > 8 ? 20 : Math.max(12, zoom * 3.5);
-            this._canvas.style.filter = `blur(${blurValue}px)`;
+       _startAnimation: function() {
+    let lastFrameTime = 0;
+    const fps = 25; // Rajoitetaan FPS
+    const interval = 1000 / fps;
+
+    const render = (now) => {
+        if (!lastFrameTime) lastFrameTime = now;
+        const delta = now - lastFrameTime;
+
+        if (delta > interval) {
+            if (currentData) drawAuroraOverlay(currentData.coordinates);
+            lastFrameTime = now - (delta % interval);
         }
+        animationFrameId = requestAnimationFrame(render);
+    };
+    requestAnimationFrame(render);
+        },
+      _update: function() {
+    const size = map.getSize();
+    // Kohdistetaan canvas kartan vasempaan ylänurkkaat (0,0)
+    const topLeft = map.containerPointToLayerPoint([0, 0]); 
+    L.DomUtil.setPosition(this._canvas, topLeft);
+    
+    // Asetetaan kankaan koko vastaamaan näkyvää aluetta
+    this._canvas.width = size.x;
+    this._canvas.height = size.y;
+    
+    const zoom = map.getZoom();
+    const blurValue = zoom > 8 ? 20 : Math.max(12, zoom * 3.5);
+    this._canvas.style.filter = `blur(${blurValue}px)`;
+}
     });
 
 } 
@@ -513,12 +526,15 @@ function drawAuroraOverlay(points) {
     ctx.clearRect(0, 0, auroraCanvas.width, auroraCanvas.height);
     
     const zoom = map.getZoom();
-    const time = Date.now() * 0.001; // Aika sekunteina animaatiota varten
+    const time = Date.now() * 0.001;
+    
+    // TÄMÄ ON SE KORJAUS: latShift siirtää hohdetta asteina (pohjoiseen)
+    // Kokeile arvoa 1.8 tai 2.0, se skaalautuu nyt oikein zoomatessa.
+    const latShift = 1.4; 
 
-    // JÄTTIKOKO LÄHELLÄ:
     let radius = zoom * 10;
     if (zoom > 7) radius = zoom * 50; 
-    if (zoom > 10) radius = zoom * 100; // Massiivinen peitto
+    if (zoom > 10) radius = zoom * 100;
 
     createSprites(radius);
     ctx.globalCompositeOperation = 'screen';
@@ -526,35 +542,31 @@ function drawAuroraOverlay(points) {
     points.forEach((p, index) => {
         const lat = p[1];
         const intensity = p[2];
-
         if (lat < 45 || intensity < 4) return;
 
         let lon = p[0];
         if (lon > 180) lon -= 360;
 
-        // LIIKE: Lisätään pieni aaltoilu sijaintiin
         const offsetLat = Math.sin(time + index) * 0.2; 
         const offsetLon = Math.cos(time * 0.8 + index) * 0.2;
 
-        const pos = map.latLngToContainerPoint([lat + offsetLat, lon + offsetLon]);
+        // Lasketaan sijainti: lat + animaatio + manuaalinen korjaus
+        const pos = map.latLngToContainerPoint([lat + offsetLat + latShift, lon + offsetLon]);
 
-        if (pos.x < -radius * 2 || pos.x > auroraCanvas.width + radius * 2 || 
-            pos.y < -radius * 2 || pos.y > auroraCanvas.height + radius * 2) return;
-
+        // Määritellään sprite intensiteetin mukaan (Tämä puuttui aiemmin!)
         let sprite = spriteGreen;
         if (intensity > 35) sprite = spriteYellow;
         if (intensity > 70) sprite = spriteRed;
 
-        // KIRKKAUS: Nostettu alpha, jotta värit loistavat
         const zoomAlpha = zoom > 8 ? 0.6 : 0.4;
         ctx.globalAlpha = Math.min(zoomAlpha, (intensity / 100));
         
+        // Piirretään suoraan laskettuun pisteeseen
         ctx.drawImage(sprite, pos.x - sprite.width / 2, pos.y - sprite.height / 2);
 
-        // Lisäkerros syvyyttä varten
         if (zoom > 8) {
             ctx.globalAlpha *= 0.4;
-            const pulse = Math.sin(time * 2 + index) * 0.1 + 1; // Pieni sykintä
+            const pulse = Math.sin(time * 2 + index) * 0.1 + 1;
             ctx.drawImage(sprite, 
                 pos.x - (sprite.width * 1.8 * pulse) / 2, 
                 pos.y - (sprite.height * 1.8 * pulse) / 2, 
@@ -564,7 +576,6 @@ function drawAuroraOverlay(points) {
         }
     });
 }
-
 async function fetchAuroraData() {
     try {
         const res = await fetch('https://services.swpc.noaa.gov/json/ovation_aurora_latest.json');
@@ -706,6 +717,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
