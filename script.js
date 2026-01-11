@@ -396,7 +396,9 @@ function initButtons() {
     locateBtn.addEventListener('click', async (e) => {
         e.preventDefault();
         e.stopPropagation();
-
+if (typeof gtag === 'function') {
+        gtag('event', 'click_locate_me');
+      }
         if (!navigator.geolocation) {
             alert('Geolocation not supported in this browser.');
             return;
@@ -726,6 +728,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
