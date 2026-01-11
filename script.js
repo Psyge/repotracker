@@ -262,6 +262,15 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
   if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
   else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
 
+  if (typeof gtag === 'function') {
+    gtag('event', 'view_aurora_prediction', {
+      'event_category': 'Engagement',
+      'event_label': statusText, // Tallentaa oliko se "High chance!" jne.
+      'intensity': auroraIntensity,
+      'cloud_cover': clouds
+    });
+  }
+  
   let popupContent = `
     <strong>Your Northern Lights chance is now:</strong><br>
     ${statusEmoji} ${statusText}<br>
@@ -288,7 +297,7 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
 
 
 function initButtons() {
-  const helpPopup = document.getElementById('help-popup');
+ /* const helpPopup = document.getElementById('help-popup');
   const closePopupBtn = document.getElementById('close-popup');
   const dontShowAgainCheckbox = document.getElementById('dont-show-again');
   const showHelpLink = document.getElementById('show-help');
@@ -310,7 +319,7 @@ function initButtons() {
       e.stopPropagation();
       helpPopup.style.display = 'flex';
     });
-  }
+  }*/
 
   const menuBtn = document.getElementById('menu-btn');
   const menu = document.getElementById('menu');
@@ -717,6 +726,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
