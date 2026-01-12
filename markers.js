@@ -137,8 +137,18 @@
       readMoreBound = true;
     }
   }
-
+function togglePlaces(visible, map) {
+    if (!markersLayer || !map) return;
+    
+    if (visible) {
+      markersLayer.addTo(map);
+    } else {
+      map.removeLayer(markersLayer);
+    }
+  }
   // Vie julkinen API vain yhtenä nimenä
   window.initMarkers = initMarkers;
+  window.togglePlaces = togglePlaces;
 })();
+
 
