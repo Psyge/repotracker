@@ -118,24 +118,33 @@
         <div id="idesc" style="font-size: 10px; color: #00ffcc; opacity: 0.8; margin-bottom: 2px;">KP-INDEX</div>
         <div class="kp-badge" id="kpVal">--</div>
         <div id="kpDesc" style="font-size: 11px; color: #fff; margin-top: 5px; opacity: 0.9;">Loading...</div> 
+      <div class="map-controls" id="places-toggle-wrapper">
+                <div class="toggle-container">
+                    <span class="toggle-label">Show Places</span>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-places" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
     </div>
 
-    <div class="mobile-only-panels">
-        <div class="side-panel right-panel closed" id="actions-panel">
-            <div class="panel-tab" id="actions-tab">⚙️</div>
-            <div class="panel-content" id="actions-content">
-                </div>
-        </div>
-        
-        <div class="side-panel right-panel closed" id="social-panel">
-            <div class="panel-tab" id="social-tab">📱</div>
+  <div class="unified-panel closed" id="main-panel">
+            <div class="panel-tabs">
+                <div class="tab" id="tab-actions">⚙️</div>
+                <div class="tab" id="tab-social">📱</div>
+            </div>
             <div class="panel-content">
-                <a href="https://instagram.com/repotracker_" target="_blank" class="soc-icon"><img src="images/ig-icon.png"></a>
-                <a href="https://www.tiktok.com/@repotracker" target="_blank" class="soc-icon"><img src="images/tiktok.png"></a>
-                <a href="https://www.buymeacoffee.com/repotracker" target="_blank" class="soc-icon">☕</a>
+                <div id="content-actions" class="content-section">
+                    </div>
+                <div id="content-social" class="content-section">
+                    <a href="https://instagram.com/repotracker_" target="_blank" class="soc-icon"><img src="ig-icon.png"></a>
+                    <a href="https://www.tiktok.com/@repotracker" target="_blank" class="soc-icon"><img src="tiktok.png"></a>
+                    <a href="https://www.buymeacoffee.com/repotracker" target="_blank" class="soc-icon">☕</a>
+                </div>
             </div>
         </div>
-    </div>
+  
   <div id="forecast-popup">
     <div class="forecast-card">
       <span id="close-forecast">&times;</span>
@@ -210,6 +219,8 @@
 
 
 let kpHideTimeout = null;
+// Globaali muuttuja paikkamerkeille, jotta kytkin voi hallita niitä
+window.placesLayerGroup = window.placesLayerGroup || null;
 
 // 1. Paneelien hallinta
 function setupMobilePanels() {
@@ -217,7 +228,6 @@ function setupMobilePanels() {
         const panel = document.getElementById(id + '-panel');
         const tab = document.getElementById(id + '-tab');
         if (panel && tab) {
-            // Estetään klikkauksen meneminen karttaan
             if (typeof L !== 'undefined' && L.DomEvent) {
                 L.DomEvent.disableClickPropagation(panel);
             }
@@ -259,14 +269,6 @@ async function fetchKPData() {
             const lastRow = data[data.length - 1];
             const kpVal = parseFloat(lastRow[1]);
 
-         /* if (!isNaN(kpVal)) {
-    // Varmistetaan, että OneSignal-jono on olemassa ennen käyttöä
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.User.addTag("kp_index", kpVal.toString());
-        console.log("KP-tagi päivitetty OneSignaliin: " + kpVal);
-    });
-} */
             const badge = document.getElementById('kpVal');
             const desc = document.getElementById('kpDesc');
             if (badge) {
@@ -292,28 +294,40 @@ async function fetchKPData() {
     }
 }
 
-// 4. ALUSTUS (Kaikki tapahtuu tässä)
+// 4. ALUSTUS
 document.addEventListener('DOMContentLoaded', () => {
-    // Käynnistetään paneelit
     setupMobilePanels();
-    
-    // Haetaan KP-data
     fetchKPData();
 
-    // Mobiilinappien siirto
+    // Mobiilinappien ja kytkimen siirto paneeliin
     if (window.innerWidth <= 768) {
         const actionsContent = document.getElementById('actions-content');
         const locateBtn = document.getElementById('locate-btn');
         const forecastBtn = document.getElementById('forecast-btn');
+        const placesToggleWrapper = document.getElementById('places-toggle-wrapper'); // Kytkimen säiliö
 
         if (actionsContent) {
             if (locateBtn) actionsContent.appendChild(locateBtn);
             if (forecastBtn) actionsContent.appendChild(forecastBtn);
-            // Markers-nappi jää nyt kartalle (tai minne se on HTML:ssä laitettu)
+            if (placesToggleWrapper) actionsContent.appendChild(placesToggleWrapper);
         }
     }
 
-    // Ennuste-popupin toiminta
+    // Show Places -kytkimen toiminnallisuus
+    const placesToggle = document.getElementById('toggle-places');
+    if (placesToggle) {
+        placesToggle.addEventListener('change', function() {
+            if (window.placesLayerGroup && typeof map !== 'undefined') {
+                if (this.checked) {
+                    map.addLayer(window.placesLayerGroup);
+                } else {
+                    map.removeLayer(window.placesLayerGroup);
+                }
+            }
+        });
+    }
+
+    // Ennuste-popup
     const forecastBtn = document.getElementById('forecast-btn');
     const forecastPopup = document.getElementById('forecast-popup');
     const closeForecast = document.getElementById('close-forecast');
@@ -322,7 +336,6 @@ document.addEventListener('DOMContentLoaded', () => {
         forecastBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             forecastPopup.style.display = 'flex';
-            // Jos updateKpChart on markers.js tai script.js tiedostossa:
             if (typeof updateKpChart === 'function') updateKpChart();
         });
     }
@@ -397,6 +410,7 @@ window.onload = function() {
   </script>
 </body>
 </html>
+
 
 
 
