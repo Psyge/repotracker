@@ -259,29 +259,53 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
 
   // Liikennevalostatus
   let statusEmoji = '🔴', statusText = 'Low chance';
-  if (score >= 3) { statusEmoji = '🟢'; statusText = 'High chance!'; }
-  else if (score === 2) { statusEmoji = '🟡'; statusText = 'Moderate chance'; }
+    let statusColor = '#ff3366'; // Oletus: Punainen
 
-  if (typeof gtag === 'function') {
-    gtag('event', 'view_aurora_prediction', {
-      'event_category': 'Engagement',
-      'event_label': statusText, // Tallentaa oliko se "High chance!" jne.
-      'intensity': auroraIntensity,
-      'cloud_cover': clouds
-    });
-  }
-  
+    if (score >= 3) { 
+        statusEmoji = '🟢'; 
+        statusText = 'High chance!'; 
+        statusColor = '#00ffcc'; 
+    } else if (score === 2) { 
+        statusEmoji = '🟡'; 
+        statusText = 'Moderate chance'; 
+        statusColor = '#ffcc00'; 
+    }
+let probability = Math.min((score / 4) * 100, 100);
   let popupContent = `
-    <strong>Your Northern Lights chance is now:</strong><br>
-    ${statusEmoji} ${statusText}<br>
-    Aurora intensity: ${auroraIntensity.toFixed(1)}<br>
-    Clouds: ${clouds}%<br>
-    Temp: ${weather ? weather.temp + '°C' : 'N/A'}
+    <div style="text-align: center; font-family: 'Arial', sans-serif; min-width: 200px; padding: 5px;">
+    <div style="font-size: 10px; text-transform: uppercase; color: #888; letter-spacing: 1px; margin-bottom: 2px;">Chance now</div>
+    <div style="font-size: 30px; font-weight: 900; color: ${statusColor}; margin: 0; line-height: 1;">${probability}%</div>
+    <div style="font-size: 10px; font-weight: bold; color: ${statusColor}; margin-top: 5px; text-transform: uppercase;">
+        ${statusEmoji} ${statusText}
+    </div>
+
+    <div style="width: 100%; height: 6px; background: #333; border-radius: 10px; margin: 15px 0;">
+        <div style="width: ${probability}%; height: 100%; background: ${statusColor}; border-radius: 10px; box-shadow: 0 0 8px ${statusColor}77;"></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; border-top: 1px solid #333; padding-top: 10px;">
+        <div style="text-align: left;">
+            <div style="font-size: 9px; color: #888;">AURORA</div>
+            <div style="font-size: 14px; font-weight: bold; color: #fff;">✨ ${auroraIntensity.toFixed(1)}</div>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 9px; color: #888;">CLOUDS</div>
+            <div style="font-size: 14px; font-weight: bold; color: #fff;">☁️ ${clouds}%</div>
+        </div>
+        </div>
+        </div>
   `;
 
   if (showGoogleMapsLink) {
-    popupContent += `<br><strong>Coordinates:</strong> ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
-      <a href="https://www.google.com/maps?q=${lat},${lon}">Open in Google Maps</a>`;
+    popupContent += `<br><div style="text-align: left;">
+            <div style="font-size: 9px; color: #888;">TEMP</div>
+            <div style="font-size: 14px; font-weight: bold; color: #fff;">🌡️ ${weather ? weather.temp + '°C' : 'N/A'}</div>
+        </div><br>
+      <div style="text-align: right;">
+            <div style="font-size: 9px; color: #888;">MAPS</div>
+            <div style="font-size: 14px;">
+                <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank" style="text-decoration: none;">📍 Open</a>
+            </div>`;
   }
 
   if (marker) {
@@ -290,7 +314,6 @@ async function showAuroraPopup(lat, lon, marker = null, showGoogleMapsLink = tru
     L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
   }
 }
-
 // ------------------------
 // UI-painikkeiden init
 // ------------------------
@@ -728,6 +751,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
