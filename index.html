@@ -69,7 +69,7 @@
      crossorigin="anonymous"></script>  
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script>
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
+ /*  window.OneSignalDeferred = window.OneSignalDeferred || [];
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "7b4a4513-fcc3-4efb-a5a1-1903f0c3615e",
@@ -78,7 +78,7 @@
         enable: true, // Tämä tuo sen pienen kellon näkyviin
       },
     });
-  });
+  }); */
 </script>  
 </head>
 <body>
@@ -259,14 +259,14 @@ async function fetchKPData() {
             const lastRow = data[data.length - 1];
             const kpVal = parseFloat(lastRow[1]);
 
-          if (!isNaN(kpVal)) {
+         /* if (!isNaN(kpVal)) {
     // Varmistetaan, että OneSignal-jono on olemassa ennen käyttöä
     window.OneSignalDeferred = window.OneSignalDeferred || [];
     window.OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.User.addTag("kp_index", kpVal.toString());
         console.log("KP-tagi päivitetty OneSignaliin: " + kpVal);
     });
-}
+} */
             const badge = document.getElementById('kpVal');
             const desc = document.getElementById('kpDesc');
             if (badge) {
@@ -397,6 +397,7 @@ window.onload = function() {
   </script>
 </body>
 </html>
+
 
 
 
