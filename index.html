@@ -219,161 +219,114 @@
 
 
 let kpHideTimeout = null;
-// Globaali muuttuja paikkamerkeille, jotta kytkin voi hallita niitä
-window.placesLayerGroup = window.placesLayerGroup || null;
+        window.placesLayerGroup = window.placesLayerGroup || null;
 
-// 1. Paneelien hallinta
-function setupMobilePanels() {
-    ['actions', 'social'].forEach(id => {
-        const panel = document.getElementById(id + '-panel');
-        const tab = document.getElementById(id + '-tab');
-        if (panel && tab) {
-            if (typeof L !== 'undefined' && L.DomEvent) {
-                L.DomEvent.disableClickPropagation(panel);
+        // 1. Paneelien hallinta (Korjattu ID:t)
+        function setupMobilePanels() {
+            const mainPanel = document.getElementById('main-panel');
+            const tabActions = document.getElementById('tab-actions');
+            const tabSocial = document.getElementById('tab-social');
+            const contentActions = document.getElementById('content-actions');
+            const contentSocial = document.getElementById('content-social');
+
+            if (!mainPanel || !tabActions || !tabSocial) return;
+
+            function toggleSection(section) {
+                if (mainPanel.classList.contains('closed')) {
+                    mainPanel.classList.remove('closed');
+                } else if (
+                    (section === 'actions' && contentActions.classList.contains('active')) ||
+                    (section === 'social' && contentSocial.classList.contains('active'))
+                ) {
+                    mainPanel.classList.add('closed');
+                }
+
+                contentActions.classList.toggle('active', section === 'actions');
+                contentSocial.classList.toggle('active', section === 'social');
             }
-            tab.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                panel.classList.toggle('closed');
-                console.log(id + " paneeli klikattu");
+
+            tabActions.addEventListener('click', (e) => { e.stopPropagation(); toggleSection('actions'); });
+            tabSocial.addEventListener('click', (e) => { e.stopPropagation(); toggleSection('social'); });
+        }
+
+        // 2. KP-laatikon näkyvyys
+        function handleKpVisibility() {
+            const kpBox = document.getElementById('kp-info-box'); 
+            if (!kpBox) return;
+            if (window.innerWidth > 768) { kpBox.classList.remove('fade-out'); return; }
+            if (kpHideTimeout) clearTimeout(kpHideTimeout);
+            kpBox.classList.remove('fade-out');
+            kpHideTimeout = setTimeout(() => { kpBox.classList.add('fade-out'); }, 8000); 
+        }
+
+        // 3. KP-datan haku
+        async function fetchKPData() {
+            try {
+                const res = await fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json');
+                const data = await res.json();
+                if (data && data.length > 1) {
+                    const lastRow = data[data.length - 1];
+                    const kpVal = parseFloat(lastRow[1]);
+                    const badge = document.getElementById('kpVal');
+                    const desc = document.getElementById('kpDesc');
+                    if (badge) {
+                        badge.innerText = isNaN(kpVal) ? "--" : kpVal.toFixed(1);
+                        const colors = kpVal >= 5 ? ["#ff3366", "● Widely visible"] : kpVal >= 3 ? ["#ffcc00", "● Chance to see"] : ["#00ffcc", "● No northern lights"];
+                        badge.style.color = colors[0];
+                        desc.innerText = colors[1];
+                        desc.style.color = colors[0];
+                    }
+                    handleKpVisibility();
+                }
+            } catch(e) { console.error("Haku epäonnistui", e); }
+        }
+
+        // 4. ALUSTUS
+        document.addEventListener('DOMContentLoaded', () => {
+            setupMobilePanels();
+            fetchKPData();
+
+            if (window.innerWidth <= 768) {
+                const actionsContent = document.getElementById('content-actions');
+                const btns = ['locate-btn', 'forecast-btn', 'markers-btn', 'places-toggle-wrapper'];
+                btns.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && actionsContent) actionsContent.appendChild(el);
+                });
+            }
+
+            const placesToggle = document.getElementById('toggle-places');
+            if (placesToggle) {
+                placesToggle.addEventListener('change', function() {
+                    if (window.placesLayerGroup && typeof map !== 'undefined') {
+                        this.checked ? map.addLayer(window.placesLayerGroup) : map.removeLayer(window.placesLayerGroup);
+                    }
+                });
+            }
+
+            // Forecast & Splash logic
+            const fBtn = document.getElementById('forecast-btn');
+            const fPop = document.getElementById('forecast-popup');
+            if (fBtn && fPop) {
+                fBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fPop.style.display = 'flex';
+                    if (typeof updateKpChart === 'function') updateKpChart();
+                });
+            }
+            document.getElementById('close-forecast')?.addEventListener('click', () => { fPop.style.display = 'none'; });
+
+            const splash = document.getElementById('mobile-splash');
+            if (splash) setTimeout(() => { splash.classList.add('hidden'); setTimeout(() => splash.remove(), 1000); }, 3000);
+
+            document.getElementById('kp-restore-btn')?.addEventListener('click', (e) => {
+                e.preventDefault(); e.stopPropagation(); handleKpVisibility(); 
             });
-        }
-    });
-}
 
-// 2. KP-laatikon näkyvyys
-function handleKpVisibility() {
-    const kpBox = document.getElementById('kp-info-box'); 
-    if (!kpBox) return;
-
-    if (window.innerWidth > 768) {
-        kpBox.classList.remove('fade-out');
-        return;
-    }
-
-    if (kpHideTimeout) clearTimeout(kpHideTimeout);
-    kpBox.classList.remove('fade-out');
-
-    kpHideTimeout = setTimeout(() => {
-        kpBox.classList.add('fade-out');
-    }, 8000); 
-}
-
-// 3. KP-datan haku
-async function fetchKPData() {
-    try {
-        const res = await fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json');
-        const data = await res.json();
-        
-        if (data && data.length > 1) {
-            const lastRow = data[data.length - 1];
-            const kpVal = parseFloat(lastRow[1]);
-
-            const badge = document.getElementById('kpVal');
-            const desc = document.getElementById('kpDesc');
-            if (badge) {
-                badge.innerText = isNaN(kpVal) ? "--" : kpVal.toFixed(1);
-                if (kpVal >= 5) {
-                    badge.style.color = "#ff3366";
-                    desc.innerText = "● Widely visible";
-                    desc.style.color = "#ff3366";
-                } else if (kpVal >= 3) {
-                    badge.style.color = "#ffcc00";
-                    desc.innerText = "● Chance to see";
-                    desc.style.color = "#ffcc00";
-                } else {
-                    badge.style.color = "#00ffcc";
-                    desc.innerText = "● No northern lights";
-                    desc.style.color = "#00ffcc";
-                }
-            }
-            handleKpVisibility();
-        }
-    } catch(e) {
-        console.error("Haku epäonnistui", e);
-    }
-}
-
-// 4. ALUSTUS (Päivitetty Show Places -toiminnolla)
-document.addEventListener('DOMContentLoaded', () => {
-    setupMobilePanels();
-    fetchKPData();
-
-    // Mobiilinappien ja kytkimen siirto paneeliin
-    if (window.innerWidth <= 768) {
-        const actionsContent = document.getElementById('actions-content');
-        const locateBtn = document.getElementById('locate-btn');
-        const forecastBtn = document.getElementById('forecast-btn');
-        // Etsitään kytkin PC-sijainnistaan
-        const placesToggleWrapper = document.getElementById('places-toggle-wrapper');
-
-        if (actionsContent) {
-            if (locateBtn) actionsContent.appendChild(locateBtn);
-            if (forecastBtn) actionsContent.appendChild(forecastBtn);
-            // Siirretään kytkin mobiilipaneeliin
-            if (placesToggleWrapper) {
-                actionsContent.appendChild(placesToggleWrapper);
-            }
-        }
-    }
-
-    // Show Places -kytkimen logiikka
-    const placesToggle = document.getElementById('toggle-places');
-    if (placesToggle) {
-        placesToggle.addEventListener('change', function() {
-            // window.placesLayerGroup on oltava määriteltynä markers.js puolella
-            if (window.placesLayerGroup && typeof map !== 'undefined') {
-                if (this.checked) {
-                    map.addLayer(window.placesLayerGroup);
-                } else {
-                    map.removeLayer(window.placesLayerGroup);
-                }
-            }
+            document.addEventListener('touchstart', (e) => {
+                if (!e.target.closest('#kp-restore-btn') && !e.target.closest('.unified-panel')) handleKpVisibility();
+            });
         });
-    }
-
-    // --- Muu alkuperäinen koodi (ennusteet, splash jne.) ---
-    const forecastBtn = document.getElementById('forecast-btn');
-    const forecastPopup = document.getElementById('forecast-popup');
-    const closeForecast = document.getElementById('close-forecast');
-
-    if (forecastBtn && forecastPopup) {
-        forecastBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            forecastPopup.style.display = 'flex';
-            if (typeof updateKpChart === 'function') updateKpChart();
-        });
-    }
-
-    if (closeForecast) {
-        closeForecast.addEventListener('click', () => {
-            forecastPopup.style.display = 'none';
-        });
-    }
-
-    const splash = document.getElementById('mobile-splash');
-    if (splash) {
-        setTimeout(() => {
-            splash.classList.add('hidden');
-            setTimeout(() => splash.remove(), 1000); 
-        }, 3000);
-    }
-
-    const restoreBtn = document.getElementById('kp-restore-btn');
-    if (restoreBtn) {
-        restoreBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleKpVisibility(); 
-        });
-    }
-});
-
-    document.addEventListener('touchstart', (e) => {
-        if (e.target.closest('#kp-restore-btn') || e.target.closest('.side-panel')) return;
-        handleKpVisibility();
-    });
-});
 </script>
 
   <footer>
@@ -414,6 +367,7 @@ window.onload = function() {
   </script>
 </body>
 </html>
+
 
 
 
