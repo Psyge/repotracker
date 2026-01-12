@@ -34,7 +34,7 @@
 
 /* Varmistetaan, että myös otsikot laatikon sisällä ovat mustia */
 .faq-item h3 {
-    color: #000000 !important;
+    color: #fff !important;
     border-bottom: 2px solid #00ffcc; /* Lisää pienen neon-viivan kysymyksen alle */
     padding-bottom: 10px;
     margin-bottom: 15px;
@@ -702,6 +702,7 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
 
 
