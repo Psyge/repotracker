@@ -1,3 +1,7 @@
+.unified-panel.closed {
+    display: none; /* Tai siirto sivun ulkopuolelle transformilla */
+}
+
 #places-toggle-wrapper {
     position: absolute !important;
     top: 230px !important; /* Forecast-napin alla */
@@ -795,6 +799,7 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
 
 
