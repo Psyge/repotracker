@@ -320,9 +320,9 @@ let probability = Math.min((score / 4) * 100, 100);
 
 
 function initButtons() {
- /* const helpPopup = document.getElementById('help-popup');
+ const helpPopup = document.getElementById('help-popup');
   const closePopupBtn = document.getElementById('close-popup');
-  const dontShowAgainCheckbox = document.getElementById('dont-show-again');
+  /*const dontShowAgainCheckbox = document.getElementById('dont-show-again');
   const showHelpLink = document.getElementById('show-help');
 
   if (helpPopup && !localStorage.getItem('hideHelpPopup')) {
@@ -751,6 +751,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
