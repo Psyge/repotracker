@@ -7,22 +7,7 @@
 .leaflet-popup-tip {
     background: rgba(10, 15, 25, 0.95) !important;
 }
-#kpTime {
-    font-family: monospace;
-    letter-spacing: 0.5px;
-    
-    width: 100%;
-    
-    z-index: 5;
-    
-    position: relative;
-}
 
-@media (max-width: 768px) {
-    #kpTime {
-        font-size: 8px !important; /* Vielä hieman pienempi mobiilissa */
-    }
-}/* PC-TYYLI */
 #places-toggle-wrapper {
     position: absolute !important;
     top: 230px !important; /* Forecast-napin alla */
@@ -92,56 +77,7 @@ input:checked + .slider:before { transform: translateX(14px); }
         background: transparent !important;
     }
 }
-.fox-animation {
-    background-repeat: no-repeat;
-    display: block;
-    margin: 0 auto;
-}
 
-/* NUKKUVA (Low) */
-.fox-low {
-    width: 51.2px; 
-    height: 54.6px;
-    background-image: url('spritesheet.png');
-    background-size: 256px auto;
-    /* Animaatio: nimi | kesto | askeleet | toisto */
-    animation: kettu-low 8s steps(5) infinite;
-}
-
-/* VALVEILLA (Mid) */
-.fox-mid {
-    width: 51.62px; /* Esimerkki: muuta oikeaksi */
-    height: 54.6px;
-    background-image: url('spritesheet2.png');
-    background-size: 258.4px auto;
-    animation: kettu-mid 8s steps(5) infinite;
-}
-
-/* HYPPIVÄ (High) */
-.fox-high {
-    width: 37.4px; /* Esimerkki: muuta oikeaksi */
-    height: 64.4px;
-    background-image: url('spritesheet3.png');
-    background-size: 187px auto;
-    animation: kettu-high 5s steps(5) infinite;
-}
-
-/* OMAT KEYFRAMET JOKAISELLE (koska päätepiste on eri leveys) */
-@keyframes kettu-low {
-    from { background-position: 0px 0px; }
-    to { background-position: -256px 0px; }
-}
-
-@keyframes kettu-mid {
-    from { background-position: 0px 0px; }
-    to { background-position: -258.4px 0px; }
-}
-
-@keyframes kettu-high {
-    from { background-position: 0px 0px; }
-    to { background-position: -187px 0px; }
-}
-/* Otsikon tyyli - pakotetaan valkoiseksi */
 #northern-lights-faq h2, 
 #contact-section h2 {
     color: #ffffff !important;
@@ -286,19 +222,7 @@ a:link {
 
 
 /* KETTU */
-.peeking-fox {
-    position: absolute;
-    top: -42px; 
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 0;
-    pointer-events: none;
-    animation: fox-peek-move 5s infinite ease-in-out;
-}
-@keyframes fox-peek-move {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(5px); } /* Laskee hieman alemmas */
-}
+
 /* SNAKE-VISUAL: Tämän pitää täyttää koko tausta */
 .snake-visual {
     position: absolute;
@@ -960,3 +884,4 @@ header.banner::before {
     .unified-panel { display: none !important; }
     #kp-restore-btn { display: none !important; }
 }
+
