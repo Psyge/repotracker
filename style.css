@@ -1,3 +1,12 @@
+.leaflet-popup-content-wrapper {
+    background: rgba(10, 15, 25, 0.95) !important;
+    color: #fff !important;
+    border: 1px solid rgba(0, 255, 204, 0.3);
+    backdrop-filter: blur(10px);
+}
+.leaflet-popup-tip {
+    background: rgba(10, 15, 25, 0.95) !important;
+}
 #northern-lights-faq h2, 
 #contact-section h2 {
     color: #ffffff !important;
@@ -693,6 +702,7 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
 
 
