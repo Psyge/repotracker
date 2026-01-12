@@ -1,3 +1,58 @@
+#places-toggle-wrapper {
+    position: absolute !important;
+    top: 230px !important; /* Forecast-napin alla */
+    right: 18px !important; 
+    z-index: 1001 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 4px;
+    background: rgba(10, 15, 25, 0.7); /* Lisätty pieni tausta PC:lle */
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 30px; /* Erittäin siro */
+    height: 16px;
+}
+
+.switch input { opacity: 0; width: 0; height: 0; }
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #00ffcc;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 10px;
+    width: 10px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider { background-color: #00ffcc; }
+input:checked + .slider:before { transform: translateX(14px); }
+
+.toggle-label {
+    color: #fff;
+    font-size: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
 .leaflet-popup-content-wrapper {
     background: rgba(10, 15, 25, 0.95) !important;
     color: #fff !important;
@@ -590,90 +645,128 @@ header.banner .logo, .banner-right {
     }
 
     /* Muutetaan alkuperäiset napit mobiilipalloiksi */
-    #locate-btn, #markers-btn, #forecast-btn {
-        position: static !important; /* Poistaa PC-paikoituksen */
-        width: 45px !important;
-        height: 45px !important;
-        border-radius: 50% !important;
-        font-size: 0 !important; /* Piilottaa tekstin */
-        margin: 5px auto;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Lisätään ikonit mobiilissa */
-    #locate-btn::before { content: "🧭"; font-size: 20px; }
-    #markers-btn::before { content: "📍"; font-size: 20px; }
-    #forecast-btn::before { content: "📊"; font-size: 20px; }
-
-    /* Paneelin tyylit (kuten aiemmin sovittiin) */
-.side-panel {
+    .unified-panel {
         position: fixed !important;
         right: 0 !important;
-        width: 60px !important;
-        background: rgba(10, 15, 25, 0.95) !important;
-        
-        border-right: none !important;
-        border-radius: 15px 0 0 15px !important;
+        top: 3% !important;
         z-index: 20000 !important;
+        display: flex !important;
+        align-items: flex-start !important;
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        padding: 10px 5px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        box-sizing: border-box !important;
-        
-        /* Oletuksena paneeli on kokonaan piilossa oikealla */
-        transform: translateX(100%); 
+        left: auto !important; /* Estää venymisen koko ruudulle */
     }
-    #actions-panel { top: 10px !important; height: auto !important; }
-    #social-panel { top: 170px !important; height: auto !important; }
-    .side-panel.closed {
-        transform: translateX(100%) !important;
+
+    .unified-panel.closed {
+        transform: translateX(65px) !important; /* Liukuu piiloon paitsi tabit */
     }
-    .side-panel:not(.closed) {
-        transform: translateX(0) !important;
+
+    .panel-tabs {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
- .panel-tab {
-        position: absolute !important;
-        left: -40px !important; /* Kieleke näkyy aina paneelin vasemmalla puolella */
-        top: 10px !important;
-        width: 40px !important;
-        height: 50px !important;
-        background: rgba(10, 15, 25, 0.95) !important;
-       
-        border-right: none !important;
-        border-radius: 10px 0 0 10px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 20px !important;
-        cursor: pointer !important;
+
+    .tab {
+        width: 45px;
+        height: 50px;
+        background: rgba(10, 15, 25, 0.95);
+        border: 1px solid rgba(0, 255, 204, 0.3);
+        border-right: none;
+        border-radius: 12px 0 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        cursor: pointer;
     }
+
     .panel-content {
-        width: 100% !important;
+        width: 65px;
+        background: rgba(10, 15, 25, 0.95);
+        border: 1px solid rgba(0, 255, 204, 0.3);
+        border-right: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px 0;
+        min-height: 150px;
+        border-radius: 0 0 0 15px;
+    }
+
+    .content-section {
+        display: none; /* Piilotetaan oletuksena */
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        align-items: center;
+    }
+
+    .content-section.active {
         display: flex !important;
-        flex-direction: column !important;
-        gap: 15px !important;
-        align-items: center !important;
     }
-    .soc-icon img, .social-btn img {
-        width: 35px !important; /* Pakotetaan ikonit pieneen kokoon */
-        height: 35px !important;
-        object-fit: contain !important;
-    }
-    #actions-content button {
+
+    /* NAPIT PANEELIN SISÄLLÄ */
+    /* Nämä säännöt poistavat PC-näkymän absolute-paikoituksen */
+    #locate-btn, #markers-btn, #forecast-btn {
+        position: static !important;
         width: 45px !important;
         height: 45px !important;
         border-radius: 50% !important;
         font-size: 0 !important;
         background: #1a2639 !important;
         border: 1px solid #00ffcc !important;
-        margin-bottom: 10px;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
+        margin: 0 !important;
+        transform: none !important;
+    }
+
+    #locate-btn::before { content: "🧭"; font-size: 20px; }
+    #markers-btn::before { content: "📍"; font-size: 20px; }
+    #forecast-btn::before { content: "📊"; font-size: 20px; }
+
+    /* SHOW PLACES -KYTKIN PANEELISSA */
+  .map-controls, #places-toggle-wrapper {
+     position: static !important; /* Poistaa "kellunnan" */
+        margin-left: 25px;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+        transform: none !important;
+    }
+
+    .toggle-container {
+      display: flex !important;
+        flex-direction: column-reverse !important;
+        gap: 6px !important;
+    }
+
+   .toggle-label {
+       font-size: 10px !important; /* Hieman isompi luettavuus */
+        color: #00ffcc !important;
+    }
+
+    .switch {
+        width: 30px !important;
+        height: 16px !important;
+    }
+
+    .slider:before {
+        height: 10px !important;
+        width: 10px !important;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(14px) !important;
+    }
+
+    /* SOME-IKONIT */
+    .soc-icon img {
+        width: 32px !important;
+        height: 32px !important;
+        object-fit: contain !important;
     }
 .desktop-only {
         display: none !important;
@@ -702,6 +795,7 @@ header.banner .logo, .banner-right {
         display: none !important;
     }
 }
+
 
 
 
