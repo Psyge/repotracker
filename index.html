@@ -294,7 +294,7 @@ async function fetchKPData() {
     }
 }
 
-// 4. ALUSTUS
+// 4. ALUSTUS (Päivitetty Show Places -toiminnolla)
 document.addEventListener('DOMContentLoaded', () => {
     setupMobilePanels();
     fetchKPData();
@@ -304,19 +304,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const actionsContent = document.getElementById('actions-content');
         const locateBtn = document.getElementById('locate-btn');
         const forecastBtn = document.getElementById('forecast-btn');
-        const placesToggleWrapper = document.getElementById('places-toggle-wrapper'); // Kytkimen säiliö
+        // Etsitään kytkin PC-sijainnistaan
+        const placesToggleWrapper = document.getElementById('places-toggle-wrapper');
 
         if (actionsContent) {
             if (locateBtn) actionsContent.appendChild(locateBtn);
             if (forecastBtn) actionsContent.appendChild(forecastBtn);
-            if (placesToggleWrapper) actionsContent.appendChild(placesToggleWrapper);
+            // Siirretään kytkin mobiilipaneeliin
+            if (placesToggleWrapper) {
+                actionsContent.appendChild(placesToggleWrapper);
+            }
         }
     }
 
-    // Show Places -kytkimen toiminnallisuus
+    // Show Places -kytkimen logiikka
     const placesToggle = document.getElementById('toggle-places');
     if (placesToggle) {
         placesToggle.addEventListener('change', function() {
+            // window.placesLayerGroup on oltava määriteltynä markers.js puolella
             if (window.placesLayerGroup && typeof map !== 'undefined') {
                 if (this.checked) {
                     map.addLayer(window.placesLayerGroup);
@@ -327,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Ennuste-popup
+    // --- Muu alkuperäinen koodi (ennusteet, splash jne.) ---
     const forecastBtn = document.getElementById('forecast-btn');
     const forecastPopup = document.getElementById('forecast-popup');
     const closeForecast = document.getElementById('close-forecast');
@@ -346,7 +351,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Splash screen
     const splash = document.getElementById('mobile-splash');
     if (splash) {
         setTimeout(() => {
@@ -355,7 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // KP palautus
     const restoreBtn = document.getElementById('kp-restore-btn');
     if (restoreBtn) {
         restoreBtn.addEventListener('click', (e) => {
@@ -364,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             handleKpVisibility(); 
         });
     }
+});
 
     document.addEventListener('touchstart', (e) => {
         if (e.target.closest('#kp-restore-btn') || e.target.closest('.side-panel')) return;
@@ -410,6 +414,7 @@ window.onload = function() {
   </script>
 </body>
 </html>
+
 
 
 
