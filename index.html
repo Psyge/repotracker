@@ -296,9 +296,9 @@ function handleKpVisibility() {
     if (!kpBox || window.innerWidth > 768) return;
     if (kpHideTimeout) clearTimeout(kpHideTimeout);
     kpBox.classList.remove('fade-out');
-    kpHideTimeout = setTimeout(() => kpBox.classList.add('fade-out'), 8000); 
+    kpHideTimeout = setTimeout(() => kpBox.classList.add('fade-out'), 1000); 
 }
-
+fetchKPData();
 // --- PANEELILOGIIKKA JA ALUSTUS ---
 document.addEventListener('DOMContentLoaded', () => {
     const mainPanel = document.getElementById('main-panel');
@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Perustoiminnot
-    fetchKPData();
+    
 
     // Splash-ruudun poisto
     const splash = document.getElementById('mobile-splash');
@@ -428,6 +428,7 @@ window.onload = function() {
   </script>
 </body>
 </html>
+
 
 
 
