@@ -825,11 +825,19 @@ header.banner .logo, .banner-right {
     overflow: hidden; /* Varmistaa ettei kuva tule yli reunojen */
     margin: 20px auto;  
     }
+        #mainos-kontti {
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    height: 50px;
+    margin: 0 auto;
+}
 }
 @media (min-width: 769px) {
     #kp-restore-btn { display: none !important; }
    .unified-panel { display: none !important; }
 }
+
 
 
 
