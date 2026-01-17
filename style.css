@@ -2,7 +2,7 @@
         position: relative;
         width: 100%;
         max-width: 600px;
-        height: 200px; /* Säädä mainosten korkeuden mukaan */
+        height: 100px; /* Säädä mainosten korkeuden mukaan */
         margin: 0 auto;
     }
 
@@ -830,6 +830,7 @@ header.banner .logo, .banner-right {
     #kp-restore-btn { display: none !important; }
    .unified-panel { display: none !important; }
 }
+
 
 
 
