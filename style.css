@@ -1,3 +1,7 @@
+.leaflet-popup-tip {
+ 
+    border: 1px solid rgba(0, 255, 204, 0.3);
+}
 #mainos-kontti {
         position: relative;
         width: 100%;
@@ -837,6 +841,7 @@ header.banner .logo, .banner-right {
     #kp-restore-btn { display: none !important; }
    .unified-panel { display: none !important; }
 }
+
 
 
 
