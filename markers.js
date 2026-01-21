@@ -44,7 +44,7 @@
     if (markersLayer) {
       markersLayer.clearLayers();
     } else {
-      markersLayer = L.layerGroup().addTo(map);
+      markersLayer = L.layerGroup();
     }
 
     places.forEach(place => {
@@ -150,5 +150,6 @@ function togglePlaces(visible, map) {
   window.initMarkers = initMarkers;
   window.togglePlaces = togglePlaces;
 })();
+
 
 
