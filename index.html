@@ -108,14 +108,14 @@
     <div id="container">
         <div id="map">
             <button id="locate-btn">Can I See Northern Lights now?</button>
-            <button id="markers-btn">Show markers</button>  
+            
             <button id="forecast-btn">3 Day Forecast</button>  
         </div>
        <div class="map-controls" id="places-toggle-wrapper">
                 <div class="toggle-container">
                     <span class="toggle-label">Show Places</span>
                     <label class="switch">
-                        <input type="checkbox" id="toggle-places" checked>
+                        <input type="checkbox" id="toggle-places">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -346,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show Places -kytkimen toiminta
     if (placesToggle) {
+      L.DomEvent.disableClickPropagation(placesToggle);
         placesToggle.addEventListener('change', function() {
             if (typeof window.togglePlaces === 'function') {
                 window.togglePlaces(this.checked, map);
@@ -460,6 +461,7 @@ setInterval(vaihdaMainos, 6000);
 </script>   
 </body>
 </html>
+
 
 
 
