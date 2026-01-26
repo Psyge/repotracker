@@ -15,7 +15,7 @@ let spriteGreen, spriteYellow, spriteRed, currentRadius = 0;
 // Weather from Cloudflare Worker
 // ------------------------------
 async function getWeather(lat, lon) {
-  const url = `https://proud-union-1e84.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
+  const url = `https://repotracker.masto84.workers.dev/?lat=${lat}&lon=${lon}`;
   try {
     const res = await fetch(url, { cache: 'no-cache' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -778,6 +778,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try { await initAppMap(); } catch (e) { console.error('initAppMap error:', e); }
   }
 });
+
 
 
 
